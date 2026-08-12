@@ -1,0 +1,27 @@
+# Môi trường (Environment variables)
+.env
+.env.local
+
+# Các file nén không cần thiết đưa lên Git
+*.zip
+*.tar.gz
+*.rar
+a.zip
+
+# IDE và OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# (Tuỳ chọn) Nếu backend và frontend chưa ignore chuẩn, mình có thể rào thêm ở đây:
+# Frontend
+node_modules/
+dist/
+.eslintcache
+
+# Backend
+target/
+*.log
+*.jar
+*.war
