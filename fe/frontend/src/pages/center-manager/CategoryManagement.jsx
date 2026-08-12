@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BookOpen, ChevronLeft, Plus, Tag, Beaker, Calculator, Atom, Globe, Microscope, PenLine } from "lucide-react";
+import { useToast } from "../../context/ToastContext";
 
 // ─── Dữ liệu tĩnh danh mục (Frontend-only, không cần API vì đây là cấu hình cố định của hệ thống)
 const GRADES = [10, 11, 12];
@@ -57,6 +58,7 @@ function SubjectCard({ subject }) {
 // ═══════════════════════════════════════════════════════════════════════
 export default function CategoryManagement() {
   const navigate = useNavigate();
+  const { showToast } = useToast();
   const [selectedGrade, setSelectedGrade] = useState(12);
   const [showNotice, setShowNotice] = useState(true);
 
@@ -113,7 +115,7 @@ export default function CategoryManagement() {
             </div>
             {/* Nút thêm môn học (UI-only placeholder cho tương lai) */}
             <button
-              onClick={() => alert("Tính năng thêm môn học tùy chỉnh sẽ khả dụng trong phiên bản tiếp theo.")}
+              onClick={() => showToast("Tính năng thêm môn học tùy chỉnh sẽ khả dụng trong phiên bản tiếp theo.", "info")}
               className="flex items-center gap-1.5 text-xs font-bold px-3 py-2 border border-dashed border-slate-300 text-slate-500 hover:border-blue-400 hover:text-blue-600 rounded-xl transition-colors cursor-pointer"
             >
               <Plus className="w-3.5 h-3.5" />

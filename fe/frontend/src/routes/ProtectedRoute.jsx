@@ -16,7 +16,11 @@ export default function ProtectedRoute({ children, allowedRoles }) {
   }
 
   if (allowedRoles && !allowedRoles.includes(user.role)) {
-    alert("Bạn không có quyền truy cập vào khu vực này!");
+    if (window.__showToast) {
+      window.__showToast("Bạn không có quyền truy cập vào khu vực này!", "error");
+    } else {
+      console.warn("Bạn không có quyền truy cập vào khu vực này!");
+    }
     if (user.role === "TEACHER")
       return <Navigate to="/teacher/dashboard" replace />;
     if (user.role === "STUDENT")

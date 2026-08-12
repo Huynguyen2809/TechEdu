@@ -39,7 +39,7 @@ axiosClient.interceptors.response.use(
       if (window.__showToast) {
         window.__showToast("Bạn không có quyền truy cập vào chức năng này!", "error");
       } else {
-        alert("Bạn không có quyền truy cập vào chức năng này!");
+        console.warn("Bạn không có quyền truy cập vào chức năng này!");
       }
     }
     return Promise.reject(error);

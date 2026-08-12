@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
-import { CheckCircle2, AlertCircle, X } from "lucide-react";
+import { CheckCircle2, AlertCircle, Info, X } from "lucide-react";
 
 const ToastContext = createContext(null);
 
@@ -30,11 +30,15 @@ export function ToastProvider({ children }) {
           className={`fixed top-5 right-5 z-[9999] px-4 py-3 rounded-2xl shadow-xl border flex items-center gap-3 animate-in slide-in-from-top-3 duration-200 ${
             toast.type === "error"
               ? "bg-rose-50 dark:bg-rose-950 text-rose-800 dark:text-rose-200 border-rose-200 dark:border-rose-800"
+              : toast.type === "info"
+              ? "bg-sky-50 dark:bg-sky-950 text-sky-800 dark:text-sky-200 border-sky-200 dark:border-sky-800"
               : "bg-emerald-50 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-200 border-emerald-200 dark:border-emerald-800"
           }`}
         >
           {toast.type === "error" ? (
             <AlertCircle className="w-5 h-5 text-rose-500 shrink-0" />
+          ) : toast.type === "info" ? (
+            <Info className="w-5 h-5 text-sky-500 shrink-0" />
           ) : (
             <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
           )}
@@ -56,7 +60,13 @@ export function useToast() {
   if (!context) {
     // Fallback nếu gọi ngoài Provider
     return {
-      showToast: (text) => alert(text)
+      showToast: (text, type) => {
+        if (window.__showToast) {
+          window.__showToast(text, type);
+        } else {
+          console.warn(`[Toast Fallback] ${type}: ${text}`);
+        }
+      }
     };
   }
   return context;
