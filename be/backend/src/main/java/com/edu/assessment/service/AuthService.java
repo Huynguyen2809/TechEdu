@@ -37,6 +37,7 @@ public class AuthService {
                 .fullName(request.getFullName())
                 .role(User.Role.STUDENT)
                 .isActive(true)
+                .isFirstLogin(false)
                 .build();
 
         userRepository.save(user);

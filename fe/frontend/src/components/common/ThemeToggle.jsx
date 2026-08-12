@@ -21,15 +21,6 @@ const OPTIONS = [
     activeText: "text-indigo-700 dark:text-indigo-300 cyber:text-indigo-700",
     activeBorder: "border-indigo-200 dark:border-indigo-800/60 cyber:border-indigo-200",
   },
-  {
-    key: "cyber",
-    label: "Mặc định",
-    icon: Sparkles,
-    iconColor: "text-violet-500",
-    activeBg: "bg-violet-50 dark:bg-violet-950/40 cyber:bg-violet-50",
-    activeText: "text-violet-700 dark:text-violet-300 cyber:text-violet-700",
-    activeBorder: "border-violet-200 dark:border-violet-800/60 cyber:border-violet-200",
-  },
 ];
 
 export default function ThemeToggle({ compact = false }) {
@@ -47,12 +38,11 @@ export default function ThemeToggle({ compact = false }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const currentOption = OPTIONS.find((o) => o.key === theme) || OPTIONS[2];
+  const currentOption = OPTIONS.find((o) => o.key === theme) || OPTIONS[0];
   const CurrentIcon = currentOption.icon;
 
   const handleCycleTheme = () => {
     if (theme === "light") setTheme("dark");
-    else if (theme === "dark") setTheme("cyber");
     else setTheme("light");
   };
 

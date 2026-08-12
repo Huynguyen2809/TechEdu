@@ -2,22 +2,20 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 
 const ThemeContext = createContext();
 
-// theme values: 'light' | 'dark' | 'cyber'
+// theme values: 'light' | 'dark'
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState(() => {
-    return localStorage.getItem("techedu-theme") || "cyber";
+    return localStorage.getItem("techedu-theme") || "light";
   });
 
   useEffect(() => {
     const root = document.documentElement;
 
     // Remove all theme classes first
-    root.classList.remove("dark", "cyber");
+    root.classList.remove("dark");
 
     if (theme === "dark") {
       root.classList.add("dark");
-    } else if (theme === "cyber") {
-      root.classList.add("cyber");
     }
     // 'light' → no class needed, default Tailwind behavior
 
