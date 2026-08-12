@@ -1,6 +1,5 @@
 package com.edu.assessment.config;
 
-import com.edu.assessment.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,9 +7,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -27,36 +23,20 @@ import java.util.List;
 @RequiredArgsConstructor // <-- Bổ sung Lombok để tự inject UserRepository
 public class SecurityConfig {
 
-    private final UserRepository userRepository; // <-- Bổ sung mới: Gọi xuống DB
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(); // Dùng BCrypt để băm mật khẩu
     }
 
-    // <-- BỔ SUNG MỚI: Chỉ cho Spring biết cách tra cứu User trong MySQL bằng Số điện thoại
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return phoneNumber -> {
-            com.edu.assessment.entity.User user = userRepository.findByPhoneNumber(phoneNumber)
-                    .orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy số điện thoại: " + phoneNumber));
 
-            if (!user.getIsActive()) {
-                throw new org.springframework.security.authentication.DisabledException("Tài khoản của bạn đã bị khóa!");
-            }
-
-            return new User(
-                    user.getPhoneNumber(),
-                    user.getPasswordHash(),
-                    List.of(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
-            );
-        };
-    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Tắt CSRF để làm REST API cho React Vite
+                .csrf(csrf -> csrf
+                        .csrfTokenRepository(org.springframework.security.web.csrf.CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .csrfTokenRequestHandler(new org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler()::handle)
+                ) // Bật CSRF và cấp phát token qua cookie (XSRF-TOKEN)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Bật CORS
                 .headers(headers -> headers.frameOptions(frame -> frame.disable())) // Cho phép nhúng iframe
                 .authorizeHttpRequests(auth -> auth

@@ -33,15 +33,6 @@ export default function StudentLayout({ children }) {
 
   useEffect(() => {
     document.title = "TechEdu - Phân Hệ Học Sinh";
-    const loadUser = async () => {
-      try {
-        const u = await authService.getCurrentUser();
-        setUser(u);
-      } catch (err) {
-        console.error("Lỗi lấy thông tin người dùng:", err);
-      }
-    };
-    loadUser();
   }, []);
 
   // Click outside to close notification dropdown
@@ -65,7 +56,6 @@ export default function StudentLayout({ children }) {
         return;
       }
     } catch (e) {}
-    localStorage.removeItem("token");
     localStorage.removeItem("user");
     navigate("/login");
   };

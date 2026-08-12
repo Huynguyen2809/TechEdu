@@ -3,6 +3,7 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 import authService from "../../services/authService";
 import ThemeToggle from "../common/ThemeToggle";
 import { ToastProvider } from "../../context/ToastContext";
+import { useAuth } from "../../context/AuthContext";
 import {
  LayoutDashboard,
  Users,
@@ -24,7 +25,7 @@ export default function AdminLayout({ children }) {
  const navigate = useNavigate();
  const location = useLocation();
 
- const [user, setUser] = useState(null);
+ const { user, logout } = useAuth();
  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
  const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -34,15 +35,6 @@ export default function AdminLayout({ children }) {
 
  useEffect(() => {
  document.title = "TechEdu - Phân Hệ Giám Đốc Trung Tâm";
- const loadUser = async () => {
- try {
- const u = await authService.getCurrentUser();
- setUser(u);
- } catch (err) {
- console.error("Lỗi lấy thông tin người dùng:", err);
- }
- };
- loadUser();
  }, []);
 
  // Click outside to close notification dropdown
@@ -103,12 +95,15 @@ export default function AdminLayout({ children }) {
  };
 
  const handleLogout = async () => {
+ if (logout) {
+ await logout();
+ } else {
  try {
  await authService.logout();
  } catch (e) {}
- localStorage.removeItem("token");
  localStorage.removeItem("user");
  navigate("/login");
+ }
  };
 
  const navItems = [

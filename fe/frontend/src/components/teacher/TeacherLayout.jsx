@@ -4,6 +4,7 @@ import authService from "../../services/authService";
 import classService from "../../services/classService";
 import ThemeToggle from "../common/ThemeToggle";
 import { ToastProvider } from "../../context/ToastContext";
+import { useAuth } from "../../context/AuthContext";
 import {
   LayoutDashboard,
   Users,
@@ -26,7 +27,7 @@ export default function TeacherLayout({ children }) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [user, setUser] = useState(null);
+  const { user, logout } = useAuth();
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -36,15 +37,6 @@ export default function TeacherLayout({ children }) {
 
   useEffect(() => {
     document.title = "TechEdu - Phân Hệ Giáo Viên";
-    const loadUser = async () => {
-      try {
-        const u = await authService.getCurrentUser();
-        setUser(u);
-      } catch (err) {
-        console.error("Lỗi lấy thông tin người dùng:", err);
-      }
-    };
-    loadUser();
   }, []);
 
   // Click outside to close notification dropdown
@@ -133,12 +125,15 @@ export default function TeacherLayout({ children }) {
   };
 
   const handleLogout = async () => {
-    try {
-      await authService.logout();
-    } catch (e) {}
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    navigate("/login");
+    if (logout) {
+      await logout();
+    } else {
+      try {
+        await authService.logout();
+      } catch (e) {}
+      localStorage.removeItem("user");
+      navigate("/login");
+    }
   };
 
   const navItems = [

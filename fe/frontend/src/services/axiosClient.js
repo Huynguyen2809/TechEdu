@@ -8,6 +8,9 @@ const axiosClient = axios.create({
   },
   // BẮT BUỘC: Cho phép trình duyệt đính kèm Cookie JSESSIONID gửi lên Server
   withCredentials: true,
+  // Cấu hình CSRF Token
+  xsrfCookieName: 'XSRF-TOKEN',
+  xsrfHeaderName: 'X-XSRF-TOKEN',
 });
 
 // Interceptor cho Request
