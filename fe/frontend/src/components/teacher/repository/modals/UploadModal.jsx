@@ -17,7 +17,7 @@ export default function UploadModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
-      <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full overflow-hidden border border-slate-100 dark:border-slate-800 shadow-2xl cyber:bg-white cyber:border-2 cyber:border-slate-900 cyber:shadow-[6px_6px_0_0_#0f172a]">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full overflow-hidden border border-slate-100 dark:border-slate-800 shadow-2xl">
         <div className="bg-indigo-600 text-white p-6 flex items-center justify-between border-b border-indigo-700 dark:border-slate-800">
           <div>
             <h3 className="font-extrabold text-lg leading-tight tracking-tight text-white">

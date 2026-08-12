@@ -8,7 +8,7 @@ export default function GradebookSidebar({
   onSelectExam
 }) {
   return (
-    <div className="bg-white dark:bg-slate-900 cyber:bg-white rounded-3xl border border-slate-200/80 dark:border-slate-800 cyber:border-2 cyber:border-slate-900 shadow-sm dark:shadow-none cyber:shadow-[3px_3px_0_0_#0f172a] overflow-hidden sticky top-20">
+    <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm dark:shadow-none overflow-hidden sticky top-20">
       <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/50">
         <p className="text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-2">
           <BookOpen className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />{" "}

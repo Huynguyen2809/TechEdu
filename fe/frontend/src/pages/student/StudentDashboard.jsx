@@ -12,7 +12,6 @@ import {
   TrendingUp,
   Award,
   PlayCircle,
-  FileText,
   History,
   AlertCircle,
   Check,
@@ -20,6 +19,7 @@ import {
   Flame,
   Plus,
   X,
+  BookOpen
 } from "lucide-react";
 
 function formatDate(isoString) {
@@ -33,12 +33,41 @@ function formatDate(isoString) {
   });
 }
 
-
-const CARD = "bg-white dark:bg-slate-900 cyber:bg-white rounded-2xl border border-slate-200/80 dark:border-slate-800 cyber:border-2 cyber:border-slate-900 shadow-sm dark:shadow-none cyber:shadow-[3px_3px_0_0_#0f172a]";
-const CARD_HOVER = `${CARD} hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group`;
-const BTN_PRIMARY = "bg-indigo-600 dark:bg-indigo-500 cyber:bg-indigo-600 hover:bg-indigo-700 dark:hover:bg-indigo-400 cyber:hover:bg-indigo-500 text-white font-semibold rounded-xl shadow-sm cyber:border-2 cyber:border-slate-900 cyber:shadow-[3px_3px_0_0_#0f172a] cyber:active:translate-x-0.5 cyber:active:translate-y-0.5 cyber:active:shadow-none transition-all cursor-pointer";
-const BTN_SECONDARY = "bg-white dark:bg-slate-800 cyber:bg-white hover:bg-slate-50 dark:hover:bg-slate-700 cyber:hover:bg-slate-100 text-slate-700 dark:text-slate-200 cyber:text-slate-900 font-semibold rounded-xl border border-slate-200 dark:border-slate-700 cyber:border-2 cyber:border-slate-900 shadow-sm cyber:shadow-[2px_2px_0_0_#0f172a] cyber:active:translate-x-0.5 cyber:active:translate-y-0.5 cyber:active:shadow-none transition-all cursor-pointer";
+// Cập nhật constants theo Clean UI + Glassmorphism
+const CARD = "bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-800/60 shadow-sm";
+const CARD_HOVER = `${CARD} hover:-translate-y-1 hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-300 group`;
+const BTN_PRIMARY = "bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white font-semibold rounded-xl shadow-sm hover:shadow-md active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-2";
+const BTN_SECONDARY = "bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 font-semibold rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-2";
 const ICON_BOX = "w-10 h-10 rounded-xl flex items-center justify-center border border-slate-200/60 dark:border-slate-700/60 shrink-0 group-hover:scale-110 transition-transform duration-300";
+
+const DashboardSkeleton = () => (
+  <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start animate-pulse">
+    <div className="lg:col-span-7 space-y-4">
+      <div className="h-6 bg-slate-200 dark:bg-slate-800 rounded w-1/3 mb-4"></div>
+      {[1, 2].map(i => (
+        <div key={i} className="bg-white dark:bg-slate-900 rounded-2xl h-40 w-full border border-slate-200/60 dark:border-slate-800/60 p-5 flex flex-col justify-between">
+          <div className="space-y-3">
+             <div className="flex gap-2"><div className="w-16 h-5 bg-slate-200 dark:bg-slate-800 rounded-full"></div><div className="w-24 h-5 bg-slate-200 dark:bg-slate-800 rounded-full"></div></div>
+             <div className="w-3/4 h-6 bg-slate-200 dark:bg-slate-800 rounded-md"></div>
+             <div className="w-1/2 h-4 bg-slate-200 dark:bg-slate-800 rounded-md"></div>
+          </div>
+        </div>
+      ))}
+    </div>
+    <div className="lg:col-span-5 space-y-4">
+      <div className="h-6 bg-slate-200 dark:bg-slate-800 rounded w-1/2 mb-4"></div>
+      {[1, 2, 3].map(i => (
+        <div key={i} className="bg-white dark:bg-slate-900 rounded-2xl h-20 w-full border border-slate-200/60 dark:border-slate-800/60 flex items-center p-4 gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-slate-200 dark:bg-slate-800 shrink-0"></div>
+          <div className="space-y-2 flex-1">
+             <div className="w-full h-4 bg-slate-200 dark:bg-slate-800 rounded-md"></div>
+             <div className="w-2/3 h-3 bg-slate-200 dark:bg-slate-800 rounded-md"></div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
 
 export default function StudentDashboard() {
   const navigate = useNavigate();
@@ -64,7 +93,6 @@ export default function StudentDashboard() {
       ]);
       const classes = Array.isArray(classesList) ? classesList : [];
 
-      // BUG-04: Chuyển for...of sang Promise.all() tải song song
       const examArrays = await Promise.all(
         classes.map(cls =>
           classService.getExamsForClass(cls.id)
@@ -73,7 +101,7 @@ export default function StudentDashboard() {
         )
       );
 
-      if (!mounted) return; // BUG-06: Kiểm tra isMounted
+      if (!mounted) return;
       setStudentName(userProfile?.fullName || userProfile?.name || "Học sinh");
       setHistory(Array.isArray(historyList) ? historyList : []);
       setUpcomingExams(examArrays.flat());
@@ -121,145 +149,158 @@ export default function StudentDashboard() {
 
   return (
     <div className="space-y-6 font-sans">
-      {/* ── BANNER ── */}
-      <div className="bg-indigo-600 rounded-2xl p-5 md:p-6 text-white shadow-md cyber:shadow-[6px_6px_0_0_#0f172a] cyber:border-2 cyber:border-slate-900 relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="relative z-10 space-y-1">
-          <div className="bg-white/15 backdrop-blur-md text-white/90 border border-white/20 text-[11px] font-semibold px-2.5 py-0.5 rounded-full inline-flex items-center gap-1.5">
-            <Star className="w-3 h-3 text-amber-300 fill-amber-300" /> CỔNG THÔNG TIN HỌC SINH
+      {/* ── BANNER (Glassmorphism & Gradient) ── */}
+      <div className="relative rounded-3xl p-6 sm:p-8 text-white overflow-hidden shadow-lg border border-indigo-500/30">
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-800 z-0"></div>
+        <div className="absolute -right-20 -top-20 w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none z-0"></div>
+        <div className="absolute -left-10 -bottom-10 w-48 h-48 bg-indigo-400/20 rounded-full blur-2xl pointer-events-none z-0"></div>
+        
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+          <div className="space-y-3">
+            <div className="bg-white/10 backdrop-blur-md text-white/90 border border-white/20 text-[11px] font-semibold px-3 py-1 rounded-full inline-flex items-center gap-1.5 shadow-sm">
+              <Star className="w-3.5 h-3.5 text-amber-300 fill-amber-300" /> CỔNG THÔNG TIN HỌC SINH
+            </div>
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-black tracking-tight mb-1 text-white">Xin chào, {studentName}</h1>
+              <p className="text-indigo-100 text-sm font-medium max-w-xl opacity-90">Theo dõi lịch thi trực tuyến và tra cứu kết quả rèn luyện của bạn.</p>
+            </div>
           </div>
-          <h1 className="text-xl sm:text-2xl font-black tracking-tight">Xin chào, {studentName}</h1>
-          <p className="text-indigo-100 text-xs font-medium max-w-xl">Theo dõi lịch thi trực tuyến và tra cứu kết quả rèn luyện của bạn.</p>
+          <div className="shrink-0">
+            <button
+              onClick={() => {
+                setJoinCode("");
+                setJoinMessage({ text: "", type: "" });
+                setIsJoinModalOpen(true);
+              }}
+              className="bg-white/10 hover:bg-white/20 text-white backdrop-blur-md px-5 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2 border border-white/20 shadow-[0_4px_12px_rgba(0,0,0,0.1)] hover:shadow-[0_6px_16px_rgba(0,0,0,0.15)] active:scale-[0.98] cursor-pointer"
+            >
+              <Plus className="w-4 h-4 text-amber-300" />
+              <span>Tham Gia Lớp Mới</span>
+            </button>
+          </div>
         </div>
-        <div className="relative z-10 shrink-0">
-          <button
-            onClick={() => {
-              setJoinCode("");
-              setJoinMessage({ text: "", type: "" });
-              setIsJoinModalOpen(true);
-            }}
-            className="bg-white/20 hover:bg-white/30 cyber:bg-white cyber:text-slate-900 cyber:hover:bg-slate-100 text-white backdrop-blur-md px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm transition-all flex items-center gap-2 cursor-pointer border border-white/20 cyber:border-2 cyber:border-slate-900 shadow-sm cyber:shadow-[3px_3px_0_0_#0f172a] cyber:hover:translate-x-0.5 cyber:hover:translate-y-0.5 cyber:hover:shadow-none active:scale-[0.98]"
-          >
-            <Plus className="w-4 h-4 text-amber-300" />
-            <span>Tham Gia Lớp Mới</span>
-          </button>
-        </div>
-        <div className="absolute -right-10 -bottom-10 w-48 h-48 bg-white/10 rounded-full blur-2xl pointer-events-none cyber:hidden" />
       </div>
 
       {/* ── THỐNG KÊ NHANH ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
         {/* Card 1: Điểm TB */}
-        <div className={`${CARD_HOVER} p-4 flex items-center justify-between hover:border-indigo-400 dark:hover:border-indigo-600`}>
-          <div className="space-y-1">
+        <div className={`${CARD_HOVER} p-5 flex items-center justify-between`}>
+          <div className="space-y-1.5">
             <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Điểm Trung Bình</p>
             <div className="flex items-baseline gap-1.5">
-              <span className="text-2xl font-black text-slate-800 dark:text-slate-100 cyber:text-slate-900 tracking-tight">{avgScore}</span>
-              {avgScore !== "—" && <span className="text-xs font-semibold text-slate-500">/10</span>}
+              <span className="text-3xl font-black text-slate-800 dark:text-slate-100 tracking-tight">{avgScore}</span>
+              {avgScore !== "—" && <span className="text-sm font-semibold text-slate-500">/10</span>}
             </div>
             {avgScore !== "—" && (
-              <span className={`text-[10px] ${avgGrade.color} inline-block`}>Xếp loại: {avgGrade.label}</span>
+              <span className={`text-[11px] font-medium px-2 py-0.5 rounded-md ${avgGrade.color.replace('text-', 'bg-').replace('600', '100').replace('400', '900/40')} ${avgGrade.color} inline-block`}>
+                Xếp loại: {avgGrade.label}
+              </span>
             )}
           </div>
-          <div className={`${ICON_BOX} bg-indigo-50 dark:bg-indigo-950/60 cyber:bg-indigo-100 text-indigo-600 dark:text-indigo-400 border-indigo-100 dark:border-indigo-900/60 group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300`}>
-            <TrendingUp className="w-5 h-5" />
+          <div className={`${ICON_BOX} w-12 h-12 bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 border-indigo-100 dark:border-indigo-800/60 group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-600`}>
+            <TrendingUp className="w-6 h-6" />
           </div>
         </div>
 
         {/* Card 2: Đã hoàn thành */}
-        <div className={`${CARD_HOVER} p-4 flex items-center justify-between hover:border-violet-400 dark:hover:border-violet-600`}>
-          <div className="space-y-1">
+        <div className={`${CARD_HOVER} p-5 flex items-center justify-between`}>
+          <div className="space-y-1.5">
             <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Đã Hoàn Thành</p>
             <div className="flex items-baseline gap-1">
-              <span className="text-2xl font-black text-slate-800 dark:text-slate-100 cyber:text-slate-900 tracking-tight">{history.length}</span>
-              <span className="text-xs font-semibold text-slate-500">bài thi</span>
+              <span className="text-3xl font-black text-slate-800 dark:text-slate-100 tracking-tight">{history.length}</span>
+              <span className="text-sm font-semibold text-slate-500">bài thi</span>
             </div>
-            <p className="text-[10px] text-slate-500 dark:text-slate-400">Đã nộp bài thành công</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Đã nộp bài thành công</p>
           </div>
-          <div className={`${ICON_BOX} bg-violet-50 dark:bg-violet-950/60 cyber:bg-violet-100 text-violet-600 dark:text-violet-400 border-violet-100 dark:border-violet-900/60 group-hover:scale-110 group-hover:bg-violet-600 group-hover:text-white transition-all duration-300`}>
-            <CheckCircle2 className="w-5 h-5" />
+          <div className={`${ICON_BOX} w-12 h-12 bg-emerald-50 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-800/60 group-hover:bg-emerald-600 group-hover:text-white group-hover:border-emerald-600`}>
+            <CheckCircle2 className="w-6 h-6" />
           </div>
         </div>
 
         {/* Card 3: Điểm cao nhất */}
-        <div className={`${CARD_HOVER} p-4 flex items-center justify-between hover:border-amber-400 dark:hover:border-amber-600`}>
-          <div className="space-y-1">
+        <div className={`${CARD_HOVER} p-5 flex items-center justify-between`}>
+          <div className="space-y-1.5">
             <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Điểm Cao Nhất</p>
             <div className="flex items-baseline gap-1.5">
-              <span className="text-2xl font-black text-amber-600 dark:text-amber-400 tracking-tight">{bestScore}</span>
-              {bestScore !== "—" && <span className="text-xs font-semibold text-slate-500">/10</span>}
+              <span className="text-3xl font-black text-amber-600 dark:text-amber-400 tracking-tight">{bestScore}</span>
+              {bestScore !== "—" && <span className="text-sm font-semibold text-slate-500">/10</span>}
             </div>
-            <p className="text-[10px] text-slate-500 dark:text-slate-400">Kỷ lục bài thi cá nhân</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Kỷ lục bài thi cá nhân</p>
           </div>
-          <div className={`${ICON_BOX} bg-amber-50 dark:bg-amber-950/60 cyber:bg-amber-100 text-amber-600 dark:text-amber-400 border-amber-100 dark:border-amber-900/60 group-hover:scale-110 group-hover:bg-amber-500 group-hover:text-white transition-all duration-300`}>
-            <Award className="w-5 h-5" />
+          <div className={`${ICON_BOX} w-12 h-12 bg-amber-50 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 border-amber-100 dark:border-amber-800/60 group-hover:bg-amber-500 group-hover:text-white group-hover:border-amber-500`}>
+            <Award className="w-6 h-6" />
           </div>
         </div>
       </div>
 
       {/* ── BỐ CỤC 2 CỘT ── */}
       {loading ? (
-        <div className={`${CARD} py-16 text-center`}>
-          <div className="w-8 h-8 border-2 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto" />
-          <p className="text-xs text-slate-400 mt-3">Đang tải dữ liệu trang chủ...</p>
-        </div>
+        <DashboardSkeleton />
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* CỘT TRÁI: Bài kiểm tra cần làm */}
           <div className="lg:col-span-7 space-y-4">
-            <h2 className="text-base font-bold text-slate-800 dark:text-slate-100 cyber:text-slate-900 tracking-tight flex items-center gap-2">
-              <Flame className="w-5 h-5 text-orange-500" />
-              <span>Bài kiểm tra cần làm</span>
-              {pendingExams.length > 0 && (
-                <span className="text-xs font-semibold bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-300 px-2 py-0.5 rounded-full border border-orange-200 dark:border-orange-800">
-                  {pendingExams.length}
-                </span>
-              )}
-            </h2>
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100 tracking-tight flex items-center gap-2">
+                <Flame className="w-5 h-5 text-orange-500" />
+                <span>Bài kiểm tra cần làm</span>
+                {pendingExams.length > 0 && (
+                  <span className="text-[11px] font-bold bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-400 px-2.5 py-0.5 rounded-full border border-orange-200 dark:border-orange-800/60">
+                    {pendingExams.length}
+                  </span>
+                )}
+              </h2>
+            </div>
 
             {pendingExams.length === 0 ? (
-              <div className={`${CARD} py-12 px-6 text-center space-y-3`}>
-                <div className={`${ICON_BOX} mx-auto bg-emerald-100 dark:bg-emerald-950/60 cyber:bg-emerald-100 text-emerald-600 dark:text-emerald-400 w-12 h-12`}>
-                  <Star className="w-6 h-6" />
+              <div className={`${CARD} py-16 px-6 text-center space-y-4 flex flex-col items-center justify-center bg-slate-50/50 dark:bg-slate-900/50 border-dashed`}>
+                <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center border border-slate-200 dark:border-slate-700 shadow-sm">
+                  <BookOpen className="w-8 h-8 text-slate-400" />
                 </div>
-                <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 cyber:text-slate-900">
-                  Hiện tại bạn không có bài kiểm tra nào cần làm.
-                </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Hãy thư giãn hoặc kiểm tra lịch thi trong các lớp học của bạn.
-                </p>
+                <div>
+                  <p className="text-base font-bold text-slate-700 dark:text-slate-200">
+                    Bạn đã hoàn thành mọi bài tập!
+                  </p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-sm mx-auto">
+                    Hiện tại không có bài kiểm tra nào cần làm. Hãy kiểm tra lại lịch thi sau hoặc tham gia lớp học mới nhé.
+                  </p>
+                </div>
               </div>
             ) : (
               <div className="space-y-4">
                 {pendingExams.map((exam) => (
-                  <div key={exam.id} className={`${CARD_HOVER} p-5 flex flex-col justify-between space-y-4`}>
-                    <div className="space-y-2">
+                  <div key={exam.id} className={`${CARD_HOVER} p-5 flex flex-col justify-between space-y-5 bg-white dark:bg-slate-900`}>
+                    <div className="space-y-3">
                       <div className="flex items-center justify-between gap-2">
-                        <span className="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-sky-50 dark:bg-sky-950/60 cyber:bg-sky-300 text-sky-700 dark:text-sky-300 cyber:text-slate-900 border border-sky-200 dark:border-sky-800 cyber:border-2 cyber:border-slate-900">
-                          {exam.durationMinutes} phút
+                        <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-sky-50 dark:bg-sky-900/40 text-sky-700 dark:text-sky-300 border border-sky-100 dark:border-sky-800/60 shadow-sm">
+                          ⏳ {exam.durationMinutes} phút
                         </span>
-                        <span className="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 cyber:bg-emerald-300 text-emerald-700 dark:text-emerald-300 cyber:text-slate-900 border border-emerald-200 dark:border-emerald-800 cyber:border-2 cyber:border-slate-900">
-                          ● Đang mở làm bài
+                        <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800/60 shadow-sm flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                          Đang mở làm bài
                         </span>
                       </div>
-                      <h3 className="font-bold text-slate-800 dark:text-slate-100 cyber:text-slate-900 tracking-tight text-base">{exam.title}</h3>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">
-                        Lớp: <strong className="text-slate-700 dark:text-slate-200 cyber:text-slate-900">{exam.className}</strong>
+                      <h3 className="font-extrabold text-slate-800 dark:text-slate-100 text-lg line-clamp-2">{exam.title}</h3>
+                      <p className="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                        <span className="w-1.5 h-4 bg-indigo-500 rounded-full inline-block"></span>
+                        Lớp: <strong className="text-slate-700 dark:text-slate-200 font-bold">{exam.className}</strong>
                         {exam.subjectName ? ` · ${exam.subjectName}` : ""}
                       </p>
-                      <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800 cyber:border-t-2 cyber:border-slate-900">
-                        <span className="flex items-center gap-1">
-                          <Clock className="w-3.5 h-3.5" />
-                          Hạn nộp: <strong className="text-rose-600 dark:text-rose-400 ml-1">{formatDate(exam.endTime)}</strong>
-                        </span>
-                      </div>
                     </div>
-                    <button
-                      onClick={() => navigate(`/student/exam/${exam.id}`)}
-                      className={`${BTN_PRIMARY} w-full py-2.5 px-4 flex items-center justify-center gap-2`}
-                    >
-                      <PlayCircle className="w-4 h-4" />
-                      <span>VÀO LÀM BÀI NGAY</span>
-                    </button>
+                    <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800/60">
+                      <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 font-medium">
+                        <Clock className="w-4 h-4 text-slate-400" />
+                        <span>Hạn nộp:</span>
+                        <strong className="text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-900/30 px-2 py-0.5 rounded-md border border-rose-100 dark:border-rose-900/50">{formatDate(exam.endTime)}</strong>
+                      </div>
+                      <button
+                        onClick={() => navigate(`/student/exam/${exam.id}`)}
+                        className={`${BTN_PRIMARY} py-2 px-5 text-sm`}
+                      >
+                        <PlayCircle className="w-4 h-4" />
+                        Làm Bài 
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -268,15 +309,15 @@ export default function StudentDashboard() {
 
           {/* CỘT PHẢI: Kết quả gần nhất */}
           <div className="lg:col-span-5 space-y-4">
-            <h2 className="text-base font-bold text-slate-800 dark:text-slate-100 cyber:text-slate-900 tracking-tight flex items-center gap-2">
+            <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100 tracking-tight flex items-center gap-2">
               <CheckCircle2 className="w-5 h-5 text-emerald-500" />
-              <span>Kết quả bài làm gần nhất</span>
+              <span>Kết quả gần đây</span>
             </h2>
 
             {recentHistory.length === 0 ? (
-              <div className={`${CARD} py-12 px-6 text-center space-y-3`}>
-                <div className={`${ICON_BOX} mx-auto bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 w-12 h-12`}>
-                  <History className="w-6 h-6" />
+               <div className={`${CARD} py-12 px-6 text-center space-y-3 flex flex-col items-center bg-slate-50/50 dark:bg-slate-900/50 border-dashed`}>
+                <div className="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center border border-slate-200 dark:border-slate-700 shadow-sm">
+                  <History className="w-6 h-6 text-slate-400" />
                 </div>
                 <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">Chưa có bài làm nào hoàn thành</p>
               </div>
@@ -285,36 +326,36 @@ export default function StudentDashboard() {
                 {recentHistory.map((item) => {
                   const isPass = Number(item.totalScore) >= 5.0;
                   return (
-                    <div key={item.submissionId} className={`${CARD_HOVER} p-4 flex items-center gap-3.5 group`}>
-                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 font-black text-sm tracking-tight cyber:border-2 cyber:border-slate-900 cyber:shadow-[2px_2px_0_0_#0f172a] ${isPass
-                        ? "bg-emerald-50 dark:bg-emerald-950/60 cyber:bg-emerald-300 text-emerald-700 dark:text-emerald-300 cyber:text-slate-900"
-                        : "bg-rose-50 dark:bg-rose-950/60 cyber:bg-rose-300 text-rose-700 dark:text-rose-300 cyber:text-slate-900"
+                    <div key={item.submissionId} className={`${CARD_HOVER} p-4 flex items-center gap-4 bg-white dark:bg-slate-900`}>
+                      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 font-black text-lg tracking-tight shadow-sm border ${isPass
+                        ? "bg-emerald-50 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 border-emerald-100 dark:border-emerald-800/60"
+                        : "bg-rose-50 dark:bg-rose-900/40 text-rose-700 dark:text-rose-400 border-rose-100 dark:border-rose-800/60"
                         }`}>
                         {item.totalScore}
                       </div>
-                      <div className="flex-1 min-w-0 space-y-0.5">
-                        <h4 className="font-semibold text-slate-800 dark:text-slate-100 cyber:text-slate-900 text-xs sm:text-sm truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                      <div className="flex-1 min-w-0 space-y-1">
+                        <h4 className="font-bold text-slate-800 dark:text-slate-100 text-sm truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                           {item.examTitle}
                         </h4>
-                        <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">{item.className}</p>
-                        <p className="text-[10px] text-slate-400 dark:text-slate-500">{formatDate(item.submittedAt)}</p>
+                        <p className="text-xs font-medium text-slate-500 dark:text-slate-400 truncate">{item.className}</p>
+                        <p className="text-[11px] text-slate-400 dark:text-slate-500 flex items-center gap-1"><Clock className="w-3 h-3" /> {formatDate(item.submittedAt)}</p>
                       </div>
                       <button
                         onClick={() => setSelectedSubmissionId(item.submissionId)}
-                        className={`${BTN_SECONDARY} px-3 py-1.5 text-xs shrink-0`}
+                        className={`${BTN_SECONDARY} px-3 py-1.5 text-xs shrink-0 rounded-lg`}
                       >
-                        Xem lại
+                        Chi tiết
                       </button>
                     </div>
                   );
                 })}
 
-                <div className="pt-1 text-right">
+                <div className="pt-2 text-right">
                   <button
                     onClick={() => navigate("/student/history")}
-                    className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 inline-flex items-center gap-1 hover:underline cursor-pointer"
+                    className="text-sm font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 inline-flex items-center gap-1 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
                   >
-                    <span>Xem tất cả trong Lịch sử làm bài</span>
+                    <span>Xem toàn bộ lịch sử</span>
                     <ChevronRight className="w-4 h-4" />
                   </button>
                 </div>
@@ -324,51 +365,51 @@ export default function StudentDashboard() {
         </div>
       )}
 
-      {/* ── MODAL GIA NHẬP LỚP ── */}
+      {/* ── MODAL GIA NHẬP LỚP (Glassmorphism) ── */}
       {isJoinModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white dark:bg-slate-900 cyber:bg-white rounded-3xl shadow-xl dark:shadow-2xl cyber:shadow-[8px_8px_0_0_#0f172a] max-w-sm w-full overflow-hidden border border-slate-200 dark:border-slate-800 cyber:border-2 cyber:border-slate-900">
-            <div className="bg-indigo-600 text-white p-6 flex items-center justify-between border-b border-indigo-700 dark:border-slate-800 cyber:border-b-2 cyber:border-slate-900">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl max-w-sm w-full overflow-hidden border border-slate-200 dark:border-slate-800 transform transition-all">
+            <div className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white p-6 flex items-center justify-between">
               <div>
-                <h3 className="font-extrabold text-lg leading-tight tracking-tight">
+                <h3 className="font-extrabold text-xl leading-tight tracking-tight">
                   Tham Gia Lớp Học
                 </h3>
-                <p className="text-xs text-indigo-100 mt-0.5">
+                <p className="text-xs font-medium text-indigo-100 mt-1 opacity-90">
                   Nhận mã lớp từ giáo viên
                 </p>
               </div>
               <button
                 onClick={() => { setIsJoinModalOpen(false); setJoinMessage({ text: "", type: "" }); }}
-                className="text-white/70 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
+                className="text-white/70 hover:text-white hover:bg-white/10 p-1.5 rounded-xl transition-all cursor-pointer"
               >
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleQuickJoin} className="p-6 space-y-5">
+            <form onSubmit={handleQuickJoin} className="p-6 space-y-6">
               {joinMessage.text && (
-                <div className={`p-3 rounded-xl text-xs flex items-center gap-2 font-semibold border ${joinMessage.type === "success"
-                  ? "bg-emerald-50 dark:bg-emerald-950/60 cyber:bg-emerald-50 border border-emerald-200 dark:border-emerald-800/80 cyber:border-2 cyber:border-slate-900 text-emerald-700 dark:text-emerald-400 cyber:text-emerald-700"
-                  : "bg-red-50 dark:bg-red-950/60 border border-red-200 dark:border-red-800/80 cyber:border-2 cyber:border-slate-900 text-red-600 dark:text-red-400 cyber:text-red-600"
+                <div className={`p-3.5 rounded-xl text-sm flex items-center gap-2.5 font-semibold border shadow-sm ${joinMessage.type === "success"
+                  ? "bg-emerald-50 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-400"
+                  : "bg-rose-50 dark:bg-rose-900/30 border-rose-200 dark:border-rose-800/60 text-rose-600 dark:text-rose-400"
                   }`}>
                   {joinMessage.type === "success"
-                    ? <Check className="w-4 h-4 shrink-0" />
-                    : <AlertCircle className="w-4 h-4 shrink-0" />}
+                    ? <Check className="w-5 h-5 shrink-0" />
+                    : <AlertCircle className="w-5 h-5 shrink-0" />}
                   <span>{joinMessage.text}</span>
                 </div>
               )}
 
-              <div>
-                <label className="block text-xs font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
-                  Mã Lớp Học
+              <div className="space-y-2">
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  Mã Lớp Học (6-10 ký tự)
                 </label>
                 <input
                   type="text"
                   value={joinCode}
                   onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
-                  placeholder="......"
+                  placeholder="Nhập mã lớp..."
                   maxLength={10}
-                  className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/60 cyber:bg-slate-50 border border-slate-200 dark:border-slate-700 cyber:border-2 cyber:border-slate-900 rounded-xl font-mono text-center tracking-widest text-lg font-bold text-slate-900 dark:text-slate-100 uppercase focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-500 cyber:focus:border-indigo-600 transition-all cyber:shadow-[2px_2px_0_0_#0f172a]"
+                  className="w-full px-4 py-3.5 bg-slate-50/50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-xl font-mono text-center tracking-[0.2em] text-xl font-bold text-slate-900 dark:text-slate-100 uppercase focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-sm focus:shadow-md focus:ring-4 focus:ring-indigo-500/10"
                   autoFocus
                   required
                 />
@@ -378,16 +419,21 @@ export default function StudentDashboard() {
                 <button
                   type="button"
                   onClick={() => { setIsJoinModalOpen(false); setJoinMessage({ text: "", type: "" }); }}
-                  className={`${BTN_SECONDARY} flex-1 py-2.5 px-4 text-sm`}
+                  className={`${BTN_SECONDARY} flex-1 py-3 text-sm`}
                 >
                   Hủy
                 </button>
                 <button
                   type="submit"
                   disabled={joinLoading}
-                  className={`${BTN_PRIMARY} flex-1 py-2.5 px-4 text-sm disabled:opacity-50`}
+                  className={`${BTN_PRIMARY} flex-1 py-3 text-sm disabled:opacity-70`}
                 >
-                  {joinLoading ? "Đang xử lý..." : "Tham Gia"}
+                  {joinLoading ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      <span>Đang xử lý</span>
+                    </div>
+                  ) : "Tham Gia"}
                 </button>
               </div>
             </form>

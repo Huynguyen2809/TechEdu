@@ -24,9 +24,9 @@ import DeleteConfirmModal from "../../components/teacher/repository/modals/Delet
 
 // ── Shared tri-theme tokens ──────────────────────────────────────
 const BTN_PRIMARY =
-  "bg-indigo-600 dark:bg-indigo-500 cyber:bg-indigo-600 hover:bg-indigo-700 dark:hover:bg-indigo-400 cyber:hover:bg-indigo-500 text-white font-semibold rounded-xl border border-transparent cyber:border-2 cyber:border-slate-900 shadow-sm cyber:shadow-[3px_3px_0_0_#0f172a] cyber:active:translate-x-0.5 cyber:active:translate-y-0.5 cyber:active:shadow-none transition-all cursor-pointer";
+  "bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white font-semibold rounded-xl border border-transparent shadow-sm active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-2";
 const BTN_SECONDARY =
-  "bg-white dark:bg-slate-800 cyber:bg-white hover:bg-slate-50 dark:hover:bg-slate-700 cyber:hover:bg-slate-100 text-slate-700 dark:text-slate-200 cyber:text-slate-900 font-semibold rounded-xl border border-slate-200 dark:border-slate-700 cyber:border-2 cyber:border-slate-900 shadow-sm cyber:shadow-[2px_2px_0_0_#0f172a] cyber:active:translate-x-0.5 cyber:active:translate-y-0.5 cyber:active:shadow-none transition-all cursor-pointer";
+  "bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-2";
 
 export default function Repository() {
   const [currentFolderId, setCurrentFolderId] = useState(null);
@@ -100,7 +100,6 @@ export default function Repository() {
 
   // Lọc và Tìm kiếm dữ liệu (Memorized)
   const filteredFolders = useMemo(() => {
-    // Khi lọc theo loại file (Đề thi / Lời giải), ẩn danh sách thư mục vì thư mục không có loại file
     if (filterType !== "ALL") return [];
     if (!searchTerm.trim()) return folders;
     return folders.filter((f) =>
@@ -321,7 +320,7 @@ export default function Repository() {
   };
 
   return (
-    <div className="space-y-6" onDragEnter={handleDrag}>
+    <div className="space-y-6 font-sans" onDragEnter={handleDrag}>
       {/* Toast Notification Banner */}
       {toast && (
         <div
@@ -339,7 +338,7 @@ export default function Repository() {
           <span className="text-xs font-bold">{toast.text}</span>
           <button
             onClick={() => setToast(null)}
-            className="p-1 hover:bg-black/5 rounded-lg transition-colors cursor-pointer"
+            className="p-1 hover:bg-black/5 dark:hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -348,21 +347,21 @@ export default function Repository() {
 
       {/* Header trang & Nút hành động */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight flex items-center gap-2">
+        <h1 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight flex items-center gap-2">
           <Folder className="w-7 h-7 text-indigo-600 dark:text-indigo-400" />
           <span>Ngân hàng đề thi</span>
         </h1>
         <div className="flex items-center gap-3">
           <button
             onClick={() => setIsFolderModalOpen(true)}
-            className={`${BTN_SECONDARY} px-4 py-2.5 flex items-center gap-2 text-xs sm:text-sm whitespace-nowrap`}
+            className={`${BTN_SECONDARY} px-5 py-2.5 flex items-center gap-2 text-sm whitespace-nowrap`}
           >
             <FolderPlus className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
             <span>Tạo Thư Mục</span>
           </button>
           <button
             onClick={() => setIsUploadModalOpen(true)}
-            className={`${BTN_PRIMARY} px-4 py-2.5 flex items-center gap-2 text-xs sm:text-sm whitespace-nowrap`}
+            className={`${BTN_PRIMARY} px-5 py-2.5 flex items-center gap-2 text-sm whitespace-nowrap`}
           >
             <UploadCloud className="w-4 h-4 text-amber-300" />
             <span>Tải File PDF</span>
@@ -377,7 +376,7 @@ export default function Repository() {
       />
 
       {/* THANH TÌM KIẾM & BỘ LỌC TÀI LIỆU */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white dark:bg-slate-900 cyber:bg-white p-3 rounded-2xl border border-slate-200/80 dark:border-slate-800 cyber:border-2 cyber:border-slate-900 shadow-sm dark:shadow-none cyber:shadow-[3px_3px_0_0_#0f172a]">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200/60 dark:border-slate-800/60 shadow-sm">
         {/* Ô Tìm kiếm */}
         <div className="relative w-full sm:w-72">
           <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -386,7 +385,7 @@ export default function Repository() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Tìm kiếm tài liệu, thư mục..."
-            className="w-full pl-9 pr-4 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-indigo-500 font-semibold text-slate-800 dark:text-slate-100"
+            className="w-full pl-9 pr-4 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 rounded-xl focus:outline-none focus:border-indigo-500 font-semibold text-slate-800 dark:text-slate-100 shadow-sm transition-all focus:bg-white dark:focus:bg-slate-900 focus:ring-4 focus:ring-indigo-500/10"
           />
           {searchTerm && (
             <button
@@ -399,34 +398,34 @@ export default function Repository() {
         </div>
 
         {/* Bộ lọc loại file */}
-        <div className="flex items-center gap-1.5 w-full sm:w-auto overflow-x-auto">
+        <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto">
           <Filter className="w-4 h-4 text-slate-400 mr-1 shrink-0" />
           <button
             onClick={() => setFilterType("ALL")}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold cursor-pointer transition-colors whitespace-nowrap ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold cursor-pointer transition-colors whitespace-nowrap shadow-sm active:scale-95 ${
               filterType === "ALL"
                 ? "bg-indigo-600 text-white"
-                : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200"
+                : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
             }`}
           >
             Tất cả
           </button>
           <button
             onClick={() => setFilterType("EXAM")}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold cursor-pointer transition-colors whitespace-nowrap ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold cursor-pointer transition-colors whitespace-nowrap shadow-sm active:scale-95 ${
               filterType === "EXAM"
-                ? "bg-rose-600 text-white"
-                : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200"
+                ? "bg-rose-500 text-white"
+                : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
             }`}
           >
             Đề Thi PDF
           </button>
           <button
             onClick={() => setFilterType("EXPLANATION")}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold cursor-pointer transition-colors whitespace-nowrap ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold cursor-pointer transition-colors whitespace-nowrap shadow-sm active:scale-95 ${
               filterType === "EXPLANATION"
-                ? "bg-emerald-600 text-white"
-                : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200"
+                ? "bg-emerald-500 text-white"
+                : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
             }`}
           >
             Lời Giải

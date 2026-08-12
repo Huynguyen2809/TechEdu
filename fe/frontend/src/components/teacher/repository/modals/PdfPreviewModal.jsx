@@ -17,7 +17,7 @@ export default function PdfPreviewModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-5xl w-full h-[90vh] overflow-hidden border border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col cyber:bg-white cyber:border-2 cyber:border-slate-900 cyber:shadow-[6px_6px_0_0_#0f172a]">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-5xl w-full h-[90vh] overflow-hidden border border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col">
         {/* Header Modal PDF */}
         <div className="bg-indigo-600 text-white px-6 py-4 flex items-center justify-between border-b border-indigo-700 dark:border-slate-800 shrink-0">
           <div className="flex items-center gap-3 min-w-0 pr-4">

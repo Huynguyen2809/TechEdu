@@ -152,7 +152,7 @@ export default function ClassManagement() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 font-sans">
       {/* Toast Notification Banner */}
       {toast && (
         <div
@@ -170,7 +170,7 @@ export default function ClassManagement() {
           <span className="text-xs font-bold">{toast.text}</span>
           <button
             onClick={() => setToast(null)}
-            className="p-1 hover:bg-black/5 rounded-lg transition-colors cursor-pointer"
+            className="p-1 hover:bg-black/5 dark:hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -179,13 +179,13 @@ export default function ClassManagement() {
 
       {/* Header trang & Nút Tạo lớp */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight flex items-center gap-2">
+        <h1 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight flex items-center gap-2">
           <Users className="w-7 h-7 text-indigo-600 dark:text-indigo-400" />
           <span>Quản lý lớp học</span>
         </h1>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="bg-indigo-600 dark:bg-indigo-500 hover:bg-indigo-700 text-white font-semibold rounded-xl px-5 py-2.5 flex items-center gap-2 text-sm whitespace-nowrap shadow-sm cursor-pointer transition-all cyber:bg-indigo-600 cyber:border-2 cyber:border-slate-900 cyber:shadow-[3px_3px_0_0_#0f172a]"
+          className="bg-indigo-600 dark:bg-indigo-500 hover:bg-indigo-700 dark:hover:bg-indigo-600 text-white font-semibold rounded-xl px-5 py-2.5 flex items-center gap-2 text-sm whitespace-nowrap shadow-sm hover:shadow-md cursor-pointer transition-all active:scale-[0.98]"
         >
           <Plus className="w-4 h-4 text-amber-300" />
           <span>Tạo Lớp Học Mới</span>
@@ -194,7 +194,7 @@ export default function ClassManagement() {
 
       {/* Thông báo lỗi server */}
       {error && (
-        <div className="p-4 bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/60 rounded-2xl flex items-center gap-3 text-rose-700 dark:text-rose-400 text-xs sm:text-sm font-medium cyber:bg-rose-100 cyber:border-2 cyber:border-slate-900 cyber:text-rose-900 cyber:shadow-[3px_3px_0_0_#0f172a]">
+        <div className="p-4 bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/60 rounded-2xl flex items-center gap-3 text-rose-700 dark:text-rose-400 text-xs sm:text-sm font-medium">
           <AlertCircle className="w-5 h-5 flex-shrink-0" />
           <span>{error}</span>
         </div>
@@ -209,9 +209,9 @@ export default function ClassManagement() {
           </p>
         </div>
       ) : classes.length === 0 ? (
-        <div className="bg-white dark:bg-slate-900 cyber:bg-white rounded-3xl border border-slate-200 dark:border-slate-800 cyber:border-2 cyber:border-slate-900 flex flex-col items-center py-20 gap-4 shadow-sm dark:shadow-none cyber:shadow-[3px_3px_0_0_#0f172a]">
-          <div className="w-16 h-16 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 rounded-2xl flex items-center justify-center border border-indigo-100 dark:border-indigo-900/60 shadow-sm">
-            <Users className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
+        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/60 dark:border-slate-800/60 flex flex-col items-center py-20 gap-4 shadow-sm">
+          <div className="w-16 h-16 bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 rounded-2xl flex items-center justify-center border border-indigo-100 dark:border-indigo-800/60 shadow-sm">
+            <Users className="w-8 h-8" />
           </div>
           <div className="text-center">
             <h3 className="text-lg font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">
@@ -223,7 +223,7 @@ export default function ClassManagement() {
           </div>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="mt-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 text-white font-semibold text-sm rounded-xl inline-flex items-center gap-2 cursor-pointer transition-all"
+            className="mt-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 text-white font-semibold text-sm rounded-xl inline-flex items-center gap-2 cursor-pointer transition-all shadow-sm active:scale-[0.98]"
           >
             <Plus className="w-4 h-4 text-amber-300" />
             <span>Tạo Lớp Ngay</span>

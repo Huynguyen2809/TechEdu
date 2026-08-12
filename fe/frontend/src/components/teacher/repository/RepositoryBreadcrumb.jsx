@@ -3,7 +3,7 @@ import { Home, ChevronRight } from "lucide-react";
 
 export default function RepositoryBreadcrumb({ folderHistory, onNavigate }) {
   return (
-    <div className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-900 cyber:bg-white px-5 py-3 rounded-2xl border border-slate-200/80 dark:border-slate-800 cyber:border-2 cyber:border-slate-900 shadow-sm dark:shadow-none cyber:shadow-[3px_3px_0_0_#0f172a] w-full overflow-x-auto">
+    <div className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-900 px-5 py-3 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm dark:shadow-none w-full overflow-x-auto">
       <span className="text-slate-400 text-xs uppercase font-extrabold mr-1 shrink-0">
         Vị trí:
       </span>

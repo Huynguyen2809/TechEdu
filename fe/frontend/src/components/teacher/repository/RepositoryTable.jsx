@@ -27,11 +27,11 @@ export default function RepositoryTable({
 }) {
   return (
     <div
-      className={`relative min-h-[420px] bg-white dark:bg-slate-900 cyber:bg-white rounded-3xl border ${
+      className={`relative min-h-[420px] bg-white dark:bg-slate-900 rounded-3xl border ${
         dragActive
           ? "border-2 border-dashed border-indigo-500 bg-indigo-50/50 dark:bg-indigo-950/20"
-          : "border-slate-200/80 dark:border-slate-800 cyber:border-2 cyber:border-slate-900"
-      } shadow-sm dark:shadow-none cyber:shadow-[3px_3px_0_0_#0f172a] overflow-hidden transition-all flex flex-col justify-between`}
+          : "border-slate-200/80 dark:border-slate-800"
+      } shadow-sm dark:shadow-none overflow-hidden transition-all flex flex-col justify-between`}
       onDragEnter={onDragEnter}
       onDragLeave={onDragLeave}
       onDragOver={onDragOver}

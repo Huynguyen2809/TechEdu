@@ -3,7 +3,7 @@ import { Users, TrendingUp, Trophy, TrendingDown } from "lucide-react";
 
 function StatCard({ icon: Icon, label, value, color, sub }) {
   return (
-    <div className="bg-white dark:bg-slate-900 cyber:bg-white rounded-2xl border border-slate-200/80 dark:border-slate-800 cyber:border-2 cyber:border-slate-900 p-5 shadow-sm dark:shadow-none cyber:shadow-[3px_3px_0_0_#0f172a] flex items-center gap-4">
+    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-sm dark:shadow-none flex items-center gap-4">
       <div
         className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border ${color}`}
       >

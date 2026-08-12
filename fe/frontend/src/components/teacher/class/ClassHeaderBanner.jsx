@@ -17,60 +17,66 @@ export default function ClassHeaderBanner({
   if (!classInfo) return null;
 
   return (
-    <div className="bg-indigo-600 rounded-2xl p-5 md:p-6 text-white shadow-md cyber:shadow-[6px_6px_0_0_#0f172a] cyber:border-2 cyber:border-slate-900 relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-      <div className="relative z-10 space-y-2 max-w-3xl">
+    <div className="relative rounded-3xl p-6 md:p-8 text-white overflow-hidden shadow-lg border border-indigo-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-6 transition-all">
+      <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-800 z-0"></div>
+      <div className="absolute -right-20 -top-20 w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none z-0"></div>
+      <div className="absolute -left-10 -bottom-10 w-48 h-48 bg-indigo-400/20 rounded-full blur-2xl pointer-events-none z-0"></div>
+
+      <div className="relative z-10 space-y-3 max-w-3xl">
         <div className="flex items-center gap-2">
-          <span className="px-3 py-0.5 rounded-full bg-white/10 text-white text-[11px] font-semibold uppercase tracking-wider backdrop-blur-xs">
+          <span className="px-3 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/20 text-white text-[11px] font-bold uppercase tracking-wider shadow-sm">
             {classInfo.subjectName || "Hóa học"} • Khối{" "}
             {classInfo.gradeLevel || "12"}
           </span>
         </div>
 
         <div className="flex items-center gap-3">
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white leading-tight">
+          <h1 className="text-3xl md:text-4xl font-black tracking-tight text-white leading-tight">
             {classInfo.name}
           </h1>
           <button
             onClick={onOpenEditModal}
-            className="p-1.5 bg-white/10 hover:bg-white/20 rounded-xl text-white transition-colors cursor-pointer"
+            className="p-2 bg-white/10 hover:bg-white/25 rounded-xl text-white transition-colors cursor-pointer border border-white/10 shadow-sm"
             title="Đổi tên lớp học"
           >
             <Edit3 className="w-4 h-4" />
           </button>
         </div>
 
-        <p className="text-xs sm:text-sm text-blue-100 flex items-center gap-4 pt-1 font-medium">
-          <span className="flex items-center gap-1.5">
-            <Users className="w-4 h-4 text-amber-300" />
-            <b>{memberCount}</b> Học sinh trong lớp
+        <p className="text-sm text-indigo-100 flex items-center gap-4 pt-1 font-medium">
+          <span className="flex items-center gap-2">
+            <Users className="w-4.5 h-4.5 text-amber-300" />
+            <b className="text-white">{memberCount}</b> Học sinh trong lớp
           </span>
-          <span>•</span>
-          <span className="flex items-center gap-1.5">
-            <Calendar className="w-4 h-4 text-blue-200" /> Ngày tạo:{" "}
-            {classInfo.createdAt
-              ? new Date(classInfo.createdAt).toLocaleDateString("vi-VN")
-              : "Gần đây"}
+          <span className="text-white/50">•</span>
+          <span className="flex items-center gap-2">
+            <Calendar className="w-4.5 h-4.5 text-indigo-300" /> Ngày tạo:{" "}
+            <span className="text-white">
+              {classInfo.createdAt
+                ? new Date(classInfo.createdAt).toLocaleDateString("vi-VN")
+                : "Gần đây"}
+            </span>
           </span>
         </p>
       </div>
 
-      {/* Hộp hiển thị và Copy Join Code */}
-      <div className="relative z-10 w-full md:w-auto bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 flex items-center justify-between gap-6 shadow-inner">
-        <div>
-          <div className="text-[10px] font-bold uppercase text-blue-100 tracking-wider">
+      {/* Hộp hiển thị và Copy Join Code (Glassmorphism) */}
+      <div className="relative z-10 w-full sm:w-auto bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-5 flex flex-col items-center justify-between gap-3 shadow-inner">
+        <div className="text-center w-full">
+          <div className="text-[10px] font-bold uppercase text-indigo-100 tracking-wider">
             Mã gia nhập lớp (Join Code)
           </div>
-          <div className="text-2xl font-mono font-extrabold text-amber-300 tracking-widest mt-0.5">
+          <div className="text-3xl font-mono font-black text-amber-300 tracking-widest mt-1">
             {classInfo.joinCode}
           </div>
         </div>
 
         <button
           onClick={() => onCopyCode(classInfo.joinCode)}
-          className={`px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 transition-all cursor-pointer ${
+          className={`w-full py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm active:scale-[0.98] ${
             copiedCode === classInfo.joinCode
-              ? "bg-green-600 text-white shadow-md"
-              : "bg-white text-indigo-700 hover:bg-blue-50 shadow-sm"
+              ? "bg-emerald-500 hover:bg-emerald-600 text-white border border-emerald-400"
+              : "bg-white hover:bg-indigo-50 text-indigo-700 border border-white"
           }`}
         >
           {copiedCode === classInfo.joinCode ? (
@@ -86,8 +92,6 @@ export default function ClassHeaderBanner({
           )}
         </button>
       </div>
-
-      <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-400/20 rounded-full pointer-events-none blur-[60px] -translate-y-1/2 translate-x-1/3"></div>
     </div>
   );
 }

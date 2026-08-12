@@ -136,7 +136,7 @@ export default function Gradebook() {
   }, [gradebook]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 font-sans">
       {/* Toast Notification Banner */}
       {toast && (
         <div
@@ -154,7 +154,7 @@ export default function Gradebook() {
           <span className="text-xs font-bold">{toast.text}</span>
           <button
             onClick={() => setToast(null)}
-            className="p-1 hover:bg-black/5 rounded-lg transition-colors cursor-pointer"
+            className="p-1 hover:bg-black/5 dark:hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -163,7 +163,7 @@ export default function Gradebook() {
 
       {/* ── HEADER ── */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight flex items-center gap-2">
+        <h1 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight flex items-center gap-2">
           <BarChart2 className="w-7 h-7 text-indigo-600 dark:text-indigo-400" />
           <span>Sổ điểm &amp; Báo cáo kết quả</span>
         </h1>
@@ -174,7 +174,7 @@ export default function Gradebook() {
             id="btn-export-excel"
             onClick={handleExportExcel}
             disabled={exporting || !gradebook}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl px-4 py-2.5 shadow-sm flex items-center gap-2 transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed text-xs sm:text-sm shrink-0 cyber:bg-emerald-600 cyber:border-2 cyber:border-slate-900 cyber:shadow-[3px_3px_0_0_#0f172a]"
+            className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl px-5 py-2.5 shadow-sm active:scale-[0.98] flex items-center gap-2 transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed text-sm shrink-0"
           >
             {exporting ? (
               <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -201,8 +201,8 @@ export default function Gradebook() {
         <div className="lg:col-span-3 space-y-6">
           {/* Placeholder khi chưa chọn */}
           {!selectedExamId && !loading && (
-            <div className="bg-white dark:bg-slate-900 cyber:bg-white rounded-3xl border border-slate-200/80 dark:border-slate-800 cyber:border-2 cyber:border-slate-900 shadow-sm dark:shadow-none cyber:shadow-[3px_3px_0_0_#0f172a] flex flex-col items-center justify-center py-24 gap-4 text-center">
-              <div className="w-16 h-16 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 rounded-3xl flex items-center justify-center border border-indigo-100 dark:border-indigo-900/60">
+            <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/60 dark:border-slate-800/60 shadow-sm flex flex-col items-center justify-center py-24 gap-4 text-center">
+              <div className="w-16 h-16 bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 rounded-3xl flex items-center justify-center border border-indigo-100 dark:border-indigo-800/60 shadow-inner">
                 <BarChart2 className="w-8 h-8" />
               </div>
               <p className="text-sm font-bold text-slate-700 dark:text-slate-300">
@@ -213,10 +213,10 @@ export default function Gradebook() {
 
           {/* Loading */}
           {loading && (
-            <div className="bg-white dark:bg-slate-900 cyber:bg-white rounded-3xl border border-slate-200/80 dark:border-slate-800 cyber:border-2 cyber:border-slate-900 shadow-sm dark:shadow-none cyber:shadow-[3px_3px_0_0_#0f172a] flex items-center justify-center py-24">
+            <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/60 dark:border-slate-800/60 shadow-sm flex items-center justify-center py-24">
               <div className="flex flex-col items-center gap-3">
-                <div className="w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
-                <p className="text-xs text-slate-400 font-medium">
+                <div className="w-10 h-10 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
+                <p className="text-sm text-slate-500 font-medium">
                   Đang tổng hợp dữ liệu bảng điểm...
                 </p>
               </div>
@@ -225,9 +225,9 @@ export default function Gradebook() {
 
           {/* Error */}
           {error && (
-            <div className="bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 rounded-2xl p-4 flex items-center gap-3">
+            <div className="bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800/60 rounded-2xl p-4 flex items-center gap-3">
               <AlertCircle className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0" />
-              <p className="text-xs sm:text-sm text-rose-700 dark:text-rose-300 font-medium">
+              <p className="text-sm text-rose-700 dark:text-rose-300 font-bold">
                 {error}
               </p>
             </div>
@@ -235,20 +235,24 @@ export default function Gradebook() {
 
           {/* Nội dung bảng điểm */}
           {gradebook && stats && (
-            <>
-              {/* Tiêu đề exam đang xem */}
-              <div className="bg-white dark:bg-slate-900 cyber:bg-white rounded-2xl p-5 border border-slate-200/80 dark:border-slate-800 cyber:border-2 cyber:border-slate-900 shadow-xs dark:shadow-none cyber:shadow-[3px_3px_0_0_#0f172a] flex items-center justify-between">
-                <div>
-                  <h2 className="text-lg font-black text-slate-900 dark:text-slate-100">
+            <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 space-y-6">
+              {/* Tiêu đề exam đang xem (Glassmorphism) */}
+              <div className="relative bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-800 rounded-2xl p-6 shadow-lg border border-indigo-500/30 flex items-center justify-between overflow-hidden">
+                <div className="absolute -right-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none z-0"></div>
+                <div className="absolute -left-10 -bottom-10 w-32 h-32 bg-indigo-400/20 rounded-full blur-xl pointer-events-none z-0"></div>
+                
+                <div className="relative z-10">
+                  <h2 className="text-xl font-black text-white tracking-tight">
                     {gradebook.examTitle}
                   </h2>
-                  <p className="text-xs text-indigo-600 dark:text-indigo-400 font-bold mt-0.5">
-                    Lớp: {gradebook.className}
+                  <p className="text-sm text-indigo-100 font-medium mt-1 flex items-center gap-2">
+                    Lớp: <span className="font-bold text-white bg-white/20 px-2 py-0.5 rounded-lg border border-white/20">{gradebook.className}</span>
                   </p>
                 </div>
-                <span className="bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 px-3 py-1 rounded-xl text-xs font-black border border-indigo-200/60 dark:border-indigo-900">
-                  {stats.total} bài nộp
-                </span>
+                <div className="relative z-10 flex flex-col items-center justify-center bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl px-5 py-3 shadow-inner">
+                  <span className="text-2xl font-black text-amber-300 leading-none">{stats.total}</span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-100 mt-1">bài nộp</span>
+                </div>
               </div>
 
               {/* STAT CARDS */}
@@ -261,7 +265,7 @@ export default function Gradebook() {
                 totalSubmissions={stats.total}
                 onSelectSubmission={setSelectedSubmission}
               />
-            </>
+            </div>
           )}
         </div>
       </div>

@@ -39,7 +39,7 @@ export default function RepositoryContextMenu({
   return (
     <div
       style={{ top: `${top}px`, left: `${left}px` }}
-      className="fixed z-50 min-w-[190px] bg-white dark:bg-slate-900 cyber:bg-white rounded-2xl border border-slate-200 dark:border-slate-800 cyber:border-2 cyber:border-slate-900 shadow-2xl p-1.5 space-y-0.5 text-xs font-semibold text-slate-700 dark:text-slate-200 animate-in fade-in zoom-in-95 duration-100"
+      className="fixed z-50 min-w-[190px] bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl p-1.5 space-y-0.5 text-xs font-semibold text-slate-700 dark:text-slate-200 animate-in fade-in zoom-in-95 duration-100"
       onClick={(e) => e.stopPropagation()}
     >
       {contextMenu.itemType === "EMPTY" && (

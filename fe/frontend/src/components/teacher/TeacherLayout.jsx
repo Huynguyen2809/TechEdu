@@ -148,6 +148,11 @@ export default function TeacherLayout({ children }) {
       icon: LayoutDashboard,
     },
     {
+      label: "Tạo bài thi",
+      path: "/teacher/exams",
+      icon: FileText,
+    },
+    {
       label: "Lớp học",
       path: "/teacher/classes",
       icon: Users,
@@ -177,22 +182,22 @@ export default function TeacherLayout({ children }) {
         {/* MOBILE OVERLAY */}
         {mobileSidebarOpen && (
           <div 
-            className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-40 lg:hidden"
+            className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 lg:hidden"
             onClick={() => setMobileSidebarOpen(false)}
           />
         )}
 
         {/* LEFT SIDEBAR */}
         <aside
-          className={`fixed lg:sticky top-0 left-0 h-screen bg-white dark:bg-slate-900 cyber:bg-white border-r border-slate-200/80 dark:border-slate-800 cyber:border-r-2 cyber:border-slate-900 flex flex-col justify-between z-50 transition-[width,transform] duration-300 ease-in-out p-3 overflow-hidden shadow-xs dark:shadow-none cyber:shadow-[4px_0_0_0_#0f172a] ${
+          className={`fixed lg:sticky top-0 left-0 h-screen bg-white dark:bg-slate-900 border-r border-slate-200/60 dark:border-slate-800/60 flex flex-col justify-between z-50 transition-[width,transform] duration-300 ease-in-out p-3 overflow-hidden shadow-sm ${
             mobileSidebarOpen ? "translate-x-0 w-64" : "-translate-x-full lg:translate-x-0"
           } ${isCollapsed ? "lg:w-20" : "lg:w-64"} shrink-0`}
         >
           <div>
             {/* Logo & Brand Header */}
-            <div className={`flex items-center ${isCollapsed ? "justify-center flex-col gap-2" : "justify-between"} pb-4 border-b border-slate-100 dark:border-slate-800 cyber:border-b-2 cyber:border-slate-900 min-h-[56px]`}>
+            <div className={`flex items-center ${isCollapsed ? "justify-center flex-col gap-2" : "justify-between"} pb-4 border-b border-slate-200/60 dark:border-slate-800/60 min-h-[56px]`}>
               <Link to="/teacher/dashboard" className="flex items-center gap-3 group shrink-0">
-                <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md shadow-indigo-200 dark:shadow-none group-hover:scale-105 transition-transform shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-500 text-white flex items-center justify-center shadow-md group-hover:scale-105 transition-transform shrink-0">
                   <BrainCircuit className="w-6 h-6" />
                 </div>
                 {!isCollapsed && (
@@ -207,7 +212,7 @@ export default function TeacherLayout({ children }) {
               {/* Desktop Collapse Toggle */}
               <button
                 onClick={() => setIsCollapsed(!isCollapsed)}
-                className="hidden lg:flex p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer shrink-0"
+                className="hidden lg:flex p-1.5 rounded-lg text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors cursor-pointer shrink-0"
                 title={isCollapsed ? "Mở rộng menu" : "Thu gọn menu"}
               >
                 {isCollapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
@@ -216,7 +221,7 @@ export default function TeacherLayout({ children }) {
               {/* Mobile Close Button */}
               <button 
                 onClick={() => setMobileSidebarOpen(false)}
-                className="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+                className="lg:hidden p-1.5 rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -242,17 +247,17 @@ export default function TeacherLayout({ children }) {
                       isCollapsed
                         ? `w-12 h-12 rounded-xl flex items-center justify-center mx-auto transition-all ${
                             active
-                              ? "bg-indigo-600 dark:bg-indigo-500 text-white shadow-sm cyber:border-2 cyber:border-slate-900 cyber:shadow-[2px_2px_0_0_#0f172a]"
-                              : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100"
+                              ? "bg-indigo-50 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 shadow-sm border border-indigo-100 dark:border-indigo-500/30"
+                              : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-100"
                           }`
                         : `flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold transition-all ${
                             active
-                              ? "bg-indigo-600 dark:bg-indigo-500 text-white shadow-sm cyber:border-2 cyber:border-slate-900 cyber:shadow-[3px_3px_0_0_#0f172a]"
-                              : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100"
+                              ? "bg-indigo-50 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 shadow-sm border border-indigo-100 dark:border-indigo-500/30"
+                              : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-100"
                           }`
                     }
                   >
-                    <Icon className={`w-5 h-5 shrink-0 ${active ? "text-white" : "text-slate-500 dark:text-slate-400 cyber:text-slate-500"}`} />
+                    <Icon className={`w-5 h-5 shrink-0 ${active ? "text-indigo-600 dark:text-indigo-400" : "text-slate-400 dark:text-slate-500"}`} />
                     {!isCollapsed && <span className="truncate">{item.label}</span>}
                   </Link>
                 );
@@ -264,21 +269,21 @@ export default function TeacherLayout({ children }) {
             <ThemeToggle compact={isCollapsed} />
 
             {/* User Card at bottom of Sidebar */}
-            <div className={`flex items-center ${isCollapsed ? "justify-center p-1.5" : "justify-between gap-2 p-3"} rounded-2xl bg-slate-50 dark:bg-slate-800/60 cyber:bg-slate-50 border border-slate-200 dark:border-slate-700 cyber:border-2 cyber:border-slate-900`}>
+            <div className={`flex items-center ${isCollapsed ? "justify-center p-1.5" : "justify-between gap-2 p-3"} rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/60 shadow-sm`}>
               {!isCollapsed && (
                 <div className="min-w-0 flex-1">
                   <p className="text-xs font-bold text-slate-800 dark:text-slate-100 truncate">{teacherName}</p>
                   {user?.email && (
                     <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">{user.email}</p>
                   )}
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-50 dark:bg-amber-950/60 cyber:bg-amber-100 text-amber-700 dark:text-amber-300 cyber:text-amber-800 border border-amber-200 dark:border-amber-900/60 cyber:border-amber-300 mt-1">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-100/50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800/60 mt-1">
                     <Star className="w-3 h-3 fill-current" /> GIÁO VIÊN
                   </span>
                 </div>
               )}
               <button
                 onClick={handleLogout}
-                className={`rounded-xl transition-colors cursor-pointer text-slate-500 dark:text-slate-400 hover:bg-rose-50 dark:hover:bg-rose-950/60 cyber:hover:bg-rose-50 hover:text-rose-600 dark:hover:text-rose-400 cyber:hover:text-rose-600 ${
+                className={`rounded-xl transition-colors cursor-pointer text-slate-500 dark:text-slate-400 hover:bg-rose-50 dark:hover:bg-rose-950/60 hover:text-rose-600 dark:hover:text-rose-400 ${
                   isCollapsed ? "w-10 h-10 flex items-center justify-center" : "p-2"
                 }`}
                 title="Đăng xuất"
@@ -292,15 +297,15 @@ export default function TeacherLayout({ children }) {
         {/* RIGHT MAIN CONTENT AREA */}
         <div className="flex-1 min-w-0 flex flex-col min-h-screen bg-[#F8FAFC] dark:bg-slate-950 transition-colors duration-200">
           {/* TOP BAR */}
-          <header className="h-16 bg-white dark:bg-slate-900 cyber:bg-white border-b border-slate-200 dark:border-slate-800 cyber:border-b-2 cyber:border-slate-900 shadow-xs dark:shadow-none cyber:shadow-[0px_4px_0_0_#0f172a] px-4 sm:px-8 flex items-center justify-between sticky top-0 z-30 transition-all duration-200">
+          <header className="h-16 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200/60 dark:border-slate-800/60 shadow-sm px-4 sm:px-8 flex items-center justify-between sticky top-0 z-30 transition-all duration-200">
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setMobileSidebarOpen(true)}
-                className="lg:hidden p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                className="lg:hidden p-2 rounded-xl text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors cursor-pointer"
               >
                 <Menu className="w-5 h-5" />
               </button>
-              <span className="text-sm font-bold text-slate-800 dark:text-slate-100 hidden sm:inline-block">
+              <span className="text-sm font-extrabold text-slate-800 dark:text-slate-100 tracking-tight hidden sm:inline-block">
                 Hệ Thống Quản Lý &amp; Đánh Giá Giảng Dạy TechEdu
               </span>
             </div>
@@ -310,26 +315,26 @@ export default function TeacherLayout({ children }) {
               <div className="relative" ref={notifRef}>
                 <button
                   onClick={() => setShowNotifications(!showNotifications)}
-                  className="relative p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 cyber:bg-white cyber:border-2 cyber:border-slate-900 transition-all cursor-pointer"
+                  className="relative p-2 rounded-xl text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-all cursor-pointer"
                   title="Thông báo"
                 >
                   <Bell className="w-5 h-5" />
                   {unreadCount > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-rose-500 text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white dark:border-slate-900 animate-pulse">
+                    <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-rose-500 text-white text-[10px] font-black rounded-full flex items-center justify-center shadow-sm">
                       {unreadCount}
                     </span>
                   )}
                 </button>
 
-                {/* Popover Dropdown */}
+                {/* Popover Dropdown (Glassmorphism) */}
                 {showNotifications && (
-                  <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white dark:bg-slate-900 cyber:bg-white rounded-2xl shadow-xl dark:shadow-2xl border border-slate-200 dark:border-slate-800 cyber:border-2 cyber:border-slate-900 overflow-hidden z-50 animate-fade-in">
-                    <div className="p-4 bg-indigo-600 text-white flex items-center justify-between">
+                  <div className="absolute right-0 mt-3 w-80 sm:w-96 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl rounded-2xl shadow-xl border border-slate-200/60 dark:border-slate-700/60 overflow-hidden z-50 animate-fade-in origin-top-right">
+                    <div className="p-4 bg-gradient-to-r from-indigo-600 to-violet-600 text-white flex items-center justify-between">
                       <div className="flex items-center gap-2 font-bold text-sm">
                         <Bell className="w-4 h-4" />
                         <span>Thông báo giảng dạy</span>
                         {unreadCount > 0 && (
-                          <span className="bg-white/20 text-white text-xs px-2 py-0.5 rounded-full font-semibold">
+                          <span className="bg-white/20 text-white text-[11px] px-2 py-0.5 rounded-full font-semibold">
                             {unreadCount} mới
                           </span>
                         )}
@@ -344,50 +349,52 @@ export default function TeacherLayout({ children }) {
                       )}
                     </div>
 
-                    <div className="max-h-80 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800">
+                    <div className="max-h-[320px] overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800/60">
                       {notifications.length === 0 ? (
-                        <div className="p-8 text-center space-y-2">
-                          <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mx-auto">
-                            <Bell className="w-5 h-5" />
+                        <div className="p-8 text-center space-y-3">
+                          <div className="w-12 h-12 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-400 flex items-center justify-center mx-auto border border-slate-100 dark:border-slate-700">
+                            <Bell className="w-6 h-6" />
                           </div>
-                          <p className="text-xs font-bold text-slate-700 dark:text-slate-200">Không có thông báo mới nào</p>
-                          <p className="text-[11px] text-slate-400">Các cập nhật về lớp học và bài thi sẽ xuất hiện tại đây.</p>
+                          <div>
+                            <p className="text-sm font-bold text-slate-700 dark:text-slate-200">Không có thông báo mới</p>
+                            <p className="text-[11px] text-slate-400 mt-0.5">Các cập nhật về lớp học và bài thi sẽ xuất hiện tại đây.</p>
+                          </div>
                         </div>
                       ) : (
                         notifications.map((n) => (
                           <div
                             key={n.id}
                             onClick={() => handleNotificationClick(n)}
-                            className={`p-3.5 flex items-start gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer ${
-                              n.unread ? "bg-indigo-50/50 dark:bg-indigo-950/30" : ""
+                            className={`p-4 flex items-start gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer ${
+                              n.unread ? "bg-indigo-50/40 dark:bg-indigo-900/20" : ""
                             }`}
                           >
                             <div className="mt-0.5 shrink-0">
                               {n.type === "exam" && (
-                                <div className="w-8 h-8 rounded-lg bg-sky-100 dark:bg-sky-950 text-sky-600 dark:text-sky-400 flex items-center justify-center">
+                                <div className="w-9 h-9 rounded-xl bg-sky-50 dark:bg-sky-900/40 text-sky-600 dark:text-sky-400 border border-sky-100 dark:border-sky-800/60 flex items-center justify-center">
                                   <FileText className="w-4 h-4" />
                                 </div>
                               )}
                               {n.type === "result" && (
-                                <div className="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                                <div className="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800/60 flex items-center justify-center">
                                   <CheckCircle2 className="w-4 h-4" />
                                 </div>
                               )}
                             </div>
 
-                            <div className="flex-1 min-w-0 space-y-0.5">
-                              <div className="flex items-center justify-between gap-1">
-                                <p className="text-xs font-bold text-slate-800 dark:text-slate-100 truncate">
+                            <div className="flex-1 min-w-0 space-y-1">
+                              <div className="flex items-center justify-between gap-2">
+                                <p className={`text-xs font-bold truncate ${n.unread ? "text-slate-900 dark:text-white" : "text-slate-700 dark:text-slate-300"}`}>
                                   {n.title}
                                 </p>
                                 {n.unread && (
-                                  <span className="w-2 h-2 rounded-full bg-indigo-600 shrink-0" />
+                                  <span className="w-2 h-2 rounded-full bg-indigo-500 shrink-0" />
                                 )}
                               </div>
-                              <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">
+                              <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
                                 {n.desc}
                               </p>
-                              <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
+                              <p className="text-[10px] text-slate-400 font-semibold">
                                 {n.time}
                               </p>
                             </div>
@@ -400,14 +407,14 @@ export default function TeacherLayout({ children }) {
               </div>
 
               {/* User Capsule Widget */}
-              <div className="flex items-center gap-2.5 bg-slate-100/80 dark:bg-slate-800/60 cyber:bg-slate-100 px-3 py-1.5 rounded-full border border-slate-200/80 dark:border-slate-700/80 cyber:border-2 cyber:border-slate-900 shadow-xs">
-                <div className="w-7 h-7 rounded-full bg-indigo-600 text-white font-extrabold text-xs flex items-center justify-center shrink-0 shadow-xs">
+              <div className="flex items-center gap-2.5 bg-white dark:bg-slate-900 px-3 py-1.5 rounded-full border border-slate-200/60 dark:border-slate-700/60 shadow-sm">
+                <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-indigo-600 to-violet-500 text-white font-extrabold text-xs flex items-center justify-center shrink-0 shadow-inner">
                   {teacherInitials}
                 </div>
                 <span className="text-xs font-bold text-slate-800 dark:text-slate-100 hidden md:inline-block max-w-[120px] truncate">
                   {teacherName}
                 </span>
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-900/60">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-800/60">
                   <Star className="w-2.5 h-2.5 fill-current" />
                   <span className="hidden lg:inline">Giáo viên</span>
                 </span>
@@ -416,7 +423,7 @@ export default function TeacherLayout({ children }) {
           </header>
 
           {/* MAIN PAGE BODY */}
-          <main className="bg-[#F8FAFC] dark:bg-slate-950 min-h-screen flex-1 p-4 sm:p-6 lg:p-8 max-w-[1600px] w-full mx-auto transition-colors duration-200">
+          <main className="bg-[#F8FAFC] dark:bg-slate-950 min-h-screen flex-1 p-6 md:p-8 max-w-[1600px] w-full mx-auto transition-colors duration-200 overflow-y-auto">
             <div key={location.pathname} className="page-transition">
               {children}
             </div>
@@ -426,5 +433,3 @@ export default function TeacherLayout({ children }) {
     </ToastProvider>
   );
 }
-
-

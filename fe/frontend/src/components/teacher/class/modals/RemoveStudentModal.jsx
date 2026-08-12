@@ -11,7 +11,7 @@ export default function RemoveStudentModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
-      <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-sm w-full overflow-hidden border border-slate-100 dark:border-slate-800 shadow-2xl p-6 text-center space-y-4 cyber:bg-white cyber:border-2 cyber:border-slate-900 cyber:shadow-[6px_6px_0_0_#0f172a]">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-sm w-full overflow-hidden border border-slate-100 dark:border-slate-800 shadow-2xl p-6 text-center space-y-4">
         <div className="w-14 h-14 bg-rose-50 dark:bg-rose-950/80 text-rose-600 rounded-2xl flex items-center justify-center mx-auto border border-rose-200 dark:border-rose-800">
           <UserMinus className="w-7 h-7" />
         </div>

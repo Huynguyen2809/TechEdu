@@ -16,11 +16,11 @@ import {
 } from "lucide-react";
 import SubmissionDetailModal from "../../components/exam/SubmissionDetailModal";
 
-// ── Shared tri-theme tokens ──────────────────────────────────────
-const CARD = "bg-white dark:bg-slate-900 cyber:bg-white rounded-2xl border border-slate-200/80 dark:border-slate-800 cyber:border-2 cyber:border-slate-900 shadow-sm dark:shadow-none cyber:shadow-[4px_4px_0_0_#0f172a]";
-const BTN_PRIMARY = "bg-indigo-600 dark:bg-indigo-500 cyber:bg-indigo-600 hover:bg-indigo-700 dark:hover:bg-indigo-400 cyber:hover:bg-indigo-500 text-white font-semibold rounded-xl border border-transparent cyber:border-2 cyber:border-slate-900 shadow-sm cyber:shadow-[2px_2px_0_0_#0f172a] cyber:active:translate-x-0.5 cyber:active:translate-y-0.5 cyber:active:shadow-none transition-all cursor-pointer";
-const BTN_SECONDARY = "bg-white dark:bg-slate-800 cyber:bg-white hover:bg-slate-50 dark:hover:bg-slate-700 cyber:hover:bg-slate-100 text-slate-700 dark:text-slate-200 cyber:text-slate-900 font-semibold rounded-xl border border-slate-200 dark:border-slate-700 cyber:border-2 cyber:border-slate-900 shadow-sm cyber:shadow-[2px_2px_0_0_#0f172a] cyber:active:translate-x-0.5 cyber:active:translate-y-0.5 cyber:active:shadow-none transition-all cursor-pointer";
-const BADGE = "text-xs font-semibold uppercase px-3 py-1 rounded-lg border cyber:border-2 cyber:border-slate-900 cyber:shadow-[2px_2px_0_0_#0f172a]";
+// ── Shared Clean UI tokens ──────────────────────────────────────
+const CARD = "bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-800/60 shadow-sm";
+const BTN_PRIMARY = "bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white font-semibold rounded-xl shadow-sm hover:shadow-md active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-2";
+const BTN_SECONDARY = "bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 font-semibold rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-2";
+const BADGE = "text-[11px] font-bold uppercase px-3 py-1 rounded-full border shadow-sm";
 
 export default function StudentClassDetail() {
   const { classId } = useParams();
@@ -65,7 +65,6 @@ export default function StudentClassDetail() {
   }, [classId]);
 
   const now = new Date();
-  // BUG-07: Tách thành 3 trạng thái rõ ràng
   const pendingExams  = exams.filter(e => !e.hasSubmitted && new Date(e.endTime) > now);
   const expiredExams  = exams.filter(e => !e.hasSubmitted && new Date(e.endTime) <= now);
   const submittedExams = exams.filter(e => e.hasSubmitted);
@@ -96,28 +95,32 @@ export default function StudentClassDetail() {
         />
       )}
 
-      {/* ── HEADER: Thông tin lớp ── */}
-      <div className={`${CARD} rounded-3xl p-6 sm:p-8 space-y-4`}>
-        <div>
+      {/* ── HEADER: Thông tin lớp (Glassmorphism & Gradient) ── */}
+      <div className="relative rounded-3xl p-6 sm:p-8 text-white overflow-hidden shadow-lg border border-indigo-500/30">
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-800 z-0"></div>
+        <div className="absolute -right-20 -top-20 w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none z-0"></div>
+        <div className="absolute -left-10 -bottom-10 w-48 h-48 bg-indigo-400/20 rounded-full blur-2xl pointer-events-none z-0"></div>
+
+        <div className="relative z-10">
           <button
             onClick={() => navigate("/student/classes")}
-            className={`${BTN_SECONDARY} inline-flex items-center gap-2 px-4 py-2 text-sm mb-4`}
+            className="bg-white/10 hover:bg-white/20 text-white backdrop-blur-md px-4 py-2 rounded-xl text-sm font-semibold transition-all mb-4 inline-flex items-center gap-2 cursor-pointer border border-white/20"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>Quay lại danh sách lớp</span>
+            <span>Danh sách lớp</span>
           </button>
 
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white mb-2">
                 {classInfo?.name || `Lớp học #${classId}`}
               </h1>
-              <div className="flex items-center gap-3 mt-2">
-                <span className={`${BADGE} bg-sky-50 dark:bg-blue-950/60 cyber:bg-sky-300 text-sky-700 dark:text-blue-300 cyber:text-slate-900 border-sky-200 dark:border-blue-900/60`}>
+              <div className="flex items-center gap-2">
+                <span className="bg-white/10 backdrop-blur-md border border-white/20 text-[11px] font-bold px-3 py-1 rounded-full shadow-sm text-white">
                   Môn: {classInfo?.subjectName || "Bộ môn"}
                 </span>
                 {classInfo?.gradeLevel && (
-                  <span className={`${BADGE} bg-slate-100 dark:bg-slate-800 cyber:bg-slate-200 text-slate-600 dark:text-slate-300 cyber:text-slate-900 border-slate-200 dark:border-slate-700`}>
+                  <span className="bg-white/10 backdrop-blur-md border border-white/20 text-[11px] font-bold px-3 py-1 rounded-full shadow-sm text-white">
                     Khối {classInfo.gradeLevel}
                   </span>
                 )}
@@ -125,44 +128,48 @@ export default function StudentClassDetail() {
             </div>
 
             {/* Badge Giáo viên */}
-            <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800/60 cyber:bg-slate-50 px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 cyber:text-slate-900 border border-slate-200 dark:border-slate-700 cyber:border-2 cyber:border-slate-900 shadow-sm cyber:shadow-[2px_2px_0_0_#0f172a]">
-              <User className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-2xl text-sm font-semibold border border-white/20 shadow-sm text-white">
+              <User className="w-4 h-4 text-indigo-200" />
               <span>Giáo viên: </span>
-              <strong className="text-slate-900 dark:text-slate-100 font-bold">{classInfo?.teacherName || "Giáo viên bộ môn"}</strong>
+              <strong className="font-extrabold">{classInfo?.teacherName || "Giáo viên bộ môn"}</strong>
             </div>
           </div>
         </div>
       </div>
 
       {error && (
-        <div className="p-4 bg-red-50 dark:bg-red-950/60 border border-red-200 dark:border-red-800/60 rounded-xl flex items-center gap-3 text-red-600 dark:text-red-400 text-sm">
+        <div className="p-4 bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-800/60 rounded-xl flex items-center gap-3 text-rose-600 dark:text-rose-400 text-sm font-medium">
           <AlertCircle className="w-5 h-5 flex-shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {loading ? (
-        <div className={`${CARD} rounded-3xl py-20 text-center space-y-3`}>
-          <div className="w-10 h-10 border-4 border-indigo-600/20 border-t-indigo-600 rounded-full animate-spin mx-auto"></div>
-          <p className="text-sm text-slate-600 dark:text-slate-400 font-medium">Đang tải thông tin lớp học...</p>
+        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/60 dark:border-slate-800/60 p-8">
+           <div className="h-14 bg-slate-100 dark:bg-slate-800 rounded-2xl w-full mb-6 animate-pulse"></div>
+           <div className="space-y-4 animate-pulse">
+             {[1, 2, 3].map(i => (
+                <div key={i} className="h-16 bg-slate-50 dark:bg-slate-800/50 rounded-xl w-full"></div>
+             ))}
+           </div>
         </div>
       ) : (
-        <div className="bg-white dark:bg-slate-900 cyber:bg-white rounded-3xl border border-slate-200/80 dark:border-slate-800 cyber:border-2 cyber:border-slate-900 shadow-sm dark:shadow-none cyber:shadow-[4px_4px_0_0_#0f172a] overflow-hidden">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/60 dark:border-slate-800/60 shadow-sm overflow-hidden">
           {/* ── Tabs header ── */}
-          <div className="flex border-b border-slate-200 dark:border-slate-800 cyber:border-b-2 cyber:border-slate-900 bg-slate-50 dark:bg-slate-800/40 cyber:bg-slate-50 px-6 pt-4 gap-2">
+          <div className="flex flex-wrap border-b border-slate-200/60 dark:border-slate-800/60 bg-slate-50 dark:bg-slate-800/40 px-6 pt-4 gap-2">
             <button
               onClick={() => setActiveTab("pending")}
               className={`flex items-center gap-2 px-5 py-3 font-semibold text-sm rounded-t-2xl transition-all cursor-pointer border-2 border-b-0 ${
                 activeTab === "pending"
-                  ? "border-slate-200 dark:border-slate-700 cyber:border-slate-900 text-indigo-600 dark:text-indigo-400 cyber:text-slate-900 bg-white dark:bg-slate-900 cyber:bg-white shadow-sm cyber:shadow-[2px_-2px_0_0_#0f172a] dark:shadow-none"
+                  ? "border-slate-200/60 dark:border-slate-700/60 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-900"
                   : "border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/50"
               }`}
             >
-              <Flame className={`w-4 h-4 ${activeTab === "pending" ? "text-amber-500" : "text-slate-400 dark:text-slate-500"}`} />
+              <Flame className={`w-4 h-4 ${activeTab === "pending" ? "text-orange-500" : "text-slate-400"}`} />
               <span>Bài kiểm tra cần làm</span>
-              <span className={`ml-1 px-2 py-0.5 text-xs rounded-full font-semibold ${
+              <span className={`ml-1 px-2 py-0.5 text-[11px] rounded-full font-bold ${
                 activeTab === "pending"
-                  ? "bg-amber-100 dark:bg-amber-950/80 cyber:bg-amber-300 text-amber-700 dark:text-amber-400 cyber:text-slate-900 border border-amber-200 dark:border-amber-800/80 cyber:border-2 cyber:border-slate-900"
+                  ? "bg-orange-50 dark:bg-orange-900/40 text-orange-700 dark:text-orange-400 border border-orange-200 dark:border-orange-800/60"
                   : "bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300"
               }`}>
                 {pendingExams.length}
@@ -173,15 +180,15 @@ export default function StudentClassDetail() {
               onClick={() => setActiveTab("results")}
               className={`flex items-center gap-2 px-5 py-3 font-semibold text-sm rounded-t-2xl transition-all cursor-pointer border-2 border-b-0 ${
                 activeTab === "results"
-                  ? "border-slate-200 dark:border-slate-700 cyber:border-slate-900 text-indigo-600 dark:text-indigo-400 cyber:text-slate-900 bg-white dark:bg-slate-900 cyber:bg-white shadow-sm cyber:shadow-[2px_-2px_0_0_#0f172a] dark:shadow-none"
+                  ? "border-slate-200/60 dark:border-slate-700/60 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-900"
                   : "border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/50"
               }`}
             >
-              <BarChart3 className={`w-4 h-4 ${activeTab === "results" ? "text-indigo-600 dark:text-indigo-400" : "text-slate-400 dark:text-slate-500"}`} />
+              <BarChart3 className={`w-4 h-4 ${activeTab === "results" ? "text-indigo-600 dark:text-indigo-400" : "text-slate-400"}`} />
               <span>Kết quả & Bảng điểm</span>
-              <span className={`ml-1 px-2 py-0.5 text-xs rounded-full font-semibold ${
+              <span className={`ml-1 px-2 py-0.5 text-[11px] rounded-full font-bold ${
                 activeTab === "results"
-                  ? "bg-indigo-100 dark:bg-indigo-950/80 cyber:bg-sky-300 text-indigo-700 dark:text-indigo-300 cyber:text-slate-900 border border-indigo-200 dark:border-indigo-900/80 cyber:border-2 cyber:border-slate-900"
+                  ? "bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60"
                   : "bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300"
               }`}>
                 {submittedExams.length}
@@ -194,15 +201,15 @@ export default function StudentClassDetail() {
                 onClick={() => setActiveTab("expired")}
                 className={`flex items-center gap-2 px-5 py-3 font-semibold text-sm rounded-t-2xl transition-all cursor-pointer border-2 border-b-0 ${
                   activeTab === "expired"
-                    ? "border-slate-200 dark:border-slate-700 cyber:border-slate-900 text-rose-600 dark:text-rose-400 cyber:text-slate-900 bg-white dark:bg-slate-900 cyber:bg-white shadow-sm cyber:shadow-[2px_-2px_0_0_#0f172a] dark:shadow-none"
+                    ? "border-slate-200/60 dark:border-slate-700/60 text-rose-600 dark:text-rose-400 bg-white dark:bg-slate-900"
                     : "border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/50"
                 }`}
               >
-                <AlertCircle className={`w-4 h-4 ${activeTab === "expired" ? "text-rose-500" : "text-slate-400 dark:text-slate-500"}`} />
+                <AlertCircle className={`w-4 h-4 ${activeTab === "expired" ? "text-rose-500" : "text-slate-400"}`} />
                 <span>Quá hạn chưa nộp</span>
-                <span className={`ml-1 px-2 py-0.5 text-xs rounded-full font-semibold ${
+                <span className={`ml-1 px-2 py-0.5 text-[11px] rounded-full font-bold ${
                   activeTab === "expired"
-                    ? "bg-rose-100 dark:bg-rose-950/80 cyber:bg-rose-300 text-rose-700 dark:text-rose-300 cyber:text-slate-900 border border-rose-200 dark:border-rose-900/80 cyber:border-2 cyber:border-slate-900"
+                    ? "bg-rose-50 dark:bg-rose-900/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/60"
                     : "bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300"
                 }`}>
                   {expiredExams.length}
@@ -213,25 +220,29 @@ export default function StudentClassDetail() {
 
           {/* ── Tab 1: Bài kiểm tra cần làm ── */}
           {activeTab === "pending" && (
-            <div className="p-6 sm:p-8">
+            <div className="p-6">
               {pendingExams.length === 0 ? (
-                <div className="text-center py-12 space-y-3 bg-slate-50 dark:bg-slate-800/40 cyber:bg-slate-50 rounded-2xl border border-slate-100 dark:border-slate-800 cyber:border-2 cyber:border-slate-900 cyber:shadow-[2px_2px_0_0_#0f172a]">
-                  <CheckCircle2 className="w-10 h-10 text-emerald-500 dark:text-emerald-400 mx-auto" />
-                  <p className="text-base font-bold text-slate-800 dark:text-slate-100 tracking-tight">Tuyệt vời! Bạn không có bài kiểm tra nào cần làm.</p>
-                  <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Hãy theo dõi lớp học thường xuyên để cập nhật đề thi mới.</p>
+                <div className="text-center py-16 space-y-4 bg-slate-50/50 dark:bg-slate-900/50 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700">
+                  <div className="w-16 h-16 bg-emerald-50 dark:bg-emerald-900/40 rounded-full flex items-center justify-center mx-auto text-emerald-500 border border-emerald-100 dark:border-emerald-800/60 shadow-sm">
+                    <CheckCircle2 className="w-8 h-8" />
+                  </div>
+                  <div>
+                     <p className="text-lg font-bold text-slate-800 dark:text-slate-100 tracking-tight">Tuyệt vời! Bạn không có bài tập nào.</p>
+                     <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Hãy theo dõi lớp học thường xuyên để cập nhật đề thi mới.</p>
+                  </div>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse min-w-[650px]">
                     <thead>
-                      <tr className="bg-slate-50 dark:bg-slate-800/80 cyber:bg-slate-100 text-[11px] font-extrabold text-slate-600 dark:text-slate-300 uppercase tracking-wider border-b border-slate-200 dark:border-slate-700 cyber:border-b-2 cyber:border-slate-900">
-                        <th className="py-3 px-4">Tên bài kiểm tra</th>
-                        <th className="py-3 px-4 text-center">Thời gian làm bài</th>
-                        <th className="py-3 px-4 text-center">Thời gian mở - đóng</th>
-                        <th className="py-3 px-4 text-right">Thao tác</th>
+                      <tr className="bg-slate-50/80 dark:bg-slate-800/60 text-[11px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider border-b border-slate-200/60 dark:border-slate-800/60">
+                        <th className="py-4 px-5">Tên bài kiểm tra</th>
+                        <th className="py-4 px-5 text-center">Thời gian làm bài</th>
+                        <th className="py-4 px-5 text-center">Thời gian mở - đóng</th>
+                        <th className="py-4 px-5 text-right">Thao tác</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800 cyber:divide-slate-200 text-sm font-semibold text-slate-700 dark:text-slate-200">
+                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 text-sm text-slate-700 dark:text-slate-200 font-medium">
                       {pendingExams.map((exam) => {
                         const now2 = new Date();
                         const start = new Date(exam.startTime);
@@ -239,35 +250,35 @@ export default function StudentClassDetail() {
                         const isOpen = now2 >= start && now2 <= end;
 
                         return (
-                          <tr key={exam.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/60 cyber:hover:bg-slate-50 transition-colors">
-                            <td className="py-4 px-4 font-bold text-slate-900 dark:text-slate-100 tracking-tight">
+                          <tr key={exam.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/40 transition-colors">
+                            <td className="py-5 px-5 font-bold text-slate-900 dark:text-slate-100 tracking-tight">
                               {exam.title}
                             </td>
-                            <td className="py-4 px-4 text-center text-slate-600 dark:text-slate-300 text-xs">
-                              <span className="inline-flex items-center gap-1 bg-slate-100 dark:bg-slate-800 cyber:bg-slate-200 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 cyber:border-2 cyber:border-slate-900 font-semibold text-slate-700 dark:text-slate-200 cyber:text-slate-900">
-                                <Clock className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
+                            <td className="py-5 px-5 text-center text-xs">
+                              <span className="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 font-semibold text-slate-700 dark:text-slate-200 shadow-sm">
+                                <Clock className="w-4 h-4 text-slate-400" />
                                 {exam.durationMinutes} phút
                               </span>
                             </td>
-                            <td className="py-4 px-4 text-center text-xs text-slate-500 dark:text-slate-400 font-medium">
-                              <div>{formatDate(exam.startTime)}</div>
-                              <div className="text-[11px] text-slate-400 dark:text-slate-500">đến {formatDate(exam.endTime)}</div>
+                            <td className="py-5 px-5 text-center text-xs text-slate-500 dark:text-slate-400">
+                              <div className="font-semibold text-slate-700 dark:text-slate-300">{formatDate(exam.startTime)}</div>
+                              <div className="text-[11px] mt-0.5">đến {formatDate(exam.endTime)}</div>
                             </td>
-                            <td className="py-4 px-4 text-right">
+                            <td className="py-5 px-5 text-right">
                               {isOpen ? (
                                 <button
                                   onClick={() => navigate(`/student/exam/${exam.id}`)}
-                                  className={`${BTN_PRIMARY} inline-flex items-center gap-1.5 px-4 py-2 text-xs`}
+                                  className={`${BTN_PRIMARY} inline-flex items-center gap-2 px-5 py-2 text-xs`}
                                 >
-                                  <PlayCircle className="w-4 h-4 text-amber-300" />
+                                  <PlayCircle className="w-4 h-4 text-white" />
                                   <span>Vào Thi Ngay</span>
                                 </button>
                               ) : now < start ? (
-                                <span className="text-xs text-amber-700 dark:text-amber-300 cyber:text-slate-900 bg-amber-50 dark:bg-amber-950/80 cyber:bg-amber-300 px-3 py-1 rounded-lg font-semibold border border-amber-200 dark:border-amber-800/80 cyber:border-2 cyber:border-slate-900">
+                                <span className="text-[11px] text-orange-700 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/40 px-3 py-1.5 rounded-lg font-bold border border-orange-200 dark:border-orange-800/60">
                                   Chưa đến giờ thi
                                 </span>
                               ) : (
-                                <span className="text-xs text-slate-400 dark:text-slate-500 italic">
+                                <span className="text-xs text-slate-400 dark:text-slate-500 font-medium italic">
                                   Hết thời gian
                                 </span>
                               )}
@@ -284,74 +295,76 @@ export default function StudentClassDetail() {
 
           {/* ── Tab 2: Kết quả & Bảng điểm ── */}
           {activeTab === "results" && (
-            <div className="p-6 sm:p-8">
+            <div className="p-6">
               {submittedExams.length === 0 ? (
-                <div className="text-center py-12 space-y-3 bg-slate-50 dark:bg-slate-800/40 cyber:bg-slate-50 rounded-2xl border border-slate-100 dark:border-slate-800 cyber:border-2 cyber:border-slate-900 cyber:shadow-[2px_2px_0_0_#0f172a]">
-                  <BarChart3 className="w-10 h-10 text-slate-400 dark:text-slate-500 mx-auto" />
-                  <p className="text-base font-bold text-slate-800 dark:text-slate-100 tracking-tight">Chưa có kết quả làm bài nào trong lớp này.</p>
+                <div className="text-center py-16 space-y-4 bg-slate-50/50 dark:bg-slate-900/50 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700">
+                  <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto text-slate-400 border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <BarChart3 className="w-8 h-8" />
+                  </div>
+                  <p className="text-base font-bold text-slate-700 dark:text-slate-300">Chưa có kết quả làm bài nào trong lớp này.</p>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse min-w-[650px]">
                     <thead>
-                      <tr className="bg-slate-50 dark:bg-slate-800/80 cyber:bg-slate-100 text-[11px] font-extrabold text-slate-600 dark:text-slate-300 uppercase tracking-wider border-b border-slate-200 dark:border-slate-700 cyber:border-b-2 cyber:border-slate-900">
-                        <th className="py-3 px-4">Tên bài thi</th>
-                        <th className="py-3 px-4 text-center">Ngày nộp</th>
-                        <th className="py-3 px-4 text-center">Điểm số chuẩn</th>
-                        <th className="py-3 px-4 text-right">Thao tác</th>
+                      <tr className="bg-slate-50/80 dark:bg-slate-800/60 text-[11px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider border-b border-slate-200/60 dark:border-slate-800/60">
+                        <th className="py-4 px-5">Tên bài thi</th>
+                        <th className="py-4 px-5 text-center">Ngày nộp</th>
+                        <th className="py-4 px-5 text-center">Điểm số chuẩn</th>
+                        <th className="py-4 px-5 text-right">Thao tác</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800 cyber:divide-slate-200 text-sm font-semibold text-slate-700 dark:text-slate-200">
+                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 text-sm font-medium text-slate-700 dark:text-slate-200">
                       {submittedExams.map((exam) => {
                         const scoreVal = exam.score ?? exam.finalScore ?? exam.totalScore ?? exam.submission?.score;
                         const hasScore = scoreVal !== undefined && scoreVal !== null;
                         const isExpiredUnsubmitted = !exam.hasSubmitted;
 
                         return (
-                          <tr key={exam.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/60 cyber:hover:bg-slate-50 transition-colors">
-                            <td className="py-4 px-4 font-bold text-slate-900 dark:text-slate-100 tracking-tight">
+                          <tr key={exam.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/40 transition-colors">
+                            <td className="py-5 px-5 font-bold text-slate-900 dark:text-slate-100 tracking-tight">
                               {exam.title}
                             </td>
-                            <td className="py-4 px-4 text-center text-xs text-slate-500 dark:text-slate-400 font-medium">
+                            <td className="py-5 px-5 text-center text-xs text-slate-500 dark:text-slate-400">
                               {isExpiredUnsubmitted ? (
-                                <span className="text-slate-400 dark:text-slate-500 italic">Không nộp / Quá hạn</span>
+                                <span className="italic">Không nộp / Quá hạn</span>
                               ) : (
-                                <span className="inline-flex items-center gap-1">
-                                  <Calendar className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
+                                <span className="inline-flex items-center gap-1.5 font-medium">
+                                  <Calendar className="w-4 h-4 text-slate-400" />
                                   {formatDate(exam.submittedAt || exam.submission?.submittedAt)}
                                 </span>
                               )}
                             </td>
-                            <td className="py-4 px-4 text-center">
+                            <td className="py-5 px-5 text-center">
                               {isExpiredUnsubmitted ? (
-                                <span className="text-slate-400 dark:text-slate-500 font-bold">-</span>
+                                <span className="text-slate-400 font-bold">-</span>
                               ) : hasScore ? (
                                 <span>
-                                  <span className={`font-black text-base tracking-tight ${
+                                  <span className={`font-black text-lg tracking-tight ${
                                     scoreVal >= 8.0
                                       ? "text-emerald-600 dark:text-emerald-400"
                                       : scoreVal >= 5.0
-                                      ? "text-blue-600 dark:text-blue-400"
+                                      ? "text-indigo-600 dark:text-indigo-400"
                                       : "text-rose-600 dark:text-rose-400"
                                   }`}>{scoreVal}</span>
-                                  <span className="text-slate-400 dark:text-slate-500 font-bold"> / 10</span>
+                                  <span className="text-slate-400 dark:text-slate-500 font-bold text-xs"> / 10</span>
                                 </span>
                               ) : (
-                                <span className="text-slate-400 dark:text-slate-500 italic font-medium">
+                                <span className="text-slate-400 dark:text-slate-500 italic text-xs">
                                   Chờ công bố
                                 </span>
                               )}
                             </td>
-                            <td className="py-4 px-4 text-right">
+                            <td className="py-5 px-5 text-right">
                               {isExpiredUnsubmitted ? (
-                                <span className="text-slate-600 dark:text-slate-300 cyber:text-slate-900 font-semibold text-xs bg-slate-100 dark:bg-slate-800 cyber:bg-slate-200 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 cyber:border-2 cyber:border-slate-900">Quá hạn / Hết giờ</span>
+                                <span className="text-[11px] font-bold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700">Quá hạn / Hết giờ</span>
                               ) : (
                                 <button
                                   onClick={() => setSelectedSubmissionId(exam.submission?.id || exam.id)}
-                                  className="bg-amber-50 dark:bg-amber-950/80 cyber:bg-amber-100 hover:bg-amber-100 dark:hover:bg-amber-900/80 cyber:hover:bg-amber-200 text-amber-700 dark:text-amber-300 cyber:text-slate-900 font-semibold border border-amber-200 dark:border-amber-700/80 cyber:border-2 cyber:border-slate-900 px-4 py-2 rounded-lg cyber:shadow-[2px_2px_0_0_#0f172a] cyber:active:translate-x-0.5 cyber:active:translate-y-0.5 cyber:active:shadow-none transition-all inline-flex items-center gap-2 text-xs cursor-pointer"
+                                  className={`${BTN_SECONDARY} px-4 py-2 text-xs w-auto inline-flex`}
                                 >
                                   <Eye className="w-4 h-4" />
-                                  <span>Xem bài làm</span>
+                                  <span>Xem chi tiết</span>
                                 </button>
                               )}
                             </td>
@@ -364,24 +377,27 @@ export default function StudentClassDetail() {
               )}
             </div>
           )}
+
           {/* ── Tab 3: Quá hạn chưa nộp (BUG-07) ── */}
           {activeTab === "expired" && (
-            <div className="p-6 sm:p-8">
+            <div className="p-6">
               {expiredExams.length === 0 ? (
-                <div className="text-center py-12 space-y-3 bg-slate-50 dark:bg-slate-800/40 cyber:bg-slate-50 rounded-2xl border border-slate-100 dark:border-slate-800 cyber:border-2 cyber:border-slate-900">
-                  <CheckCircle2 className="w-10 h-10 text-emerald-500 dark:text-emerald-400 mx-auto" />
+                <div className="text-center py-16 space-y-4 bg-slate-50/50 dark:bg-slate-900/50 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700">
+                  <div className="w-16 h-16 bg-emerald-50 dark:bg-emerald-900/40 rounded-full flex items-center justify-center mx-auto text-emerald-500 border border-emerald-100 dark:border-emerald-800/60 shadow-sm">
+                    <CheckCircle2 className="w-8 h-8" />
+                  </div>
                   <p className="text-base font-bold text-slate-800 dark:text-slate-100">Không có bài thi nào bị quá hạn.</p>
                 </div>
               ) : (
                 <div className="space-y-3">
                   {expiredExams.map(exam => (
-                    <div key={exam.id} className="flex items-center justify-between p-4 bg-rose-50 dark:bg-rose-950/30 cyber:bg-rose-50 border border-rose-200 dark:border-rose-900/60 cyber:border-2 cyber:border-slate-900 rounded-2xl">
+                    <div key={exam.id} className="flex items-center justify-between p-5 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/60 rounded-2xl shadow-sm">
                       <div>
-                        <p className="font-bold text-slate-900 dark:text-slate-100 text-sm">{exam.title}</p>
-                        <p className="text-xs text-rose-600 dark:text-rose-400 mt-0.5">Hết hạn: {formatDate(exam.endTime)}</p>
+                        <p className="font-bold text-slate-900 dark:text-slate-100 text-base tracking-tight">{exam.title}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-1.5"><Clock className="w-3.5 h-3.5"/> Hết hạn: {formatDate(exam.endTime)}</p>
                       </div>
-                      <span className="text-xs font-semibold text-rose-700 dark:text-rose-300 bg-rose-100 dark:bg-rose-950/80 cyber:bg-rose-200 px-3 py-1.5 rounded-lg border border-rose-200 dark:border-rose-800 cyber:border-2 cyber:border-slate-900">
-                        Quá hạn
+                      <span className="text-[11px] font-bold text-rose-700 dark:text-rose-400 bg-rose-50 dark:bg-rose-900/40 px-3 py-1.5 rounded-lg border border-rose-200 dark:border-rose-800/60">
+                        Quá hạn không nộp
                       </span>
                     </div>
                   ))}

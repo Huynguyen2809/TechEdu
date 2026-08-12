@@ -62,7 +62,7 @@ export default function CreateExam() {
     Array.from({ length: 4 }, (_, i) => ({
       questionNumber: 18 + i + 1,
       partType: "PART_2_TRUE_FALSE",
-      correctAnswer: "D,S,D,S",
+      correctAnswer: "D,D,D,D",
       points: 1.0
     }))
   );
@@ -149,7 +149,6 @@ export default function CreateExam() {
       setStep(1);
       return;
     }
-    // [FIX] Backend yêu cầu documentId @NotNull — bắt buộc chọn PDF từ kho
     if (!selectedDocId) {
       showToast("Vui lòng chọn file PDF đề thi từ Kho lưu trữ (Bước 1)", "error");
       setStep(1);
@@ -163,7 +162,6 @@ export default function CreateExam() {
       return;
     }
 
-    // [FIX] Validate thời gian: Bắt đầu phải trước Kết thúc (BUG-04)
     if (startTime && endTime) {
       if (new Date(startTime) >= new Date(endTime)) {
         showToast("Thời gian bắt đầu phải trước thời gian kết thúc!", "error");
@@ -181,7 +179,6 @@ export default function CreateExam() {
         durationMinutes: Number(durationMinutes),
         startTime: startTime ? `${startTime}:00` : null,
         endTime: endTime ? `${endTime}:00` : null,
-        // [FIX] Thêm 3 trường bắt buộc mà backend yêu cầu (@NotNull @Min(0))
         part1Count: part1Keys.length,
         part2Count: part2Keys.length,
         part3Count: part3Keys.length,
@@ -204,53 +201,58 @@ export default function CreateExam() {
   if (loadingClasses) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
+        <div className="w-10 h-10 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
-      {/* Step Header */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-black text-slate-900 dark:text-slate-100 flex items-center gap-2">
-            <FileText className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+    <div className="space-y-6 max-w-5xl mx-auto font-sans">
+      {/* Step Header (Glassmorphism & Gradient) */}
+      <div className="relative bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200/60 dark:border-slate-800/60 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 overflow-hidden">
+        {/* Subtle background glow */}
+        <div className="absolute -left-10 -top-10 w-40 h-40 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none z-0"></div>
+        
+        <div className="relative z-10">
+          <h1 className="text-2xl font-black text-slate-900 dark:text-slate-100 flex items-center gap-3 tracking-tight">
+            <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center border border-indigo-100 dark:border-indigo-800/60 shadow-sm">
+              <FileText className="w-5 h-5" />
+            </div>
             Tạo Đề Thi Mới
           </h1>
-          <p className="text-xs text-slate-400 dark:text-slate-500 font-medium mt-0.5">
+          <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mt-1 pl-13">
             Quy trình 3 bước soạn bài kiểm tra và đáp án ma trận
           </p>
         </div>
 
         {/* Wizard Steps indicator */}
-        <div className="flex items-center gap-2">
+        <div className="relative z-10 flex items-center gap-2 bg-slate-50 dark:bg-slate-800/50 p-1.5 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 shadow-inner w-full sm:w-auto overflow-x-auto">
           <button
             onClick={() => setStep(1)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${
               step === 1
-                ? "bg-indigo-600 text-white shadow-sm"
-                : "bg-slate-100 dark:bg-slate-800 text-slate-500"
+                ? "bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm border border-slate-200/60 dark:border-slate-600"
+                : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
             }`}
           >
             1. Thông tin
           </button>
           <button
             onClick={() => setStep(2)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${
               step === 2
-                ? "bg-indigo-600 text-white shadow-sm"
-                : "bg-slate-100 dark:bg-slate-800 text-slate-500"
+                ? "bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm border border-slate-200/60 dark:border-slate-600"
+                : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
             }`}
           >
             2. Đáp án
           </button>
           <button
             onClick={() => setStep(3)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${
               step === 3
-                ? "bg-indigo-600 text-white shadow-sm"
-                : "bg-slate-100 dark:bg-slate-800 text-slate-500"
+                ? "bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm border border-slate-200/60 dark:border-slate-600"
+                : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
             }`}
           >
             3. Xác nhận
@@ -259,64 +261,66 @@ export default function CreateExam() {
       </div>
 
       {/* Step Content */}
-      {step === 1 && (
-        <ExamBasicInfoStep
-          title={title}
-          setTitle={setTitle}
-          classId={classId}
-          setClassId={setClassId}
-          classes={classes}
-          durationMinutes={durationMinutes}
-          setDurationMinutes={setDurationMinutes}
-          startTime={startTime}
-          setStartTime={setStartTime}
-          endTime={endTime}
-          setEndTime={setEndTime}
-          selectedExamPdf={selectedExamPdf}
-          selectedDocId={selectedDocId}
-          onOpenRepoPicker={() => setIsRepoPickerOpen(true)}
-        />
-      )}
+      <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+        {step === 1 && (
+          <ExamBasicInfoStep
+            title={title}
+            setTitle={setTitle}
+            classId={classId}
+            setClassId={setClassId}
+            classes={classes}
+            durationMinutes={durationMinutes}
+            setDurationMinutes={setDurationMinutes}
+            startTime={startTime}
+            setStartTime={setStartTime}
+            endTime={endTime}
+            setEndTime={setEndTime}
+            selectedExamPdf={selectedExamPdf}
+            selectedDocId={selectedDocId}
+            onOpenRepoPicker={() => setIsRepoPickerOpen(true)}
+          />
+        )}
 
-      {step === 2 && (
-        <QuestionEditorStep
-          part1Count={part1Keys.length}
-          part2Count={part2Keys.length}
-          part3Count={part3Keys.length}
-          part1Keys={part1Keys}
-          part2Keys={part2Keys}
-          part3Keys={part3Keys}
-          onUpdatePart1={handleUpdatePart1}
-          onUpdatePart2={handleUpdatePart2}
-          onUpdatePart3={handleUpdatePart3}
-          activePartTab={activePartTab}
-          setActivePartTab={setActivePartTab}
-        />
-      )}
+        {step === 2 && (
+          <QuestionEditorStep
+            part1Count={part1Keys.length}
+            part2Count={part2Keys.length}
+            part3Count={part3Keys.length}
+            part1Keys={part1Keys}
+            part2Keys={part2Keys}
+            part3Keys={part3Keys}
+            onUpdatePart1={handleUpdatePart1}
+            onUpdatePart2={handleUpdatePart2}
+            onUpdatePart3={handleUpdatePart3}
+            activePartTab={activePartTab}
+            setActivePartTab={setActivePartTab}
+          />
+        )}
 
-      {step === 3 && (
-        <ExamPreviewStep
-          title={title}
-          className={selectedClassName}
-          durationMinutes={durationMinutes}
-          startTime={startTime}
-          endTime={endTime}
-          totalScore={totalScore}
-          totalQuestions={totalQuestions}
-          part1Count={part1Keys.length}
-          part2Count={part2Keys.length}
-          part3Count={part3Keys.length}
-          selectedExamPdf={selectedExamPdf}
-        />
-      )}
+        {step === 3 && (
+          <ExamPreviewStep
+            title={title}
+            className={selectedClassName}
+            durationMinutes={durationMinutes}
+            startTime={startTime}
+            endTime={endTime}
+            totalScore={totalScore}
+            totalQuestions={totalQuestions}
+            part1Count={part1Keys.length}
+            part2Count={part2Keys.length}
+            part3Count={part3Keys.length}
+            selectedExamPdf={selectedExamPdf}
+          />
+        )}
+      </div>
 
       {/* Step Footer Navigation */}
-      <div className="flex items-center justify-between bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-800 shadow-sm">
+      <div className="flex items-center justify-between bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/60 dark:border-slate-800/60 shadow-sm sticky bottom-6 z-10">
         {step > 1 ? (
           <button
             type="button"
             onClick={() => setStep((s) => s - 1)}
-            className="px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 font-extrabold text-xs rounded-xl flex items-center gap-2 cursor-pointer transition-all"
+            className="px-5 py-2.5 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-sm rounded-xl flex items-center gap-2 cursor-pointer transition-all border border-slate-200 dark:border-slate-700 shadow-sm active:scale-95"
           >
             <ArrowLeft className="w-4 h-4" /> Quay lại
           </button>
@@ -328,7 +332,7 @@ export default function CreateExam() {
           <button
             type="button"
             onClick={() => setStep((s) => s + 1)}
-            className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs rounded-xl flex items-center gap-2 cursor-pointer shadow-sm transition-all"
+            className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white font-bold text-sm rounded-xl flex items-center gap-2 cursor-pointer shadow-sm active:scale-95 transition-all"
           >
             Tiếp theo <ArrowRight className="w-4 h-4" />
           </button>
@@ -337,7 +341,7 @@ export default function CreateExam() {
             type="button"
             onClick={handleSubmitExam}
             disabled={submitting}
-            className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl flex items-center gap-2 cursor-pointer shadow-md transition-all disabled:opacity-60"
+            className="px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-bold text-sm rounded-xl flex items-center gap-2 cursor-pointer shadow-md active:scale-95 transition-all disabled:opacity-70"
           >
             {submitting ? (
               <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
