@@ -110,17 +110,12 @@ export default function PDFViewer({ pdfUrl }) {
   if (loadError) {
     return (
       <div className="flex flex-col h-full">
-        {/* Toolbar cảnh báo */}
-        <div className="h-10 bg-amber-50 border-b border-amber-200 flex items-center px-4 gap-2 shrink-0">
-          <AlertTriangle className="w-4 h-4 text-amber-500" />
-          <span className="text-xs text-amber-700 font-medium">
-            Đang dùng chế độ xem dự phòng (iframe). Một số tính năng bị giới hạn.
-          </span>
-        </div>
+
         <iframe
-          src={fullPdfUrl}
+          src={`${fullPdfUrl}#toolbar=0&navpanes=0`}
           title="Đề thi PDF (Fallback)"
           className="flex-1 w-full border-0"
+          onContextMenu={(e) => e.preventDefault()}
         />
       </div>
     );

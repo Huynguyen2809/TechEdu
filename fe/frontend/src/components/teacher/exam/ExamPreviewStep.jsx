@@ -2,6 +2,7 @@ import React from "react";
 import { CheckCircle2, Clock, Calendar, FileText, ListChecks } from "lucide-react";
 
 export default function ExamPreviewStep({
+  examMode,
   title,
   className,
   durationMinutes,
@@ -21,8 +22,13 @@ export default function ExamPreviewStep({
           <CheckCircle2 className="w-5 h-5" />
         </div>
         <div>
-          <h2 className="text-lg font-black text-slate-900 dark:text-slate-100">
+          <h2 className="text-lg font-black text-slate-900 dark:text-slate-100 flex items-center gap-3">
             3. Xem Trước &amp; Xác Nhận Xuất Bản Bài Thi
+            {examMode === "THPT" ? (
+              <span className="px-2.5 py-1 rounded-lg bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-400 text-[10px] font-black uppercase tracking-wider">Đề THPT</span>
+            ) : (
+              <span className="px-2.5 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-400 text-[10px] font-black uppercase tracking-wider">Đề Tùy chỉnh</span>
+            )}
           </h2>
           <p className="text-xs text-slate-500 font-medium">Kiểm tra lại toàn bộ thông tin trước khi phát hành</p>
         </div>

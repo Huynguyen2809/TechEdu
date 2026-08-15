@@ -31,30 +31,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/api/v1/auth/**")
-                        .csrfTokenRepository(
-                                org.springframework.security.web.csrf.CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .csrfTokenRequestHandler(
-                                new org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler()::handle)) // Bật
-                                                                                                                          // CSRF
-                                                                                                                          // và
-                                                                                                                          // cấp
-                                                                                                                          // phát
-                                                                                                                          // token
-                                                                                                                          // qua
-                                                                                                                          // cookie
-                                                                                                                          // (XSRF-TOKEN)
+                .csrf(csrf -> csrf.disable()) // Tạm thời TẮT CSRF để cô lập lỗi 403
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Bật CORS
                 .headers(headers -> headers.frameOptions(frame -> frame.disable())) // Cho phép nhúng iframe
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/**", "/api/v1/files/**").permitAll()
                         .requestMatchers("/api/v1/center-manager/**").hasAnyRole("CENTER_MANAGER", "DEPARTMENT_HEAD")
-                        .anyRequest().authenticated()
-                )
+                        .anyRequest().authenticated())
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // Tự động tạo Session Cookie khi
-                                                                                  // login
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // Tự động tạo Session Cookie khi login
                 );
         return http.build();
     }

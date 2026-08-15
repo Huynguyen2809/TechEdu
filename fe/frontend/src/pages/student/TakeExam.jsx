@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import examService from "../../services/examService";
 import SplitScreenLayout from "../../components/exam/SplitScreenLayout";
 import PDFViewer from "../../components/exam/PDFViewer";
@@ -25,6 +25,7 @@ import {
 export default function TakeExam() {
   const { id: examId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
 
   // ─── STATE ──────────────────────────────────────────────────
   const [examData, setExamData] = useState(null);
@@ -39,8 +40,8 @@ export default function TakeExam() {
   const [timeLeft, setTimeLeft] = useState(0);
   // Trạng thái nộp bài
   const [isSubmitting, setIsSubmitting] = useState(false);
-  // Kết quả sau khi nộp bài thành công
-  const [result, setResult] = useState(null);
+  // Kết quả sau khi nộp bài thành công (khôi phục từ state nếu F5)
+  const [result, setResult] = useState(location.state?.result || null);
   // Modal xác nhận nộp bài
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   // Modal xác nhận thoát phòng thi (BUG-02)
@@ -90,6 +91,11 @@ export default function TakeExam() {
   // ─── EFFECT: Tải dữ liệu phòng thi & khôi phục Nháp F5 ────────────────────────
   useEffect(() => {
     const fetchExam = async () => {
+      // Nếu đã có kết quả (từ location state do F5), không cần tải lại đề thi
+      if (result) {
+        setLoading(false);
+        return;
+      }
       try {
         const data = await examService.getExamForTaking(examId);
         
@@ -173,11 +179,7 @@ export default function TakeExam() {
     }));
   }, [answers, flaggedQuestions, examData, DRAFT_KEY, timeLeft, result]);
 
-  // ─── REF: Luôn giữ phiên bản executeSubmit mới nhất cho timer (BUG-03)
-  const executeSubmitRef = useRef(null);
-  useEffect(() => {
-    executeSubmitRef.current = executeSubmit;
-  }, [executeSubmit]);
+
 
   // ─── EFFECT: Đếm ngược thời gian ───────────────────────────
   useEffect(() => {
@@ -258,6 +260,8 @@ export default function TakeExam() {
         localStorage.removeItem(DRAFT_KEY);
         localStorage.removeItem(PENDING_KEY);
         setResult(res);
+        // Lưu state vào history để F5 không bị mất kết quả
+        navigate(".", { replace: true, state: { result: res } });
         if (res?.submissionId) {
           setShowDetailModal(true);
         }
@@ -274,6 +278,12 @@ export default function TakeExam() {
     [answers, examData, examId, timeLeft, DRAFT_KEY, PENDING_KEY]
   );
 
+  // ─── REF: Luôn giữ phiên bản executeSubmit mới nhất cho timer (BUG-03)
+  const executeSubmitRef = useRef(null);
+  useEffect(() => {
+    executeSubmitRef.current = executeSubmit;
+  }, [executeSubmit]);
+
   // ─── HANDLER: Thoát phòng thi — BUG-02: Dùng Modal thay window.confirm()
   const handleExit = useCallback(() => {
     setShowExitConfirmModal(true);
@@ -284,7 +294,7 @@ export default function TakeExam() {
   const unansweredList = (examData?.answerSheetStructure || []).filter((q) => {
     const ans = answers[q.id];
     if (q.partType === "PART_2_TRUE_FALSE") {
-      return !Array.isArray(ans) || ans.every((v) => v === "");
+      return !Array.isArray(ans) || ans.length < 4 || ans.some((v) => v === "");
     }
     return ans === undefined || ans === null || ans === "";
   });
@@ -339,9 +349,9 @@ export default function TakeExam() {
 
     return (
       <div className="h-screen bg-[#F8FAFC] dark:bg-slate-950 flex items-center justify-center p-6">
-        <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-[8px_8px_0px_0px_#0f172a] dark:shadow-2xl max-w-md w-full p-8 space-y-6 text-center border-2 border-slate-900 dark:border-slate-800">
-          <div className="w-20 h-20 bg-emerald-300 dark:bg-emerald-950/60 rounded-2xl border-2 border-slate-900 dark:border-emerald-800/80 flex items-center justify-center mx-auto shadow-[2px_2px_0px_0px_#0f172a] dark:shadow-none">
-            <CheckCircle2 className="w-10 h-10 text-slate-900 dark:text-emerald-400" />
+        <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-xl dark:shadow-2xl max-w-md w-full p-8 space-y-6 text-center border border-slate-200 dark:border-slate-800">
+          <div className="w-20 h-20 bg-emerald-100 dark:bg-emerald-900/40 rounded-2xl border border-emerald-200 dark:border-emerald-800/80 flex items-center justify-center mx-auto shadow-sm">
+            <CheckCircle2 className="w-10 h-10 text-emerald-600 dark:text-emerald-400" />
           </div>
 
           <div>
@@ -351,7 +361,7 @@ export default function TakeExam() {
             </p>
           </div>
 
-          <div className="bg-slate-50 dark:bg-slate-800/60 rounded-2xl p-6 border-2 border-slate-900 dark:border-slate-700 space-y-3 shadow-[4px_4px_0px_0px_#0f172a] dark:shadow-none">
+          <div className="bg-slate-50 dark:bg-slate-800/60 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 space-y-3 shadow-sm">
             <div className="flex items-center justify-center gap-2 text-slate-600 dark:text-slate-400 text-xs font-extrabold uppercase tracking-widest">
               <Trophy className="w-4 h-4 text-amber-500" />
               Tổng điểm đạt được
@@ -372,7 +382,7 @@ export default function TakeExam() {
           <div className="space-y-3">
             <button
               onClick={() => setShowDetailModal(true)}
-              className="w-full bg-indigo-600 hover:bg-indigo-500 dark:bg-indigo-600 dark:hover:bg-indigo-500 text-white font-bold py-3.5 px-4 rounded-xl text-sm border-2 border-slate-900 dark:border-indigo-500 shadow-[3px_3px_0px_0px_#0f172a] dark:shadow-none active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center justify-center gap-2"
+              className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3.5 px-4 rounded-xl text-sm shadow-md active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-2"
             >
               <FileText className="w-5 h-5 text-amber-300" />
               <span>Xem Chi Tiết Bài Làm & Lời Giải</span>
@@ -381,13 +391,13 @@ export default function TakeExam() {
             <div className="flex gap-3">
               <button
                 onClick={() => navigate("/student/history")}
-                className="flex-1 bg-white hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-900 dark:text-slate-200 border-2 border-slate-900 dark:border-slate-700 font-bold py-3 rounded-xl text-sm shadow-[2px_2px_0px_0px_#0f172a] dark:shadow-none active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
+                className="flex-1 bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-bold py-3 rounded-xl text-sm shadow-sm active:scale-[0.98] transition-all cursor-pointer"
               >
                 Xem Lịch Sử
               </button>
               <button
                 onClick={() => navigate("/student/my-classes")}
-                className="flex-1 bg-indigo-600 hover:bg-indigo-500 dark:bg-indigo-600 dark:hover:bg-indigo-500 text-white font-bold py-3 rounded-xl text-sm border-2 border-slate-900 dark:border-indigo-500 shadow-[2px_2px_0px_0px_#0f172a] dark:shadow-none active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
+                className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl text-sm shadow-sm active:scale-[0.98] transition-all cursor-pointer"
               >
                 Về Danh Sách Lớp
               </button>
@@ -508,27 +518,31 @@ export default function TakeExam() {
 
             {/* Cảnh báo nếu còn câu chưa làm */}
             {unansweredList.length > 0 && (
-              <div className="bg-rose-50 border border-rose-200/80 rounded-2xl p-3.5 space-y-1.5">
-                <div className="flex items-center gap-2 text-rose-700 font-extrabold text-xs">
-                  <AlertTriangle className="w-4 h-4 shrink-0" />
+              <div className="bg-rose-50 border border-rose-200/80 rounded-2xl p-4 space-y-3">
+                <div className="flex items-center gap-2 text-rose-700 font-extrabold text-sm">
+                  <AlertTriangle className="w-5 h-5 shrink-0" />
                   <span>Chú ý: Bạn còn {unansweredList.length} câu chưa trả lời</span>
                 </div>
-                <p className="text-xs text-rose-600 leading-relaxed font-mono">
-                  Danh sách câu bỏ trống:{" "}
-                  <span className="font-bold">
-                    {unansweredList
-                      .map((q) => {
-                        const partLabel =
-                          q.partType === "PART_1_ABCD"
-                            ? "P.I"
-                            : q.partType === "PART_2_TRUE_FALSE"
-                            ? "P.II"
-                            : "P.III";
-                        return `${partLabel}-Câu ${q.displayNumber}`;
-                      })
-                      .join(", ")}
-                  </span>
-                </p>
+                <div className="max-h-28 overflow-y-auto pr-2 custom-scrollbar">
+                  <div className="flex flex-wrap gap-2">
+                    {unansweredList.map((q) => {
+                      const partLabel =
+                        q.partType === "PART_1_ABCD"
+                          ? "P.I"
+                          : q.partType === "PART_2_TRUE_FALSE"
+                          ? "P.II"
+                          : "P.III";
+                      return (
+                        <span
+                          key={q.id}
+                          className="inline-flex items-center px-2.5 py-1 rounded-lg bg-white text-rose-600 text-[11px] font-bold border border-rose-200 shadow-sm"
+                        >
+                          {partLabel} - Câu {q.displayNumber}
+                        </span>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
             )}
 

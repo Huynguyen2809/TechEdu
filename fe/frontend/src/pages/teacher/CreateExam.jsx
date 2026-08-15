@@ -13,6 +13,7 @@ import {
   Save
 } from "lucide-react";
 
+import ExamModeStep from "../../components/teacher/exam/ExamModeStep";
 import ExamBasicInfoStep from "../../components/teacher/exam/ExamBasicInfoStep";
 import QuestionEditorStep from "../../components/teacher/exam/QuestionEditorStep";
 import ExamPreviewStep from "../../components/teacher/exam/ExamPreviewStep";
@@ -28,10 +29,19 @@ export default function CreateExam() {
   const navigate = useNavigate();
   const { showToast } = useToast();
 
-  const [step, setStep] = useState(1); // 1: Info, 2: Questions, 3: Preview
+  const [step, setStep] = useState(0); // 0: Mode, 1: Info, 2: Questions, 3: Preview
   const [loadingClasses, setLoadingClasses] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [classes, setClasses] = useState([]);
+
+  // Mode State
+  const [examMode, setExamMode] = useState("THPT");
+  const [customPart1Count, setCustomPart1Count] = useState(18);
+  const [customPart2Count, setCustomPart2Count] = useState(4);
+  const [customPart3Count, setCustomPart3Count] = useState(6);
+  const [customPart1Points, setCustomPart1Points] = useState(4.5);
+  const [customPart2Points, setCustomPart2Points] = useState(4.0);
+  const [customPart3Points, setCustomPart3Points] = useState(1.5);
 
   // Form State
   const [title, setTitle] = useState("");
@@ -49,34 +59,49 @@ export default function CreateExam() {
   const [isRepoPickerOpen, setIsRepoPickerOpen] = useState(false);
 
   // Question Keys
-  const [part1Keys, setPart1Keys] = useState(
-    Array.from({ length: 18 }, (_, i) => ({
-      questionNumber: i + 1,
-      partType: "PART_1_ABCD",
-      correctAnswer: "A",
-      points: 0.25
-    }))
-  );
-
-  const [part2Keys, setPart2Keys] = useState(
-    Array.from({ length: 4 }, (_, i) => ({
-      questionNumber: 18 + i + 1,
-      partType: "PART_2_TRUE_FALSE",
-      correctAnswer: "D,D,D,D",
-      points: 1.0
-    }))
-  );
-
-  const [part3Keys, setPart3Keys] = useState(
-    Array.from({ length: 6 }, (_, i) => ({
-      questionNumber: 22 + i + 1,
-      partType: "PART_3_SHORT_ANSWER",
-      correctAnswer: "",
-      points: 0.25
-    }))
-  );
+  const [part1Keys, setPart1Keys] = useState([]);
+  const [part2Keys, setPart2Keys] = useState([]);
+  const [part3Keys, setPart3Keys] = useState([]);
 
   const [activePartTab, setActivePartTab] = useState("PART_1");
+
+  const handleNextStep0 = () => {
+    let p1 = 18, p2 = 4, p3 = 6;
+    if (examMode === "CUSTOM") {
+      p1 = customPart1Count;
+      p2 = customPart2Count;
+      p3 = customPart3Count;
+    }
+    
+    setPart1Keys(
+      Array.from({ length: p1 }, (_, i) => ({
+        questionNumber: i + 1,
+        partType: "PART_1_ABCD",
+        correctAnswer: "A",
+        points: examMode === "THPT" ? 0.25 : (p1 > 0 ? Number((customPart1Points / p1).toFixed(2)) : 0)
+      }))
+    );
+    
+    setPart2Keys(
+      Array.from({ length: p2 }, (_, i) => ({
+        questionNumber: p1 + i + 1,
+        partType: "PART_2_TRUE_FALSE",
+        correctAnswer: "D,D,D,D",
+        points: examMode === "THPT" ? 1.0 : (p2 > 0 ? Number((customPart2Points / p2).toFixed(2)) : 0)
+      }))
+    );
+    
+    setPart3Keys(
+      Array.from({ length: p3 }, (_, i) => ({
+        questionNumber: p1 + p2 + i + 1,
+        partType: "PART_3_SHORT_ANSWER",
+        correctAnswer: "",
+        points: examMode === "THPT" ? 0.25 : (p3 > 0 ? Number((customPart3Points / p3).toFixed(2)) : 0)
+      }))
+    );
+
+    setStep(1);
+  };
 
   // Load Classes
   useEffect(() => {
@@ -228,8 +253,19 @@ export default function CreateExam() {
         {/* Wizard Steps indicator */}
         <div className="relative z-10 flex items-center gap-2 bg-slate-50 dark:bg-slate-800/50 p-1.5 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 shadow-inner w-full sm:w-auto overflow-x-auto">
           <button
+            onClick={() => setStep(0)}
+            className={`px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${
+              step === 0
+                ? "bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm border border-slate-200/60 dark:border-slate-600"
+                : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+            }`}
+          >
+            0. Chế độ
+          </button>
+          <button
             onClick={() => setStep(1)}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${
+            disabled={step === 0}
+            className={`px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed ${
               step === 1
                 ? "bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm border border-slate-200/60 dark:border-slate-600"
                 : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
@@ -239,7 +275,8 @@ export default function CreateExam() {
           </button>
           <button
             onClick={() => setStep(2)}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${
+            disabled={step === 0}
+            className={`px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed ${
               step === 2
                 ? "bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm border border-slate-200/60 dark:border-slate-600"
                 : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
@@ -249,7 +286,8 @@ export default function CreateExam() {
           </button>
           <button
             onClick={() => setStep(3)}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${
+            disabled={step === 0}
+            className={`px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed ${
               step === 3
                 ? "bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm border border-slate-200/60 dark:border-slate-600"
                 : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
@@ -262,8 +300,29 @@ export default function CreateExam() {
 
       {/* Step Content */}
       <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+        {step === 0 && (
+          <ExamModeStep
+            examMode={examMode}
+            setExamMode={setExamMode}
+            customPart1Count={customPart1Count}
+            setCustomPart1Count={setCustomPart1Count}
+            customPart2Count={customPart2Count}
+            setCustomPart2Count={setCustomPart2Count}
+            customPart3Count={customPart3Count}
+            setCustomPart3Count={setCustomPart3Count}
+            customPart1Points={customPart1Points}
+            setCustomPart1Points={setCustomPart1Points}
+            customPart2Points={customPart2Points}
+            setCustomPart2Points={setCustomPart2Points}
+            customPart3Points={customPart3Points}
+            setCustomPart3Points={setCustomPart3Points}
+            onNext={handleNextStep0}
+          />
+        )}
+
         {step === 1 && (
           <ExamBasicInfoStep
+            examMode={examMode}
             title={title}
             setTitle={setTitle}
             classId={classId}
@@ -283,6 +342,7 @@ export default function CreateExam() {
 
         {step === 2 && (
           <QuestionEditorStep
+            examMode={examMode}
             part1Count={part1Keys.length}
             part2Count={part2Keys.length}
             part3Count={part3Keys.length}
@@ -299,6 +359,7 @@ export default function CreateExam() {
 
         {step === 3 && (
           <ExamPreviewStep
+            examMode={examMode}
             title={title}
             className={selectedClassName}
             durationMinutes={durationMinutes}
@@ -315,8 +376,8 @@ export default function CreateExam() {
       </div>
 
       {/* Step Footer Navigation */}
-      <div className="flex items-center justify-between bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/60 dark:border-slate-800/60 shadow-sm sticky bottom-6 z-10">
-        {step > 1 ? (
+      <div className={`flex items-center justify-between bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/60 dark:border-slate-800/60 shadow-sm sticky bottom-6 z-10 ${step === 0 ? 'hidden' : ''}`}>
+        {step > 0 ? (
           <button
             type="button"
             onClick={() => setStep((s) => s - 1)}

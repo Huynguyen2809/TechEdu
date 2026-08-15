@@ -40,7 +40,7 @@ export default function SplitScreenLayout({
   const ansCount = questions.filter((q) => {
     const ans = answers[q.id];
     if (q?.partType === "PART_2_TRUE_FALSE") {
-      return Array.isArray(ans) && ans.some((v) => v !== "");
+      return Array.isArray(ans) && ans.length === 4 && ans.every((v) => v !== "");
     }
     return ans !== undefined && ans !== null && ans !== "";
   }).length;
@@ -63,8 +63,8 @@ export default function SplitScreenLayout({
         const rect = containerRef.current.getBoundingClientRect();
         const mouseX = e.clientX - rect.left;
         const newLeftWidth = (mouseX / rect.width) * 100;
-        // Giới hạn trong khoảng 35% đến 80%
-        const clampedWidth = Math.max(35, Math.min(80, newLeftWidth));
+        // Giới hạn PDF panel từ 30% đến 65% để panel Đáp án có tối thiểu 35% diện tích
+        const clampedWidth = Math.max(30, Math.min(65, newLeftWidth));
         setLeftWidth(clampedWidth);
       });
     };
@@ -176,6 +176,7 @@ export default function SplitScreenLayout({
             width: isDesktop
               ? (isRightCollapsed ? "100%" : `${leftWidth}%`)
               : "100%",
+            pointerEvents: isDragging ? "none" : "auto"
           }}
         >
           {/* Trên mobile: chỉ dùng khi tab PDF đang active */}
@@ -216,6 +217,7 @@ export default function SplitScreenLayout({
           className={`h-full overflow-hidden relative bg-white flex-1 transition-all ${
             mobileTab === "pdf" ? "hidden lg:block" : "block"
           } ${isRightCollapsed ? "lg:!hidden" : ""}`}
+          style={{ pointerEvents: isDragging ? "none" : "auto" }}
         >
           {rightPanel}
         </div>

@@ -14,7 +14,7 @@ function parseQuickImport(text, count) {
   return result;
 }
 
-function Part1Matrix({ keys = [], onUpdate }) {
+function Part1Matrix({ keys = [], onUpdate, examMode }) {
   const safeKeys = Array.isArray(keys) ? keys : [];
   const [quickText, setQuickText] = useState("");
   const [importMsg, setImportMsg] = useState(null);
@@ -120,10 +120,11 @@ function Part1Matrix({ keys = [], onUpdate }) {
                   type="number"
                   step="0.05"
                   value={ans.points}
+                  disabled={examMode === "THPT"}
                   onChange={(e) =>
                     onUpdate(idx, "points", parseFloat(e.target.value) || 0)
                   }
-                  className="w-12 bg-transparent text-xs font-black text-center text-emerald-600 dark:text-emerald-400 focus:outline-none"
+                  className="w-12 bg-transparent text-xs font-black text-center text-emerald-600 dark:text-emerald-400 focus:outline-none disabled:opacity-50"
                 />
                 <span className="text-[10px] text-slate-400 font-bold uppercase">điểm</span>
               </div>
@@ -152,7 +153,7 @@ function Part1Matrix({ keys = [], onUpdate }) {
   );
 }
 
-function Part2Matrix({ keys = [], onUpdate }) {
+function Part2Matrix({ keys = [], onUpdate, examMode }) {
   const safeKeys = Array.isArray(keys) ? keys : [];
   const parseArr = (str) => {
     const parts = (str || "").split(",");
@@ -184,10 +185,11 @@ function Part2Matrix({ keys = [], onUpdate }) {
                   type="number"
                   step="0.1"
                   value={ans.points}
+                  disabled={examMode === "THPT"}
                   onChange={(e) =>
                     onUpdate(idx, "points", parseFloat(e.target.value) || 0)
                   }
-                  className="w-12 bg-transparent text-sm font-black text-center text-emerald-600 dark:text-emerald-400 focus:outline-none"
+                  className="w-12 bg-transparent text-sm font-black text-center text-emerald-600 dark:text-emerald-400 focus:outline-none disabled:opacity-50"
                 />
               </div>
             </div>
@@ -232,7 +234,7 @@ function Part2Matrix({ keys = [], onUpdate }) {
   );
 }
 
-function Part3Matrix({ keys = [], onUpdate }) {
+function Part3Matrix({ keys = [], onUpdate, examMode }) {
   const safeKeys = Array.isArray(keys) ? keys : [];
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -250,10 +252,11 @@ function Part3Matrix({ keys = [], onUpdate }) {
                 type="number"
                 step="0.05"
                 value={ans.points}
+                disabled={examMode === "THPT"}
                 onChange={(e) =>
                   onUpdate(idx, "points", parseFloat(e.target.value) || 0)
                 }
-                className="w-12 bg-transparent text-sm font-black text-center text-emerald-600 dark:text-emerald-400 focus:outline-none"
+                className="w-12 bg-transparent text-sm font-black text-center text-emerald-600 dark:text-emerald-400 focus:outline-none disabled:opacity-50"
               />
               <span className="text-[10px] text-slate-400 font-bold uppercase">điểm</span>
             </div>
@@ -262,6 +265,7 @@ function Part3Matrix({ keys = [], onUpdate }) {
           <div className="relative">
             <input
               type="text"
+              maxLength={4}
               value={ans.correctAnswer}
               onChange={(e) => onUpdate(idx, "correctAnswer", e.target.value)}
               placeholder="Nhập đáp án ngắn vào đây..."
@@ -275,6 +279,7 @@ function Part3Matrix({ keys = [], onUpdate }) {
 }
 
 export default function QuestionEditorStep({
+  examMode,
   part1Count,
   part2Count,
   part3Count,
@@ -299,6 +304,26 @@ export default function QuestionEditorStep({
               2. Soạn Thảo Bảng Đáp Án &amp; Ma Trận Điểm
             </h2>
             <p className="text-xs text-slate-500 font-medium">Nhập đáp án đúng và điểm cho từng phần thi</p>
+          </div>
+        </div>
+        {/* Realtime score */}
+        <div className="hidden sm:flex flex-col items-end">
+          <p className="text-xs font-bold text-slate-500 uppercase">Tổng điểm hiện tại</p>
+          <div className="flex items-center gap-2 mt-1">
+            <div className={`px-3 py-1 rounded-xl text-sm font-black shadow-sm border ${
+              (() => {
+                const totalScore = (part1Keys.reduce((a, b) => a + (Number(b.points) || 0), 0) +
+                                    part2Keys.reduce((a, b) => a + (Number(b.points) || 0), 0) +
+                                    part3Keys.reduce((a, b) => a + (Number(b.points) || 0), 0));
+                if (Math.abs(totalScore - 10) < 0.001) return "bg-emerald-100 text-emerald-700 border-emerald-200";
+                if (totalScore > 10) return "bg-rose-100 text-rose-700 border-rose-200 animate-pulse";
+                return "bg-slate-100 text-slate-700 border-slate-200";
+              })()
+            }`}>
+              {(part1Keys.reduce((a, b) => a + (Number(b.points) || 0), 0) +
+                part2Keys.reduce((a, b) => a + (Number(b.points) || 0), 0) +
+                part3Keys.reduce((a, b) => a + (Number(b.points) || 0), 0)).toFixed(2)} / 10.0
+            </div>
           </div>
         </div>
       </div>
@@ -348,13 +373,13 @@ export default function QuestionEditorStep({
       {/* Tab Contents */}
       <div className="pt-2 animate-in fade-in zoom-in-[0.98] duration-300">
         {activePartTab === "PART_1" && (
-          <Part1Matrix keys={part1Keys} onUpdate={onUpdatePart1} />
+          <Part1Matrix keys={part1Keys} onUpdate={onUpdatePart1} examMode={examMode} />
         )}
         {activePartTab === "PART_2" && (
-          <Part2Matrix keys={part2Keys} onUpdate={onUpdatePart2} />
+          <Part2Matrix keys={part2Keys} onUpdate={onUpdatePart2} examMode={examMode} />
         )}
         {activePartTab === "PART_3" && (
-          <Part3Matrix keys={part3Keys} onUpdate={onUpdatePart3} />
+          <Part3Matrix keys={part3Keys} onUpdate={onUpdatePart3} examMode={examMode} />
         )}
       </div>
     </div>

@@ -33,21 +33,21 @@ function formatDuration(seconds) {
 
 function scoreGrade(score) {
   const num = Number(score);
-  if (isNaN(num)) return { label: "Chưa có", color: "bg-slate-100 text-slate-500 border-slate-200" };
-  if (num >= 9) return { label: "Xuất sắc", color: "bg-emerald-50 text-emerald-600 border-emerald-200" };
-  if (num >= 8) return { label: "Giỏi", color: "bg-blue-50 text-blue-600 border-blue-200" };
-  if (num >= 6.5) return { label: "Khá", color: "bg-violet-50 text-violet-600 border-violet-200" };
-  if (num >= 5) return { label: "Trung bình", color: "bg-amber-50 text-amber-600 border-amber-200" };
-  return { label: "Yếu", color: "bg-rose-50 text-rose-600 border-rose-200" };
+  if (isNaN(num)) return { label: "Chưa có", color: "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700" };
+  if (num >= 9) return { label: "Xuất sắc", color: "bg-emerald-50 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800" };
+  if (num >= 8) return { label: "Giỏi", color: "bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800" };
+  if (num >= 6.5) return { label: "Khá", color: "bg-violet-50 dark:bg-violet-900/40 text-violet-600 dark:text-violet-400 border-violet-200 dark:border-violet-800" };
+  if (num >= 5) return { label: "Trung bình", color: "bg-amber-50 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800" };
+  return { label: "Yếu", color: "bg-rose-50 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400 border-rose-200 dark:border-rose-800" };
 }
 
 function PartBadge({ partType }) {
   const map = {
-    PART_1_ABCD: { label: "Phần I", color: "bg-blue-50 text-blue-600 border-blue-200" },
-    PART_2_TRUE_FALSE: { label: "Phần II", color: "bg-violet-50 text-violet-600 border-violet-200" },
-    PART_3_SHORT_ANSWER: { label: "Phần III", color: "bg-amber-50 text-amber-600 border-amber-200" },
+    PART_1_ABCD: { label: "Phần I", color: "bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800" },
+    PART_2_TRUE_FALSE: { label: "Phần II", color: "bg-violet-50 dark:bg-violet-900/40 text-violet-600 dark:text-violet-400 border-violet-200 dark:border-violet-800" },
+    PART_3_SHORT_ANSWER: { label: "Phần III", color: "bg-amber-50 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800" },
   };
-  const { label, color } = map[partType] || { label: partType, color: "bg-slate-100 text-slate-500 border-slate-200" };
+  const { label, color } = map[partType] || { label: partType, color: "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700" };
   return (
     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${color}`}>{label}</span>
   );
@@ -357,16 +357,18 @@ export default function SubmissionDetailModal({ submissionId, onClose }) {
                       >
                         Tất cả ({totalCount})
                       </button>
-                      <button
-                        onClick={() => setFilterMode("incorrect")}
-                        className={`px-3 py-1 rounded-lg text-xs font-extrabold transition-all cursor-pointer ${
-                          filterMode === "incorrect"
-                            ? "bg-rose-600 dark:bg-rose-600 cyber:bg-slate-900 cyber:text-white text-white shadow-xs cyber:border cyber:border-slate-900 cyber:shadow-[2px_2px_0_0_#0f172a]"
-                            : "text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 cyber:bg-white cyber:text-slate-700 cyber:border cyber:border-slate-900 cyber:shadow-[2px_2px_0_0_#0f172a] cyber:hover:bg-slate-100"
-                        }`}
-                      >
-                        ❌ Chỉ câu làm sai ({incorrectCount})
-                      </button>
+                      {!detail.canViewExplanation ? null : (
+                        <button
+                          onClick={() => setFilterMode("incorrect")}
+                          className={`px-3 py-1 rounded-lg text-xs font-extrabold transition-all cursor-pointer ${
+                            filterMode === "incorrect"
+                              ? "bg-rose-600 dark:bg-rose-600 cyber:bg-slate-900 cyber:text-white text-white shadow-xs cyber:border cyber:border-slate-900 cyber:shadow-[2px_2px_0_0_#0f172a]"
+                              : "text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 cyber:bg-white cyber:text-slate-700 cyber:border cyber:border-slate-900 cyber:shadow-[2px_2px_0_0_#0f172a] cyber:hover:bg-slate-100"
+                          }`}
+                        >
+                          ❌ Chỉ câu làm sai ({incorrectCount})
+                        </button>
+                      )}
                     </div>
                   </div>
 
@@ -377,50 +379,64 @@ export default function SubmissionDetailModal({ submissionId, onClose }) {
                   ) : (
                     <div className="overflow-x-auto max-h-[460px] overflow-y-auto">
                       <table className="w-full text-xs">
-                        <thead className="sticky top-0 z-10 bg-slate-100 dark:bg-slate-800 cyber:bg-slate-200 shadow-2xs text-left border-b border-slate-200 dark:border-slate-700 cyber:border-b-2 cyber:border-slate-900">
+                        <thead className="sticky top-0 z-10 bg-slate-100 dark:bg-slate-800 cyber:bg-slate-200 shadow-2xs text-center border-b border-slate-200 dark:border-slate-700 cyber:border-b-2 cyber:border-slate-900">
                           <tr>
                             <th className="px-4 py-2.5 font-extrabold text-slate-600 dark:text-slate-300 uppercase">Câu</th>
                             <th className="px-4 py-2.5 font-extrabold text-slate-600 dark:text-slate-300 uppercase">Loại</th>
                             <th className="px-4 py-2.5 font-extrabold text-slate-600 dark:text-slate-300 uppercase">Em chọn</th>
                             <th className="px-4 py-2.5 font-extrabold text-slate-600 dark:text-slate-300 uppercase">Đáp án đúng</th>
-                            <th className="px-4 py-2.5 font-extrabold text-slate-600 dark:text-slate-300 uppercase text-right">Điểm</th>
-                            <th className="px-4 py-2.5 font-extrabold text-slate-600 dark:text-slate-300 uppercase text-center">Kết quả</th>
+                            <th className="px-4 py-2.5 font-extrabold text-slate-600 dark:text-slate-300 uppercase">Điểm</th>
+                            <th className="px-4 py-2.5 font-extrabold text-slate-600 dark:text-slate-300 uppercase">Kết quả</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100 dark:divide-slate-800 cyber:divide-slate-900">
-                          {displayedDetails.map((d) => (
+                          {displayedDetails.map((d) => {
+                            const isRowHidden = !detail.canViewExplanation || d.correctAnswer === "🔒 Đã ẩn" || d.correctAnswer === "🔒" || d.rightAnswer === "🔒" || d.rightAnswer === "🔒 Đã ẩn";
+                            return (
                             <tr
                               key={d.questionNumber}
-                              className={`transition-colors ${d.isCorrect ? "hover:bg-emerald-50 dark:hover:bg-emerald-950/20 cyber:hover:bg-emerald-50" : "hover:bg-rose-50 dark:hover:bg-rose-950/20 cyber:hover:bg-rose-50"}`}
+                              className={`transition-colors ${isRowHidden ? "hover:bg-slate-50 dark:hover:bg-slate-800" : d.isCorrect ? "hover:bg-emerald-50 dark:hover:bg-emerald-950/20 cyber:hover:bg-emerald-50" : "hover:bg-rose-50 dark:hover:bg-rose-950/20 cyber:hover:bg-rose-50"}`}
                             >
-                              <td className="px-4 py-3 font-bold text-slate-900 dark:text-slate-100">Câu {getRelativeQuestionNumber(d)}</td>
-                              <td className="px-4 py-3">
+                              <td className="px-4 py-3 font-bold text-slate-900 dark:text-slate-100 text-center">Câu {getRelativeQuestionNumber(d)}</td>
+                              <td className="px-4 py-3 text-center">
                                 <PartBadge partType={d.partType} />
                               </td>
-                              <td className="px-4 py-3 font-mono font-bold text-slate-700 dark:text-slate-200">
+                              <td className="px-4 py-3 font-mono font-bold text-slate-700 dark:text-slate-200 text-center">
                                 {d.studentAnswer === "BO_TRONG" ? (
                                   <span className="text-slate-400 dark:text-slate-500 italic font-sans font-normal">Bỏ trống</span>
                                 ) : (
                                   d.studentAnswer
                                 )}
                               </td>
-                              <td className="px-4 py-3 font-mono font-extrabold text-emerald-700 dark:text-emerald-400">
-                                {!detail.canViewExplanation || d.correctAnswer === "🔒 Đã ẩn" || d.correctAnswer === "🔒" || d.rightAnswer === "🔒" || d.rightAnswer === "🔒 Đã ẩn" ? (
-                                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700" title="Đáp án đang được bảo mật">
-                                    🔒 Đã ẩn
+                              <td className="px-4 py-3 font-mono font-extrabold text-emerald-700 dark:text-emerald-400 text-center">
+                                {isRowHidden ? (
+                                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700" title="Đang được bảo mật">
+                                    <Lock className="w-3 h-3 text-slate-400 dark:text-slate-500" /> Đã ẩn
                                   </span>
                                 ) : (
                                   d.correctAnswer || d.rightAnswer
                                 )}
                               </td>
-                              <td className="px-4 py-3 text-right font-mono font-bold">
-                                <span className={d.earnedPoints > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-slate-400 dark:text-slate-500"}>
-                                  +{d.earnedPoints}
-                                </span>
-                                <span className="text-slate-300 dark:text-slate-600">/{d.maxPoints}</span>
+                              <td className="px-4 py-3 text-center font-mono font-bold">
+                                {isRowHidden ? (
+                                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700" title="Đang được bảo mật">
+                                    <Lock className="w-3 h-3 text-slate-400 dark:text-slate-500" /> Đã ẩn
+                                  </span>
+                                ) : (
+                                  <>
+                                    <span className={d.earnedPoints > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-slate-400 dark:text-slate-500"}>
+                                      +{d.earnedPoints}
+                                    </span>
+                                    <span className="text-slate-300 dark:text-slate-600">/{d.maxPoints}</span>
+                                  </>
+                                )}
                               </td>
                               <td className="px-4 py-3 text-center">
-                                {d.isCorrect ? (
+                                {isRowHidden ? (
+                                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700" title="Đang được bảo mật">
+                                    <Lock className="w-3 h-3 text-slate-400 dark:text-slate-500" /> Đã ẩn
+                                  </span>
+                                ) : d.isCorrect ? (
                                   <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/80">
                                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" /> Đúng
                                   </span>
@@ -435,7 +451,8 @@ export default function SubmissionDetailModal({ submissionId, onClose }) {
                                 )}
                               </td>
                             </tr>
-                          ))}
+                            );
+                          })}
                         </tbody>
                       </table>
                     </div>

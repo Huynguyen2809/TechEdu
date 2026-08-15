@@ -32,7 +32,7 @@ function Part1Section({ questions, answers, onAnswerChange, flaggedQuestions, on
           return (
             <div
               key={q.id}
-              className={`flex items-center gap-2.5 p-2 rounded-xl border transition-all ${
+              className={`flex flex-wrap items-center justify-between gap-2.5 p-2 rounded-xl border transition-all ${
                 isFlagged
                   ? "bg-amber-50/80 border-amber-300 shadow-sm"
                   : "bg-slate-50 hover:bg-blue-50/30 border-slate-200/80"
@@ -135,7 +135,7 @@ function Part2Section({ questions, answers, onAnswerChange, flaggedQuestions, on
                 )}
               </div>
 
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 min-[450px]:grid-cols-4 gap-2">
                 {["a", "b", "c", "d"].map((sub, idx) => (
                   <div key={sub} className="flex flex-col items-center gap-1.5">
                     <span className="text-[10px] font-bold text-slate-400">
@@ -295,7 +295,7 @@ export default function QuestionPalette({
   const answeredCount = questions.filter((q) => {
     const ans = answers[q.id];
     if (q.partType === "PART_2_TRUE_FALSE") {
-      return Array.isArray(ans) && ans.some((v) => v !== "");
+      return Array.isArray(ans) && ans.length === 4 && ans.every((v) => v !== "");
     }
     return ans !== undefined && ans !== null && ans !== "";
   }).length;
@@ -315,7 +315,7 @@ export default function QuestionPalette({
       return qList.filter((q) => {
         const ans = answers[q.id];
         if (q.partType === "PART_2_TRUE_FALSE") {
-          return !Array.isArray(ans) || ans.every((v) => v === "");
+          return !Array.isArray(ans) || ans.length < 4 || ans.some((v) => v === "");
         }
         return ans === undefined || ans === null || ans === "";
       });

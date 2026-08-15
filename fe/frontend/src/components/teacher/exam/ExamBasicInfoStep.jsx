@@ -2,6 +2,7 @@ import React from "react";
 import { FolderOpen, Calendar, Clock, FileText } from "lucide-react";
 
 export default function ExamBasicInfoStep({
+  examMode,
   title,
   setTitle,
   classId,
@@ -23,11 +24,18 @@ export default function ExamBasicInfoStep({
         <div className="p-2 bg-indigo-50 dark:bg-indigo-900/30 rounded-xl text-indigo-600 dark:text-indigo-400">
           <FileText className="w-5 h-5" />
         </div>
-        <div>
-          <h2 className="text-lg font-black text-slate-900 dark:text-slate-100">
-            1. Thông Tin Cơ Bản Đề Thi
-          </h2>
-          <p className="text-xs text-slate-500 font-medium">Nhập tên, chọn lớp và cài đặt thời gian</p>
+        <div className="flex-1 flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-black text-slate-900 dark:text-slate-100 flex items-center gap-3">
+              1. Thông Tin Cơ Bản Đề Thi
+              {examMode === "THPT" ? (
+                <span className="px-2.5 py-1 rounded-lg bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-400 text-[10px] font-black uppercase tracking-wider">Đề THPT</span>
+              ) : (
+                <span className="px-2.5 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-400 text-[10px] font-black uppercase tracking-wider">Đề Tùy chỉnh</span>
+              )}
+            </h2>
+            <p className="text-xs text-slate-500 font-medium">Nhập tên, chọn lớp và cài đặt thời gian</p>
+          </div>
         </div>
       </div>
 
