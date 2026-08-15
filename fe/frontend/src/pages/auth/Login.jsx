@@ -6,7 +6,7 @@ import { Phone, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
 
 export default function Login() {
   const navigate = useNavigate();
-  const { loginSuccess } = useAuth();
+  const { loginSuccess, checkAuthStatus } = useAuth();
 
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
@@ -39,7 +39,7 @@ export default function Login() {
     try {
       await authService.login({ phoneNumber, password });
 
-      // Lấy profile user sau khi Server cấp Session Cookie
+      // Lấy thông tin user từ server và cập nhật AuthContext
       const userData = await authService.getCurrentUser();
       loginSuccess(userData);
 
@@ -49,7 +49,7 @@ export default function Login() {
         return;
       }
 
-      // Điều hướng theo vai trò (RBAC)
+      // Điều hướng theo vai trò (RBAC) - dùng role từ server trả về, không đọc từ context
       if (userData.role === "CENTER_MANAGER" || userData.role === "DEPARTMENT_HEAD") {
         navigate("/center-manager/dashboard");
       } else if (userData.role === "TEACHER") {

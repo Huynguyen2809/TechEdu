@@ -44,7 +44,7 @@ public class AuthService {
         return Map.of("message", "Đăng ký tài khoản thành công!");
     }
 
-    public Map<String, Object> login(LoginRequest request, HttpServletRequest httpServletRequest) {
+    public Map<String, Object> login(LoginRequest request, HttpServletRequest httpServletRequest, jakarta.servlet.http.HttpServletResponse httpServletResponse) {
         User user = userRepository.findByPhoneNumber(request.getPhoneNumber())
                 .orElseThrow(() -> new IllegalArgumentException("Số điện thoại hoặc mật khẩu không chính xác!"));
 
@@ -55,6 +55,17 @@ public class AuthService {
         if (!user.getIsActive()) {
             throw new IllegalStateException("Tài khoản của bạn đã bị Quản trị viên khóa!");
         }
+
+        // Bước 1: Hủy session cũ để tránh Session Fixation attack
+        HttpSession oldSession = httpServletRequest.getSession(false);
+        if (oldSession != null) {
+            oldSession.invalidate();
+        }
+
+        // Bước 2: Tạo session HOÀN TOÀN MỚI
+        HttpSession newSession = httpServletRequest.getSession(true);
+
+        // Bước 3: Tạo SecurityContext với đúng role của user
         List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                 user.getPhoneNumber(), null, authorities
@@ -62,12 +73,11 @@ public class AuthService {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(authentication);
         SecurityContextHolder.setContext(context);
-        HttpSession session = httpServletRequest.getSession(true);
-        session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
 
-        // Tạo Session và lưu trữ thông tin User vào bộ nhớ máy chủ
-        session.setAttribute("USER_ID", user.getId());
-        session.setAttribute("USER_ROLE", user.getRole().name());
+        // Bước 4: Lưu SecurityContext vào session mới bằng key chuẩn của Spring Security
+        newSession.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
+        newSession.setAttribute("USER_ID", user.getId());
+        newSession.setAttribute("USER_ROLE", user.getRole().name());
 
         return Map.of(
                 "message", "Đăng nhập thành công!",

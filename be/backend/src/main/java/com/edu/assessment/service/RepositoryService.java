@@ -64,13 +64,13 @@ public class RepositoryService {
         return Map.of(
                 "message", "Tạo thư mục thành công!",
                 "folderId", newFolder.getId(),
-                "name", newFolder.getName()
-        );
+                "name", newFolder.getName());
     }
 
     // Nghiệp vụ 2: Tải file PDF đề thi / lời giải lên hệ thống
     @Transactional
-    public Map<String, Object> uploadDocument(MultipartFile file, Long folderId, String fileTypeStr, Long teacherId) throws IOException {
+    public Map<String, Object> uploadDocument(MultipartFile file, Long folderId, String fileTypeStr, Long teacherId)
+            throws IOException {
         if (file.isEmpty()) {
             throw new IllegalArgumentException("Vui lòng chọn file PDF để tải lên!");
         }
@@ -100,7 +100,7 @@ public class RepositoryService {
         }
 
         String originalFileName = file.getOriginalFilename();
-        
+
         // Lưu file vào MongoDB GridFS
         ObjectId objectId = gridFsTemplate.store(file.getInputStream(), originalFileName, file.getContentType());
 
@@ -124,11 +124,11 @@ public class RepositoryService {
                 "documentId", document.getId(),
                 "title", document.getTitle(),
                 "fileSizeKb", document.getFileSizeKb(),
-                "fileUrl", document.getFileUrl()
-        );
+                "fileUrl", document.getFileUrl());
     }
 
-    // Nghiệp vụ 3: Lấy danh sách tài nguyên (Folder + File PDF) trong 1 thư mục để hiển thị lên UI
+    // Nghiệp vụ 3: Lấy danh sách tài nguyên (Folder + File PDF) trong 1 thư mục để
+    // hiển thị lên UI
     public Map<String, Object> getRepositoryContent(Long folderId, Long teacherId) {
         List<Folder> folders;
         List<Document> documents;
@@ -167,8 +167,7 @@ public class RepositoryService {
         return Map.of(
                 "currentFolderId", folderId != null ? folderId : "ROOT",
                 "folders", folderList,
-                "documents", docList
-        );
+                "documents", docList);
     }
 
     // Nghiệp vụ 4: Di chuyển file PDF sang thư mục khác
@@ -196,17 +195,16 @@ public class RepositoryService {
         return Map.of(
                 "message", "Di chuyển file thành công!",
                 "documentId", document.getId(),
-                "targetFolderId", targetFolderId != null ? targetFolderId : "ROOT"
-        );
+                "targetFolderId", targetFolderId != null ? targetFolderId : "ROOT");
     }
 
-    // Nghiệp vụ 5: Lấy toàn bộ thư mục của Giáo viên để phục vụ dropdown chọn thư mục đích
+    // Nghiệp vụ 5: Lấy toàn bộ thư mục của Giáo viên để phục vụ dropdown chọn thư
+    // mục đích
     public List<Map<String, Object>> getAllFolders(Long teacherId) {
         List<Folder> folders = folderRepository.findAllByTeacherId(teacherId);
         return folders.stream().map(f -> Map.<String, Object>of(
                 "id", f.getId(),
-                "name", f.getName()
-        )).toList();
+                "name", f.getName())).toList();
     }
 
     // Nghiệp vụ 6: Đổi tên File PDF

@@ -25,8 +25,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request, HttpServletRequest httpServletRequest) {
-        return ResponseEntity.ok(authService.login(request, httpServletRequest));
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request, HttpServletRequest httpServletRequest, jakarta.servlet.http.HttpServletResponse httpServletResponse) {
+        return ResponseEntity.ok(authService.login(request, httpServletRequest, httpServletResponse));
     }
 
     @PostMapping("/logout")

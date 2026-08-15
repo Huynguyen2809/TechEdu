@@ -28,24 +28,33 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder(); // Dùng BCrypt để băm mật khẩu
     }
 
-
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf
-                        .csrfTokenRepository(org.springframework.security.web.csrf.CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .csrfTokenRequestHandler(new org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler()::handle)
-                ) // Bật CSRF và cấp phát token qua cookie (XSRF-TOKEN)
+                        .ignoringRequestMatchers("/api/v1/auth/**")
+                        .csrfTokenRepository(
+                                org.springframework.security.web.csrf.CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .csrfTokenRequestHandler(
+                                new org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler()::handle)) // Bật
+                                                                                                                          // CSRF
+                                                                                                                          // và
+                                                                                                                          // cấp
+                                                                                                                          // phát
+                                                                                                                          // token
+                                                                                                                          // qua
+                                                                                                                          // cookie
+                                                                                                                          // (XSRF-TOKEN)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Bật CORS
                 .headers(headers -> headers.frameOptions(frame -> frame.disable())) // Cho phép nhúng iframe
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/**", "/api/v1/files/**").permitAll() // Mở tự do cho API Đăng ký, Đăng nhập & File PDF
-                        .requestMatchers("/api/v1/center-manager/**").hasRole("CENTER_MANAGER") // Các endpoint quản trị yêu cầu quyền CENTER_MANAGER
-                        .anyRequest().authenticated() // Các API khác bắt buộc phải đăng nhập
+                        .requestMatchers("/api/v1/auth/**", "/api/v1/files/**").permitAll()
+                        .requestMatchers("/api/v1/center-manager/**").hasAnyRole("CENTER_MANAGER", "DEPARTMENT_HEAD")
+                        .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // Tự động tạo Session Cookie khi login
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // Tự động tạo Session Cookie khi
+                                                                                  // login
                 );
         return http.build();
     }
@@ -64,7 +73,8 @@ public class SecurityConfig {
 
     @Bean
     public org.springframework.security.authentication.AuthenticationManager authenticationManager(
-            org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration authConfig) throws Exception {
+            org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration authConfig)
+            throws Exception {
         return authConfig.getAuthenticationManager();
     }
 }

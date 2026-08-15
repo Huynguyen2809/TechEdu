@@ -34,8 +34,8 @@ export const AuthProvider = ({ children }) => {
       console.error("Lỗi khi đăng xuất:", error);
     } finally {
       setUser(null);
-      // BUG-05: Dùng navigate() thay window.location.href để giữ SPA navigation
-      window.__navigateToLogin?.();
+      // Hard reload để reset toàn bộ React state và đảm bảo không còn dữ liệu cũ
+      window.location.replace("/login");
     }
   };
 

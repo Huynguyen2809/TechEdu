@@ -25,7 +25,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/repository")
 @RequiredArgsConstructor
-@PreAuthorize("hasAnyRole('TEACHER', 'CENTER_MANAGER', 'DEPARTMENT_HEAD')") // <-- Chỉ Giáo viên/Center Manager mới vào được Ngân hàng đề
+@PreAuthorize("hasAnyRole('TEACHER', 'CENTER_MANAGER', 'DEPARTMENT_HEAD')") // <-- Chỉ Giáo viên/Center Manager mới vào
+                                                                            // được Ngân hàng đề
 public class RepositoryController {
 
     private final RepositoryService repositoryService;
@@ -41,7 +42,8 @@ public class RepositoryController {
 
     // 1. API Tạo thư mục mới
     @PostMapping("/folders")
-    public ResponseEntity<?> createFolder(@Valid @RequestBody CreateFolderRequest request, HttpServletRequest httpServletRequest) {
+    public ResponseEntity<?> createFolder(@Valid @RequestBody CreateFolderRequest request,
+            HttpServletRequest httpServletRequest) {
         Long teacherId = getCurrentUserId(httpServletRequest);
         return ResponseEntity.ok(repositoryService.createFolder(request, teacherId));
     }
@@ -67,7 +69,8 @@ public class RepositoryController {
     }
 
     // 4. API Di chuyển file sang thư mục khác (Hỗ trợ cả PUT và POST)
-    @RequestMapping(value = {"/documents/{documentId}/move", "/documents/move"}, method = {RequestMethod.PUT, RequestMethod.POST})
+    @RequestMapping(value = { "/documents/{documentId}/move", "/documents/move" }, method = { RequestMethod.PUT,
+            RequestMethod.POST })
     public ResponseEntity<?> moveDocument(
             @PathVariable(value = "documentId", required = false) Long pathDocId,
             @RequestBody(required = false) Map<String, Object> body,
@@ -104,7 +107,8 @@ public class RepositoryController {
     }
 
     // 6. API Đổi tên File PDF (Hỗ trợ cả PUT và POST)
-    @RequestMapping(value = {"/documents/{documentId}/rename", "/documents/rename"}, method = {RequestMethod.PUT, RequestMethod.POST})
+    @RequestMapping(value = { "/documents/{documentId}/rename", "/documents/rename" }, method = { RequestMethod.PUT,
+            RequestMethod.POST })
     public ResponseEntity<?> renameDocument(
             @PathVariable(value = "documentId", required = false) Long pathDocId,
             @RequestBody(required = false) Map<String, Object> body,
@@ -120,7 +124,8 @@ public class RepositoryController {
     }
 
     // 7. API Xóa File PDF (Hỗ trợ cả DELETE, POST, và GET)
-    @RequestMapping(value = {"/documents/{documentId}", "/documents/{documentId}/delete", "/documents/delete"}, method = {RequestMethod.DELETE, RequestMethod.POST, RequestMethod.GET})
+    @RequestMapping(value = { "/documents/{documentId}", "/documents/{documentId}/delete",
+            "/documents/delete" }, method = { RequestMethod.DELETE, RequestMethod.POST, RequestMethod.GET })
     public ResponseEntity<?> deleteDocument(
             @PathVariable(value = "documentId", required = false) Long pathDocId,
             @RequestParam(value = "documentId", required = false) Long paramDocId,
@@ -131,7 +136,8 @@ public class RepositoryController {
     }
 
     // 8. API Đổi tên Thư Mục (Hỗ trợ cả PUT và POST)
-    @RequestMapping(value = {"/folders/{folderId}/rename", "/folders/rename"}, method = {RequestMethod.PUT, RequestMethod.POST})
+    @RequestMapping(value = { "/folders/{folderId}/rename", "/folders/rename" }, method = { RequestMethod.PUT,
+            RequestMethod.POST })
     public ResponseEntity<?> renameFolder(
             @PathVariable(value = "folderId", required = false) Long pathFolderId,
             @RequestBody(required = false) Map<String, Object> body,
@@ -147,7 +153,8 @@ public class RepositoryController {
     }
 
     // 9. API Xóa Thư Mục (Hỗ trợ cả DELETE, POST, và GET)
-    @RequestMapping(value = {"/folders/{folderId}", "/folders/{folderId}/delete", "/folders/delete"}, method = {RequestMethod.DELETE, RequestMethod.POST, RequestMethod.GET})
+    @RequestMapping(value = { "/folders/{folderId}", "/folders/{folderId}/delete", "/folders/delete" }, method = {
+            RequestMethod.DELETE, RequestMethod.POST, RequestMethod.GET })
     public ResponseEntity<?> deleteFolder(
             @PathVariable(value = "folderId", required = false) Long pathFolderId,
             @RequestParam(value = "folderId", required = false) Long paramFolderId,
@@ -158,7 +165,8 @@ public class RepositoryController {
     }
 
     // 10. API Chuyển đổi loại file (Đề Thi <-> Lời Giải)
-    @RequestMapping(value = {"/documents/{documentId}/toggle-type", "/documents/toggle-type"}, method = {RequestMethod.PUT, RequestMethod.POST, RequestMethod.GET})
+    @RequestMapping(value = { "/documents/{documentId}/toggle-type", "/documents/toggle-type" }, method = {
+            RequestMethod.PUT, RequestMethod.POST, RequestMethod.GET })
     public ResponseEntity<?> toggleFileType(
             @PathVariable(value = "documentId", required = false) Long pathDocId,
             @RequestParam(value = "documentId", required = false) Long paramDocId,
@@ -182,7 +190,7 @@ public class RepositoryController {
             }
 
             GridFsResource resource = gridFsTemplate.getResource(gridFSFile);
-            
+
             return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_PDF)
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + gridFSFile.getFilename() + "\"")

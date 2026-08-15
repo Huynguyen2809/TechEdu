@@ -8,7 +8,10 @@ import java.util.List;
 @Repository
 public interface DocumentRepository extends JpaRepository<Document, Long> {
     List<Document> findAllByTeacherIdAndFolderId(Long teacherId, Long folderId);
+
     List<Document> findAllByTeacherIdAndFolderIsNull(Long teacherId);
+
     List<Document> findAllByFileTypeOrderByIdDesc(Document.FileType fileType);
+
     long countByFileType(Document.FileType fileType);
 }
