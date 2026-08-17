@@ -79,11 +79,21 @@ public class ExamService {
             throw new IllegalArgumentException("Tổng số câu cấu hình (" + totalConfigured + ") không khớp với số lượng đáp án gửi lên (" + request.getAnswerKeys().size() + ")!");
         }
 
+        // [FIX Bug #6] Kiểm tra thời gian bắt đầu phải trước thời gian kết thúc
+        if (!request.getStartTime().isBefore(request.getEndTime())) {
+            throw new IllegalArgumentException("Thời gian kết thúc phải sau thời gian bắt đầu!");
+        }
+
         double totalConfiguredPoints = request.getAnswerKeys().stream()
                 .mapToDouble(CreateExamRequest.QuestionAnswerDto::getPoints)
                 .sum();
         if (totalConfiguredPoints - 10.0 > 0.001) {
             throw new IllegalArgumentException("Quy chế vi phạm: Tổng điểm các câu hỏi là " + totalConfiguredPoints + " điểm. Vui lòng điều chỉnh để tổng điểm không vượt quá thang điểm 10.0!");
+        }
+
+        // [FIX Bug #11] Tổng điểm phải lớn hơn 0
+        if (totalConfiguredPoints <= 0.0) {
+            throw new IllegalArgumentException("Tổng điểm toàn bài phải lớn hơn 0!");
         }
 
         Exam exam = Exam.builder()
@@ -104,8 +114,19 @@ public class ExamService {
 
         examRepository.save(exam);
 
+        // [FIX Bug #7] Kiểm tra questionNumber trùng lặp và Bug #13 questionNumber âm/bằng 0
+        Set<Integer> usedNumbers = new HashSet<>();
         List<ExamQuestion> questionEntities = new ArrayList<>();
         for (CreateExamRequest.QuestionAnswerDto dto : request.getAnswerKeys()) {
+            // [FIX Bug #13] questionNumber phải >= 1
+            if (dto.getQuestionNumber() == null || dto.getQuestionNumber() < 1) {
+                throw new IllegalArgumentException("Số thứ tự câu hỏi phải bắt đầu từ 1, không được âm hoặc bằng 0!");
+            }
+            // [FIX Bug #7] questionNumber không được trùng
+            if (!usedNumbers.add(dto.getQuestionNumber())) {
+                throw new IllegalArgumentException("Số thứ tự câu hỏi " + dto.getQuestionNumber() + " bị trùng lặp trong danh sách đáp án!");
+            }
+
             ExamQuestion.PartType partType;
             try {
                 partType = ExamQuestion.PartType.valueOf(dto.getPartType().toUpperCase());
@@ -114,6 +135,20 @@ public class ExamService {
             }
 
             String cleanAnswer = dto.getCorrectAnswer().trim().toUpperCase();
+
+            // [FIX Bug #10] PART_2 phải có đúng 4 phần ngăn cách bằng dấu phẩy
+            if (partType == ExamQuestion.PartType.PART_2_TRUE_FALSE) {
+                String[] parts = cleanAnswer.split(",");
+                if (parts.length != 4) {
+                    throw new IllegalArgumentException("Đáp án câu Đúng/Sai số " + dto.getQuestionNumber()
+                            + " phải có đúng 4 phần ngăn cách bằng dấu phẩy (vd: T,T,F,T)! Hiện tại có " + parts.length + " phần.");
+                }
+            }
+
+            // [FIX Bug #12] correctAnswer không được rỗng sau khi trim
+            if (cleanAnswer.isEmpty()) {
+                throw new IllegalArgumentException("Đáp án câu số " + dto.getQuestionNumber() + " không được để trống!");
+            }
 
             ExamQuestion question = ExamQuestion.builder()
                     .exam(exam)
@@ -243,10 +278,17 @@ public class ExamService {
             questionMap.put(q.getId(), q);
         }
 
+        // [SECURITY FIX] Chặn tấn công Duplicate Question ID: mỗi câu hỏi chỉ được chấm đúng 1 lần
+        Set<Long> processedQuestionIds = new HashSet<>();
         double totalEarnedScore = 0.0;
         List<SubmissionAnswer> submissionAnswers = new ArrayList<>();
 
         for (SubmitExamRequest.AnswerDto ansDto : request.getAnswers()) {
+            // Nếu câu hỏi này đã được xử lý trước đó trong cùng payload -> bỏ qua ngay
+            if (!processedQuestionIds.add(ansDto.getQuestionId())) {
+                continue;
+            }
+
             ExamQuestion question = questionMap.get(ansDto.getQuestionId());
             if (question == null) continue;
 

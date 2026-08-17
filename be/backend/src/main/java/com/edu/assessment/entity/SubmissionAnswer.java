@@ -24,7 +24,8 @@ public class SubmissionAnswer {
     @JoinColumn(name = "question_id", nullable = false)
     private ExamQuestion question;
 
-    @Column(name = "student_answer", length = 50)
+    // [FIX Bug #15] Tăng giới hạn độ dài từ 50 lên 500 (đáp án PART_3 có thể dài hơn)
+    @Column(name = "student_answer", length = 500)
     private String studentAnswer; // Đáp án học sinh gửi lên: "A", "D,S,D,S", "-3,25"...
 
     @Column(name = "earned_points", nullable = false)
