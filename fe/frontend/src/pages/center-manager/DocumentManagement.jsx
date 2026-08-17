@@ -237,14 +237,14 @@ export default function DocumentManagement() {
       {/* BẢNG DỮ LIỆU */}
       <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/60 dark:border-slate-800/60 shadow-sm overflow-hidden">
         <div className="overflow-x-auto w-full min-h-[320px]">
-          <table className="w-full text-left border-collapse min-w-[750px]">
+          <table className="w-full text-center border-collapse min-w-[750px]">
             <thead>
               <tr className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200/60 dark:border-slate-800/60 text-xs font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                 <th className="py-4 px-6 w-16 text-center whitespace-nowrap">STT</th>
-                <th className="py-4 px-6 whitespace-nowrap">Tên tài liệu</th>
+                <th className="py-4 px-6 text-left whitespace-nowrap">Tên tài liệu</th>
                 <th className="py-4 px-6 text-center whitespace-nowrap">Định dạng</th>
-                <th className="py-4 px-6 whitespace-nowrap">Dung lượng</th>
-                <th className="py-4 px-6 whitespace-nowrap">Ngày tải lên</th>
+                <th className="py-4 px-6 text-center whitespace-nowrap">Dung lượng</th>
+                <th className="py-4 px-6 text-center whitespace-nowrap">Ngày tải lên</th>
                 <th className="py-4 px-6 text-center w-36 whitespace-nowrap">Thao tác</th>
               </tr>
             </thead>
@@ -259,7 +259,7 @@ export default function DocumentManagement() {
                       {index + 1}
                     </td>
 
-                    <td className="py-4 px-6 font-bold text-slate-800 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors whitespace-nowrap">
+                    <td className="py-4 px-6 text-left font-bold text-slate-800 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors whitespace-nowrap">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 border border-indigo-100 dark:border-indigo-800/60">
                           <FileText className="w-5 h-5" />
@@ -277,12 +277,12 @@ export default function DocumentManagement() {
                       {getFileBadge(doc.fileType)}
                     </td>
 
-                    <td className="py-4 px-6 font-mono text-xs text-slate-500 dark:text-slate-400 font-bold whitespace-nowrap">
+                    <td className="py-4 px-6 text-center font-mono text-xs text-slate-500 dark:text-slate-400 font-bold whitespace-nowrap">
                       {doc.size}
                     </td>
 
-                    <td className="py-4 px-6 text-xs text-slate-500 dark:text-slate-400 font-bold whitespace-nowrap">
-                      <div className="flex items-center gap-2">
+                    <td className="py-4 px-6 text-center text-xs text-slate-500 dark:text-slate-400 font-bold whitespace-nowrap">
+                      <div className="flex items-center justify-center gap-2">
                         <div className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400">
                           <Calendar className="w-3.5 h-3.5 shrink-0" />
                         </div>

@@ -233,13 +233,13 @@ export default function StudentClassDetail() {
                 </div>
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse min-w-[650px]">
+                  <table className="w-full text-center border-collapse min-w-[650px]">
                     <thead>
                       <tr className="bg-slate-50/80 dark:bg-slate-800/60 text-[11px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider border-b border-slate-200/60 dark:border-slate-800/60">
-                        <th className="py-4 px-5">Tên bài kiểm tra</th>
+                        <th className="py-4 px-5 text-left">Tên bài kiểm tra</th>
                         <th className="py-4 px-5 text-center">Thời gian làm bài</th>
                         <th className="py-4 px-5 text-center">Thời gian mở - đóng</th>
-                        <th className="py-4 px-5 text-right">Thao tác</th>
+                        <th className="py-4 px-5 text-center">Thao tác</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 text-sm text-slate-700 dark:text-slate-200 font-medium">
@@ -251,7 +251,7 @@ export default function StudentClassDetail() {
 
                         return (
                           <tr key={exam.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/40 transition-colors">
-                            <td className="py-5 px-5 font-bold text-slate-900 dark:text-slate-100 tracking-tight">
+                            <td className="py-5 px-5 text-left font-bold text-slate-900 dark:text-slate-100 tracking-tight">
                               {exam.title}
                             </td>
                             <td className="py-5 px-5 text-center text-xs">
@@ -264,7 +264,7 @@ export default function StudentClassDetail() {
                               <div className="font-semibold text-slate-700 dark:text-slate-300">{formatDate(exam.startTime)}</div>
                               <div className="text-[11px] mt-0.5">đến {formatDate(exam.endTime)}</div>
                             </td>
-                            <td className="py-5 px-5 text-right">
+                            <td className="py-5 px-5 text-center">
                               {isOpen ? (
                                 <button
                                   onClick={() => navigate(`/student/exam/${exam.id}`)}
@@ -305,13 +305,13 @@ export default function StudentClassDetail() {
                 </div>
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse min-w-[650px]">
+                  <table className="w-full text-center border-collapse min-w-[650px]">
                     <thead>
                       <tr className="bg-slate-50/80 dark:bg-slate-800/60 text-[11px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider border-b border-slate-200/60 dark:border-slate-800/60">
-                        <th className="py-4 px-5">Tên bài thi</th>
+                        <th className="py-4 px-5 text-left">Tên bài thi</th>
                         <th className="py-4 px-5 text-center">Ngày nộp</th>
                         <th className="py-4 px-5 text-center">Điểm số chuẩn</th>
-                        <th className="py-4 px-5 text-right">Thao tác</th>
+                        <th className="py-4 px-5 text-center">Thao tác</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 text-sm font-medium text-slate-700 dark:text-slate-200">
@@ -322,7 +322,7 @@ export default function StudentClassDetail() {
 
                         return (
                           <tr key={exam.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/40 transition-colors">
-                            <td className="py-5 px-5 font-bold text-slate-900 dark:text-slate-100 tracking-tight">
+                            <td className="py-5 px-5 text-left font-bold text-slate-900 dark:text-slate-100 tracking-tight">
                               {exam.title}
                             </td>
                             <td className="py-5 px-5 text-center text-xs text-slate-500 dark:text-slate-400">
@@ -355,7 +355,7 @@ export default function StudentClassDetail() {
                                 </span>
                               )}
                             </td>
-                            <td className="py-5 px-5 text-right">
+                            <td className="py-5 px-5 text-center">
                               {isExpiredUnsubmitted ? (
                                 <span className="text-[11px] font-bold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700">Quá hạn / Hết giờ</span>
                               ) : (

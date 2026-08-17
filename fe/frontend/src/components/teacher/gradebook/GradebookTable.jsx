@@ -132,13 +132,13 @@ export default function GradebookTable({
       <div className="overflow-x-auto">
         <table className="w-full text-xs sm:text-sm">
           <thead>
-            <tr className="bg-slate-50 dark:bg-slate-800/60 text-left border-b border-slate-100 dark:border-slate-800 text-[11px] font-extrabold uppercase text-slate-400 dark:text-slate-500 tracking-wider">
-              <th className="px-4 py-3">STT</th>
-              <th className="px-4 py-3">Họ và Tên</th>
-              <th className="px-4 py-3">Số Điện Thoại</th>
-              <th className="px-4 py-3">Thời Gian Làm</th>
-              <th className="px-4 py-3">Nộp Lúc</th>
-              <th className="px-4 py-3 text-right">Tổng Điểm</th>
+            <tr className="bg-slate-50 dark:bg-slate-800/60 text-center border-b border-slate-100 dark:border-slate-800 text-[11px] font-extrabold uppercase text-slate-400 dark:text-slate-500 tracking-wider">
+              <th className="px-4 py-3 text-center">STT</th>
+              <th className="px-4 py-3 text-left">Họ và Tên</th>
+              <th className="px-4 py-3 text-center">Số Điện Thoại</th>
+              <th className="px-4 py-3 text-center">Thời Gian Làm</th>
+              <th className="px-4 py-3 text-center">Nộp Lúc</th>
+              <th className="px-4 py-3 text-center">Tổng Điểm</th>
               <th className="px-4 py-3 text-center">Chi Tiết</th>
             </tr>
           </thead>
@@ -150,27 +150,27 @@ export default function GradebookTable({
                   key={s.submissionId}
                   className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors"
                 >
-                  <td className="px-4 py-3.5 text-slate-400 dark:text-slate-500 font-mono font-semibold">
+                  <td className="px-4 py-3.5 text-center text-slate-400 dark:text-slate-500 font-mono font-semibold">
                     {idx + 1}
                   </td>
-                  <td className="px-4 py-3.5 font-extrabold text-slate-900 dark:text-slate-100">
+                  <td className="px-4 py-3.5 text-left font-extrabold text-slate-900 dark:text-slate-100">
                     {s.fullName}
                   </td>
-                  <td className="px-4 py-3.5 text-slate-500 dark:text-slate-400 font-mono text-xs">
+                  <td className="px-4 py-3.5 text-center text-slate-500 dark:text-slate-400 font-mono text-xs">
                     {s.phoneNumber || "—"}
                   </td>
-                  <td className="px-4 py-3.5 text-slate-600 dark:text-slate-300 font-medium">
-                    <span className="inline-flex items-center gap-1 text-xs">
+                  <td className="px-4 py-3.5 text-center text-slate-600 dark:text-slate-300 font-medium">
+                    <span className="inline-flex items-center justify-center gap-1 text-xs">
                       <Clock className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
                       {formatTime(s.timeSpentSeconds)}
                     </span>
                   </td>
-                  <td className="px-4 py-3.5 text-slate-500 text-xs font-medium">
+                  <td className="px-4 py-3.5 text-center text-slate-500 text-xs font-medium">
                     {formatDate(s.submittedAt)}
                   </td>
 
                   {/* Phân màu điểm (Xanh ≥8.0, Xanh dương ≥5.0, Cam <5.0) */}
-                  <td className="px-4 py-3.5 text-right">
+                  <td className="px-4 py-3.5 text-center">
                     <span
                       className={`inline-block px-3 py-1 rounded-xl text-sm border ${badgeStyle}`}
                     >

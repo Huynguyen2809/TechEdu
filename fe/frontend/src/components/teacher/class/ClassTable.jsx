@@ -11,16 +11,16 @@ export default function ClassTable({
   return (
     <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm dark:shadow-none overflow-hidden">
       <div className="overflow-x-auto w-full">
-        <table className="w-full text-left border-collapse min-w-[800px]">
+        <table className="w-full text-center border-collapse min-w-[800px]">
           <thead>
             <tr className="bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200/80 dark:border-slate-800 text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap">
               <th className="py-4 px-6 w-16 text-center">STT</th>
-              <th className="py-4 px-6 min-w-[220px]">Tên Lớp Học</th>
+              <th className="py-4 px-6 text-left min-w-[220px]">Tên Lớp Học</th>
               <th className="py-4 px-6 text-center min-w-[120px]">Môn Học</th>
               <th className="py-4 px-6 text-center min-w-[100px]">Khối Lớp</th>
               <th className="py-4 px-6 text-center min-w-[150px]">Mã Gia Nhập</th>
               <th className="py-4 px-6 text-center min-w-[110px]">Sĩ Số</th>
-              <th className="py-4 px-6 text-right min-w-[120px]">Thao Tác</th>
+              <th className="py-4 px-6 text-center min-w-[120px]">Thao Tác</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 text-xs font-semibold text-slate-700 dark:text-slate-200">
@@ -36,7 +36,7 @@ export default function ClassTable({
                 </td>
 
                 {/* Tên Lớp Học */}
-                <td className="py-4 px-6">
+                <td className="py-4 px-6 text-left">
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center border border-indigo-200/60 dark:border-indigo-900/60 shrink-0 group-hover:scale-110 transition-transform">
                       <BookOpen className="w-4 h-4" />
@@ -87,8 +87,8 @@ export default function ClassTable({
                 </td>
 
                 {/* Thao Tác */}
-                <td className="py-4 px-6 text-right">
-                  <div className="flex items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
+                <td className="py-4 px-6 text-center">
+                  <div className="flex items-center justify-center gap-1" onClick={(e) => e.stopPropagation()}>
                     <button
                       onClick={() => onViewClass(cls.id)}
                       className="p-1.5 hover:bg-indigo-50 dark:hover:bg-indigo-950/60 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-lg transition-colors cursor-pointer"

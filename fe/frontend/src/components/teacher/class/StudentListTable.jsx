@@ -74,17 +74,17 @@ export default function StudentListTable({
         </div>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse min-w-[750px]">
+          <table className="w-full text-center border-collapse min-w-[750px]">
             <thead>
               <tr className="bg-slate-50 dark:bg-slate-800/60 text-[11px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider border-b border-slate-100 dark:border-slate-800">
                 <th className="py-4 px-6 w-16 text-center">STT</th>
-                <th className="py-4 px-6 min-w-[200px]">Họ và tên</th>
-                <th className="py-4 px-6 min-w-[140px]">Số điện thoại</th>
-                <th className="py-4 px-6 min-w-[140px]">Ngày tham gia</th>
+                <th className="py-4 px-6 min-w-[200px] text-left">Họ và tên</th>
+                <th className="py-4 px-6 min-w-[140px] text-center">Số điện thoại</th>
+                <th className="py-4 px-6 min-w-[140px] text-center">Ngày tham gia</th>
                 <th className="py-4 px-6 min-w-[130px] text-center">
                   Điểm gần nhất
                 </th>
-                <th className="py-4 px-6 text-right min-w-[120px]">
+                <th className="py-4 px-6 text-center min-w-[120px]">
                   Thao tác
                 </th>
               </tr>
@@ -100,17 +100,17 @@ export default function StudentListTable({
                   </td>
 
                   {/* Họ và tên */}
-                  <td className="py-4 px-6 font-extrabold text-slate-800 dark:text-slate-100">
+                  <td className="py-4 px-6 text-left font-extrabold text-slate-800 dark:text-slate-100">
                     {member.fullName}
                   </td>
 
                   {/* SĐT */}
-                  <td className="py-4 px-6 font-mono text-slate-600 dark:text-slate-400 font-bold">
+                  <td className="py-4 px-6 text-center font-mono text-slate-600 dark:text-slate-400 font-bold">
                     {member.phoneNumber || "09xxxxxxx"}
                   </td>
 
                   {/* Ngày tham gia */}
-                  <td className="py-4 px-6 text-slate-500 font-medium">
+                  <td className="py-4 px-6 text-center text-slate-500 font-medium">
                     {member.joinedAt
                       ? new Date(member.joinedAt).toLocaleDateString("vi-VN")
                       : "Vừa tham gia"}
@@ -129,10 +129,10 @@ export default function StudentListTable({
                   </td>
 
                   {/* Thao tác */}
-                  <td className="py-4 px-6 text-right">
+                  <td className="py-4 px-6 text-center">
                     <button
                       onClick={() => onOpenRemoveModal(member)}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-red-600 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-950/60 transition-all border border-transparent hover:border-red-200 cursor-pointer"
+                      className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-red-600 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-950/60 transition-all border border-transparent hover:border-red-200 cursor-pointer"
                       title="Xóa học sinh này khỏi lớp"
                     >
                       <UserMinus className="w-4 h-4" />

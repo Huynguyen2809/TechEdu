@@ -81,7 +81,7 @@ export default function RepositoryTable({
         </div>
       ) : (
         <div className="overflow-x-auto w-full">
-          <table className="w-full text-left border-collapse table-fixed">
+          <table className="w-full text-center border-collapse table-fixed">
             <thead>
               <tr className="bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200/80 dark:border-slate-800 text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap">
                 <th className="py-4 px-6 w-[55%] text-left">Tên</th>

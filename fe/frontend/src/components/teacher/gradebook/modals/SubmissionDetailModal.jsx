@@ -120,20 +120,20 @@ export default function SubmissionDetailModal({ submissionId, onClose }) {
               <div className="overflow-x-auto border border-slate-100 dark:border-slate-800 rounded-2xl">
                 <table className="w-full text-xs sm:text-sm border-collapse">
                   <thead>
-                    <tr className="bg-slate-50/80 dark:bg-slate-800/60 text-left">
-                      <th className="px-3 py-3 text-xs font-extrabold text-slate-500 dark:text-slate-400 uppercase">
+                    <tr className="bg-slate-50/80 dark:bg-slate-800/60 text-center">
+                      <th className="px-3 py-3 text-center text-xs font-extrabold text-slate-500 dark:text-slate-400 uppercase">
                         Câu
                       </th>
-                      <th className="px-3 py-3 text-xs font-extrabold text-slate-500 dark:text-slate-400 uppercase">
+                      <th className="px-3 py-3 text-center text-xs font-extrabold text-slate-500 dark:text-slate-400 uppercase">
                         Phần
                       </th>
-                      <th className="px-3 py-3 text-xs font-extrabold text-slate-500 dark:text-slate-400 uppercase">
+                      <th className="px-3 py-3 text-center text-xs font-extrabold text-slate-500 dark:text-slate-400 uppercase">
                         Học sinh chọn
                       </th>
-                      <th className="px-3 py-3 text-xs font-extrabold text-slate-500 dark:text-slate-400 uppercase">
+                      <th className="px-3 py-3 text-center text-xs font-extrabold text-slate-500 dark:text-slate-400 uppercase">
                         Đáp án đúng
                       </th>
-                      <th className="px-3 py-3 text-xs font-extrabold text-slate-500 dark:text-slate-400 uppercase text-right">
+                      <th className="px-3 py-3 text-center text-xs font-extrabold text-slate-500 dark:text-slate-400 uppercase">
                         Điểm
                       </th>
                     </tr>
@@ -148,10 +148,10 @@ export default function SubmissionDetailModal({ submissionId, onClose }) {
                             : "bg-rose-50/20 dark:bg-rose-950/10"
                         }`}
                       >
-                        <td className="px-3 py-2.5 font-bold text-slate-800 dark:text-slate-200">
+                        <td className="px-3 py-2.5 text-center font-bold text-slate-800 dark:text-slate-200">
                           {d.questionNumber}
                         </td>
-                        <td className="px-3 py-2.5">
+                        <td className="px-3 py-2.5 text-center">
                           <span className="text-[10px] bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded-md font-semibold">
                             {d.partType
                               .replace("PART_", "P")
@@ -160,13 +160,13 @@ export default function SubmissionDetailModal({ submissionId, onClose }) {
                               .replace("_SHORT_ANSWER", "3")}
                           </span>
                         </td>
-                        <td className="px-3 py-2.5 font-mono text-slate-800 dark:text-slate-200 font-semibold">
+                        <td className="px-3 py-2.5 text-center font-mono text-slate-800 dark:text-slate-200 font-semibold">
                           {d.studentAnswer}
                         </td>
-                        <td className="px-3 py-2.5 font-mono text-emerald-700 dark:text-emerald-400 font-bold">
+                        <td className="px-3 py-2.5 text-center font-mono text-emerald-700 dark:text-emerald-400 font-bold">
                           {d.correctAnswer}
                         </td>
-                        <td className="px-3 py-2.5 text-right font-bold">
+                        <td className="px-3 py-2.5 text-center font-bold">
                           <span
                             className={
                               d.isCorrect ? "text-emerald-600" : "text-rose-500"
