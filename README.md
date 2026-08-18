@@ -37,8 +37,6 @@ Dự án được chia thành 2 phần chính:
   ```
 
 ## 📄 Tài liệu tham khảo
-- `BACKEND_ANALYSIS_REPORT.md`: Báo cáo phân tích backend.
-- `FRONTEND_ANALYSIS_REPORT.md`: Báo cáo phân tích frontend.
 - `BUG_NOTES.md`: Ghi chú các bug trong quá trình phát triển.
 - `APIs.docx`: Tài liệu mô tả API.
 
