@@ -86,6 +86,6 @@ class ClassServiceTest {
             classService.createClass(request, 2L);
         });
 
-        assertTrue(exception.getMessage().contains("Chỉ Giáo viên mới có quyền tạo lớp học"));
+        assertTrue(exception.getMessage().contains("Chỉ Giáo viên hoặc Trưởng bộ môn mới có quyền tạo lớp học!"));
     }
 }
