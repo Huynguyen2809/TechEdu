@@ -40,7 +40,7 @@ public class ClassController {
         return (String) session.getAttribute("USER_ROLE");
     }
 
-    @PreAuthorize("hasAnyRole('TEACHER', 'CENTER_MANAGER', 'DEPARTMENT_HEAD')")
+    @PreAuthorize("hasAnyRole('TEACHER', 'DEPARTMENT_HEAD')")
     @PostMapping
     public ResponseEntity<?> createClass(@Valid @RequestBody CreateClassRequest request, HttpServletRequest httpServletRequest) {
         Long teacherId = getCurrentUserId(httpServletRequest);
@@ -74,14 +74,41 @@ public class ClassController {
     @GetMapping("/{id}/members")
     public ResponseEntity<?> getClassMembers(@PathVariable Long id, HttpServletRequest httpServletRequest) {
         Long teacherId = getCurrentUserId(httpServletRequest);
-        return ResponseEntity.ok(classService.getClassMembers(id, teacherId));
+        String role = getCurrentUserRole(httpServletRequest);
+        return ResponseEntity.ok(classService.getClassMembers(id, teacherId, role));
     }
 
     @PreAuthorize("hasAnyRole('TEACHER', 'CENTER_MANAGER', 'DEPARTMENT_HEAD')")
     @DeleteMapping("/{classId}/members/{studentId}")
     public ResponseEntity<?> removeMember(@PathVariable Long classId, @PathVariable Long studentId, HttpServletRequest httpServletRequest) {
         Long teacherId = getCurrentUserId(httpServletRequest);
-        return ResponseEntity.ok(classService.removeMember(classId, studentId, teacherId));
+        String role = getCurrentUserRole(httpServletRequest);
+        return ResponseEntity.ok(classService.removeMember(classId, studentId, teacherId, role));
+    }
+
+    // API Cập nhật thông tin lớp học (ĐÃ SỬA LỖI VÀ CHUẨN HÓA)
+    @PreAuthorize("hasAnyRole('TEACHER', 'DEPARTMENT_HEAD')")
+    @GetMapping("/{id}/pending-members")
+    public ResponseEntity<?> getPendingMembers(@PathVariable Long id, HttpServletRequest httpServletRequest) {
+        Long teacherId = getCurrentUserId(httpServletRequest);
+        String role = getCurrentUserRole(httpServletRequest);
+        return ResponseEntity.ok(classService.getPendingMembers(id, teacherId, role));
+    }
+
+    @PreAuthorize("hasAnyRole('TEACHER', 'DEPARTMENT_HEAD')")
+    @PutMapping("/{classId}/members/{studentId}/approve")
+    public ResponseEntity<?> approveMember(@PathVariable Long classId, @PathVariable Long studentId, HttpServletRequest httpServletRequest) {
+        Long teacherId = getCurrentUserId(httpServletRequest);
+        String role = getCurrentUserRole(httpServletRequest);
+        return ResponseEntity.ok(classService.approveMember(classId, studentId, teacherId, role));
+    }
+
+    @PreAuthorize("hasAnyRole('TEACHER', 'DEPARTMENT_HEAD')")
+    @PutMapping("/{classId}/members/{studentId}/reject")
+    public ResponseEntity<?> rejectMember(@PathVariable Long classId, @PathVariable Long studentId, HttpServletRequest httpServletRequest) {
+        Long teacherId = getCurrentUserId(httpServletRequest);
+        String role = getCurrentUserRole(httpServletRequest);
+        return ResponseEntity.ok(classService.rejectMember(classId, studentId, teacherId, role));
     }
 
     // API Cập nhật thông tin lớp học (ĐÃ SỬA LỖI VÀ CHUẨN HÓA)
@@ -89,7 +116,8 @@ public class ClassController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateClass(@PathVariable Long id, @RequestBody ClassUpdateRequest request, HttpServletRequest httpServletRequest) {
         Long teacherId = getCurrentUserId(httpServletRequest);
-        Class updatedClass = classService.updateClass(id, request, teacherId);
+        String role = getCurrentUserRole(httpServletRequest);
+        Class updatedClass = classService.updateClass(id, request, teacherId, role);
         return ResponseEntity.ok(updatedClass);
     }
 
@@ -98,6 +126,14 @@ public class ClassController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> archiveClass(@PathVariable Long id, HttpServletRequest httpServletRequest) {
         Long teacherId = getCurrentUserId(httpServletRequest);
-        return ResponseEntity.ok(classService.archiveClass(id, teacherId));
+        String role = getCurrentUserRole(httpServletRequest);
+        return ResponseEntity.ok(classService.archiveClass(id, teacherId, role));
+    }
+
+    @PreAuthorize("hasAnyRole('TEACHER', 'DEPARTMENT_HEAD')")
+    @GetMapping("/department-teachers")
+    public ResponseEntity<?> getDepartmentTeachers(HttpServletRequest httpServletRequest) {
+        Long creatorId = getCurrentUserId(httpServletRequest);
+        return ResponseEntity.ok(classService.getDepartmentTeachers(creatorId));
     }
 }

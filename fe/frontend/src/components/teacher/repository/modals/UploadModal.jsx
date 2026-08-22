@@ -18,12 +18,12 @@ export default function UploadModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
       <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full overflow-hidden border border-slate-100 dark:border-slate-800 shadow-2xl">
-        <div className="bg-indigo-600 text-white p-6 flex items-center justify-between border-b border-indigo-700 dark:border-slate-800">
+        <div className="bg-teal-600 text-white p-6 flex items-center justify-between border-b border-teal-700 dark:border-slate-800">
           <div>
             <h3 className="font-extrabold text-lg leading-tight tracking-tight text-white">
               Tải Lên File PDF
             </h3>
-            <p className="text-xs text-indigo-100 mt-0.5">
+            <p className="text-xs text-teal-100 mt-0.5">
               Tải đề thi hoặc file lời giải chi tiết
             </p>
           </div>
@@ -71,7 +71,7 @@ export default function UploadModal({
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
               File PDF <span className="text-rose-500">*</span>
             </label>
-            <div className="border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-indigo-500 dark:hover:border-indigo-400 bg-slate-50/70 dark:bg-slate-800/50 hover:bg-indigo-50/30 rounded-2xl p-6 text-center transition-all cursor-pointer relative">
+            <div className="border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-teal-500 dark:hover:border-teal-400 bg-slate-50/70 dark:bg-slate-800/50 hover:bg-teal-50/30 rounded-2xl p-6 text-center transition-all cursor-pointer relative">
               <input
                 type="file"
                 accept="application/pdf"
@@ -80,11 +80,11 @@ export default function UploadModal({
               />
               {uploadFile ? (
                 <div className="space-y-1">
-                  <FileText className="w-8 h-8 text-indigo-600 dark:text-indigo-400 mx-auto" />
+                  <FileText className="w-8 h-8 text-teal-600 dark:text-teal-400 mx-auto" />
                   <p className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate max-w-xs mx-auto">
                     {uploadFile.name}
                   </p>
-                  <p className="text-[11px] text-indigo-600 dark:text-indigo-400 font-semibold">
+                  <p className="text-[11px] text-teal-600 dark:text-teal-400 font-semibold">
                     {(uploadFile.size / 1024).toFixed(1)} KB • Bấm để chọn lại
                   </p>
                 </div>

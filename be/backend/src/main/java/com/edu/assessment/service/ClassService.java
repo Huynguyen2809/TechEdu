@@ -41,21 +41,33 @@ public class ClassService {
         return code;
     }
 
-    // Nghiệp vụ 1: Giáo viên tạo lớp mới
+    // Nghiệp vụ 1: Trưởng bộ môn hoặc Giáo viên tạo lớp mới
     @Transactional
-    public Map<String, Object> createClass(CreateClassRequest request, Long teacherId) {
-        User teacher = userRepository.findById(teacherId)
-                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy thông tin Giáo viên"));
+    public Map<String, Object> createClass(CreateClassRequest request, Long creatorId) {
+        User creator = userRepository.findById(creatorId)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy thông tin người tạo"));
 
-        if (teacher.getRole() != User.Role.TEACHER && teacher.getRole() != User.Role.CENTER_MANAGER) {
-            throw new IllegalStateException("Chỉ Giáo viên mới có quyền tạo lớp học!");
+        if (creator.getRole() != User.Role.TEACHER && creator.getRole() != User.Role.DEPARTMENT_HEAD) {
+            throw new IllegalStateException("Chỉ Giáo viên hoặc Trưởng bộ môn mới có quyền tạo lớp học!");
+        }
+
+        User assignedTeacher = creator;
+        if (creator.getRole() == User.Role.DEPARTMENT_HEAD && request.getAssignedTeacherId() != null) {
+            assignedTeacher = userRepository.findById(request.getAssignedTeacherId())
+                    .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy thông tin Giáo viên được phân công"));
+            
+            // Tùy chọn: Đảm bảo giáo viên phân công thuộc cùng bộ môn (Nếu DB có setup)
+            if (assignedTeacher.getDepartment() == null || creator.getDepartment() == null 
+                || !assignedTeacher.getDepartment().getId().equals(creator.getDepartment().getId())) {
+                throw new IllegalArgumentException("Giáo viên được phân công không thuộc bộ môn của bạn!");
+            }
         }
 
         Class newClass = Class.builder()
                 .name(request.getName())
                 .subjectName(request.getSubjectName())
                 .gradeLevel(request.getGradeLevel())
-                .teacher(teacher)
+                .teacher(assignedTeacher)
                 .joinCode(generateUniqueJoinCode())
                 .isArchived(false)
                 .build();
@@ -90,26 +102,29 @@ public class ClassService {
         // Kiểm tra xem học sinh đã có trong lớp chưa
         Optional<ClassMember> existingMember = classMemberRepository.findByClazzIdAndStudentId(targetClass.getId(), studentId);
         if (existingMember.isPresent()) {
-            if (existingMember.get().getStatus() == ClassMember.Status.ACTIVE) {
+            ClassMember.Status currentStatus = existingMember.get().getStatus();
+            if (currentStatus == ClassMember.Status.ACTIVE) {
                 throw new IllegalArgumentException("Bạn đã tham gia lớp học này rồi!");
+            } else if (currentStatus == ClassMember.Status.PENDING) {
+                throw new IllegalArgumentException("Yêu cầu của bạn đang chờ giáo viên phê duyệt!");
             } else {
-                // Nếu trước đó bị xóa, cho phép gia nhập lại bằng cách đổi trạng thái thành ACTIVE
-                existingMember.get().setStatus(ClassMember.Status.ACTIVE);
+                // Nếu trước đó bị xóa, cho phép gia nhập lại bằng cách đổi trạng thái thành PENDING
+                existingMember.get().setStatus(ClassMember.Status.PENDING);
                 classMemberRepository.save(existingMember.get());
-                return Map.of("message", "Chào mừng bạn quay trở lại lớp học: " + targetClass.getName());
+                return Map.of("message", "Đã gửi lại yêu cầu tham gia, vui lòng chờ giáo viên phê duyệt!");
             }
         }
 
         ClassMember member = ClassMember.builder()
                 .clazz(targetClass)
                 .student(student)
-                .status(ClassMember.Status.ACTIVE)
+                .status(ClassMember.Status.PENDING)
                 .build();
 
         classMemberRepository.save(member);
 
         return Map.of(
-                "message", "Tham gia lớp học thành công!",
+                "message", "Đã gửi yêu cầu tham gia, vui lòng chờ giáo viên phê duyệt!",
                 "className", targetClass.getName(),
                 "teacherName", targetClass.getTeacher().getFullName()
         );
@@ -117,7 +132,7 @@ public class ClassService {
 
     // Nghiệp vụ 3: Lấy danh sách lớp học của tôi
     public List<Map<String, Object>> getMyClasses(Long userId, String role) {
-        if ("TEACHER".equals(role)) {
+        if ("TEACHER".equals(role) || "DEPARTMENT_HEAD".equals(role)) {
             List<Class> classes = classRepository.findAllByTeacherIdAndIsArchivedFalse(userId);
             return classes.stream().map(c -> {
                 Map<String, Object> map = new HashMap<>();
@@ -151,7 +166,7 @@ public class ClassService {
         Class targetClass = classRepository.findById(classId)
                 .orElseThrow(() -> new IllegalArgumentException("Lớp học không tồn tại trên hệ thống!"));
 
-        if ("TEACHER".equals(role)) {
+        if ("TEACHER".equals(role) || "DEPARTMENT_HEAD".equals(role)) {
             if (!targetClass.getTeacher().getId().equals(userId)) {
                 throw new IllegalStateException("Bạn không phải giáo viên phụ trách lớp học này!");
             }
@@ -176,12 +191,14 @@ public class ClassService {
 
 
     // Nghiệp vụ 5: Lấy danh sách học sinh đang tham gia lớp (Status = ACTIVE) kèm điểm gần nhất
-    public List<Map<String, Object>> getClassMembers(Long classId, Long teacherId) {
+    public List<Map<String, Object>> getClassMembers(Long classId, Long teacherId, String role) {
         Class targetClass = classRepository.findById(classId)
                 .orElseThrow(() -> new IllegalArgumentException("Lớp học không tồn tại!"));
 
-        if (!targetClass.getTeacher().getId().equals(teacherId)) {
-            throw new IllegalStateException("Bạn không có quyền xem danh sách học sinh của lớp này!");
+        if ("TEACHER".equals(role) || "DEPARTMENT_HEAD".equals(role)) {
+            if (!targetClass.getTeacher().getId().equals(teacherId)) {
+                throw new IllegalStateException("Bạn không có quyền xem danh sách học sinh của lớp này!");
+            }
         }
 
         List<ClassMember> members = classMemberRepository.findAllByClazzIdAndStatusWithStudent(classId, ClassMember.Status.ACTIVE);
@@ -214,12 +231,14 @@ public class ClassService {
 
     // Nghiệp vụ 6: Xóa (mời) học sinh ra khỏi lớp
     @Transactional
-    public Map<String, Object> removeMember(Long classId, Long studentId, Long teacherId) {
+    public Map<String, Object> removeMember(Long classId, Long studentId, Long teacherId, String role) {
         Class targetClass = classRepository.findById(classId)
                 .orElseThrow(() -> new IllegalArgumentException("Lớp học không tồn tại!"));
 
-        if (!targetClass.getTeacher().getId().equals(teacherId)) {
-            throw new IllegalStateException("Bạn không có quyền xóa học sinh khỏi lớp này!");
+        if ("TEACHER".equals(role)) {
+            if (!targetClass.getTeacher().getId().equals(teacherId)) {
+                throw new IllegalStateException("Bạn không có quyền xóa học sinh khỏi lớp này!");
+            }
         }
 
         ClassMember member = classMemberRepository.findByClazzIdAndStudentId(classId, studentId)
@@ -233,14 +252,16 @@ public class ClassService {
     }
 
     @Transactional
-    public Class updateClass(Long id, ClassUpdateRequest request, Long teacherId) {
+    public Class updateClass(Long id, ClassUpdateRequest request, Long teacherId, String role) {
         // 1. Tìm lớp học theo ID
         Class targetClass = classRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy lớp học với ID: " + id));
 
         // Kiểm tra bảo mật: Chỉ giáo viên tạo lớp mới có quyền sửa tên lớp
-        if (!targetClass.getTeacher().getId().equals(teacherId)) {
-            throw new IllegalStateException("Bạn không có quyền chỉnh sửa lớp học này!");
+        if ("TEACHER".equals(role)) {
+            if (!targetClass.getTeacher().getId().equals(teacherId)) {
+                throw new IllegalStateException("Bạn không có quyền chỉnh sửa lớp học này!");
+            }
         }
 
         // 2. Cập nhật các thông tin mới
@@ -261,13 +282,15 @@ public class ClassService {
     }
 
     @Transactional
-    public Map<String, Object> archiveClass(Long classId, Long teacherId) {
+    public Map<String, Object> archiveClass(Long classId, Long teacherId, String role) {
         Class targetClass = classRepository.findById(classId)
                 .orElseThrow(() -> new IllegalArgumentException("Lớp học không tồn tại trên hệ thống!"));
 
         // Kiểm tra bảo mật: Chỉ giáo viên tạo lớp mới có quyền xóa
-        if (!targetClass.getTeacher().getId().equals(teacherId)) {
-            throw new IllegalStateException("Bạn không có quyền xóa lớp học này!");
+        if ("TEACHER".equals(role)) {
+            if (!targetClass.getTeacher().getId().equals(teacherId)) {
+                throw new IllegalStateException("Bạn không có quyền xóa lớp học này!");
+            }
         }
 
         // Bật cờ lưu trữ (Soft Delete)
@@ -275,5 +298,98 @@ public class ClassService {
         classRepository.save(targetClass);
 
         return Map.of("message", "Đã xóa lớp học thành công!");
+    }
+
+    // Nghiệp vụ 8: Xem danh sách chờ duyệt
+    public List<Map<String, Object>> getPendingMembers(Long classId, Long teacherId, String role) {
+        Class targetClass = classRepository.findById(classId)
+                .orElseThrow(() -> new IllegalArgumentException("Lớp học không tồn tại!"));
+
+        if ("TEACHER".equals(role)) {
+            if (!targetClass.getTeacher().getId().equals(teacherId)) {
+                throw new IllegalStateException("Bạn không có quyền xem danh sách chờ của lớp này!");
+            }
+        }
+
+        List<ClassMember> members = classMemberRepository.findAllByClazzIdAndStatusWithStudent(classId, ClassMember.Status.PENDING);
+
+        return members.stream().map(m -> {
+            User student = m.getStudent();
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", m.getId());
+            map.put("studentId", student.getId());
+            map.put("fullName", student.getFullName());
+            map.put("phoneNumber", student.getPhoneNumber());
+            map.put("requestedAt", m.getJoinedAt() != null ? m.getJoinedAt().toString() : "");
+            return map;
+        }).toList();
+    }
+
+    // Nghiệp vụ 9: Duyệt học sinh
+    @Transactional
+    public Map<String, Object> approveMember(Long classId, Long studentId, Long teacherId, String role) {
+        Class targetClass = classRepository.findById(classId)
+                .orElseThrow(() -> new IllegalArgumentException("Lớp học không tồn tại!"));
+
+        if ("TEACHER".equals(role)) {
+            if (!targetClass.getTeacher().getId().equals(teacherId)) {
+                throw new IllegalStateException("Bạn không có quyền duyệt học sinh lớp này!");
+            }
+        }
+
+        ClassMember member = classMemberRepository.findByClazzIdAndStudentId(classId, studentId)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy yêu cầu tham gia!"));
+
+        if (member.getStatus() != ClassMember.Status.PENDING) {
+            throw new IllegalStateException("Yêu cầu này không ở trạng thái chờ duyệt!");
+        }
+
+        member.setStatus(ClassMember.Status.ACTIVE);
+        classMemberRepository.save(member);
+
+        return Map.of("message", "Đã duyệt học sinh vào lớp!");
+    }
+
+    // Nghiệp vụ 10: Từ chối học sinh
+    @Transactional
+    public Map<String, Object> rejectMember(Long classId, Long studentId, Long teacherId, String role) {
+        Class targetClass = classRepository.findById(classId)
+                .orElseThrow(() -> new IllegalArgumentException("Lớp học không tồn tại!"));
+
+        if ("TEACHER".equals(role)) {
+            if (!targetClass.getTeacher().getId().equals(teacherId)) {
+                throw new IllegalStateException("Bạn không có quyền từ chối học sinh lớp này!");
+            }
+        }
+
+        ClassMember member = classMemberRepository.findByClazzIdAndStudentId(classId, studentId)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy yêu cầu tham gia!"));
+
+        if (member.getStatus() != ClassMember.Status.PENDING) {
+            throw new IllegalStateException("Yêu cầu này không ở trạng thái chờ duyệt!");
+        }
+
+        classMemberRepository.delete(member); // Từ chối thì xóa luôn bản ghi cho nhẹ Database
+
+        return Map.of("message", "Đã từ chối yêu cầu tham gia!");
+    }
+
+    public List<Map<String, Object>> getDepartmentTeachers(Long creatorId) {
+        User creator = userRepository.findById(creatorId).orElseThrow();
+        if (creator.getRole() != User.Role.DEPARTMENT_HEAD) {
+            return List.of(Map.of("id", creator.getId(), "fullName", "Bản thân (" + creator.getFullName() + ")"));
+        }
+
+        List<User> teachers = userRepository.findAllByRoleOrderByCreatedAtDesc(User.Role.TEACHER);
+        List<Map<String, Object>> result = new ArrayList<>();
+        result.add(Map.of("id", creator.getId(), "fullName", "Bản thân (" + creator.getFullName() + ")"));
+        
+        for (User t : teachers) {
+            if (t.getDepartment() != null && creator.getDepartment() != null 
+                && t.getDepartment().getId().equals(creator.getDepartment().getId())) {
+                result.add(Map.of("id", t.getId(), "fullName", t.getFullName()));
+            }
+        }
+        return result;
     }
 }

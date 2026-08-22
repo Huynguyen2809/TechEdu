@@ -69,7 +69,7 @@ public class RepositoryService {
 
     // Nghiệp vụ 2: Tải file PDF đề thi / lời giải lên hệ thống
     @Transactional
-    public Map<String, Object> uploadDocument(MultipartFile file, Long folderId, String fileTypeStr, Long teacherId)
+    public Map<String, Object> uploadDocument(MultipartFile file, Long folderId, String fileTypeStr, Boolean isDepartmentMaterial, Long teacherId)
             throws IOException {
         if (file.isEmpty()) {
             throw new IllegalArgumentException("Vui lòng chọn file PDF để tải lên!");
@@ -82,6 +82,10 @@ public class RepositoryService {
 
         User teacher = userRepository.findById(teacherId)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy thông tin Giáo viên"));
+
+        if (Boolean.TRUE.equals(isDepartmentMaterial) && teacher.getRole() != User.Role.DEPARTMENT_HEAD) {
+            throw new IllegalStateException("Chỉ Trưởng bộ môn mới có quyền đánh dấu tài liệu dùng chung!");
+        }
 
         Folder folder = null;
         if (folderId != null) {
@@ -115,6 +119,7 @@ public class RepositoryService {
                 .fileSizeKb(file.getSize() / 1024)
                 .teacher(teacher)
                 .folder(folder)
+                .isDepartmentMaterial(Boolean.TRUE.equals(isDepartmentMaterial))
                 .build();
 
         documentRepository.save(document);
@@ -246,11 +251,6 @@ public class RepositoryService {
             if (document.getFileUrl() != null && document.getFileUrl().contains("/api/v1/repository/documents/view/")) {
                 String gridFsId = document.getFileUrl().substring(document.getFileUrl().lastIndexOf("/") + 1);
                 gridFsTemplate.delete(new Query(Criteria.where("_id").is(gridFsId)));
-            } else if (document.getFileUrl() != null && document.getFileUrl().startsWith("/api/v1/files/")) {
-                // Hỗ trợ xóa các file cũ lưu ở ổ cứng
-                String fileName = document.getFileUrl().replace("/api/v1/files/", "");
-                Path path = Paths.get("local-storage/uploads/" + fileName);
-                Files.deleteIfExists(path);
             }
         } catch (Exception e) {
             System.err.println("Lỗi khi xóa file: " + e.getMessage());

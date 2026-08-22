@@ -13,13 +13,13 @@ export default function RepositoryBreadcrumb({ folderHistory, onNavigate }) {
           <React.Fragment key={hist.id || `root-${index}`}>
             <div
               onClick={() => onNavigate(index)}
-              className={`flex items-center gap-1.5 cursor-pointer hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors whitespace-nowrap ${
+              className={`flex items-center gap-1.5 cursor-pointer hover:text-teal-600 dark:hover:text-teal-400 transition-colors whitespace-nowrap ${
                 isCurrent
-                  ? "text-indigo-600 dark:text-indigo-400 font-bold pointer-events-none bg-indigo-50 dark:bg-indigo-950/60 px-2.5 py-1 rounded-lg border border-indigo-200/60 dark:border-indigo-900/60"
+                  ? "text-teal-600 dark:text-teal-400 font-bold pointer-events-none bg-teal-50 dark:bg-teal-950/60 px-2.5 py-1 rounded-lg border border-teal-200/60 dark:border-teal-900/60"
                   : ""
               }`}
             >
-              {index === 0 && <Home className="w-4 h-4 text-indigo-500" />}
+              {index === 0 && <Home className="w-4 h-4 text-teal-500" />}
               <span>{hist.name}</span>
             </div>
             {!isCurrent && (

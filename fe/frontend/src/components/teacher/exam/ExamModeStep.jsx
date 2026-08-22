@@ -69,7 +69,7 @@ export default function ExamModeStep({
   return (
     <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/60 dark:border-slate-800/60 p-6 md:p-8 shadow-sm space-y-8 transition-all duration-300">
       <div className="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-800">
-        <div className="p-2 bg-indigo-50 dark:bg-indigo-900/30 rounded-xl text-indigo-600 dark:text-indigo-400">
+        <div className="p-2 bg-teal-50 dark:bg-teal-900/30 rounded-xl text-teal-600 dark:text-teal-400">
           <LayoutList className="w-5 h-5" />
         </div>
         <div>
@@ -86,17 +86,17 @@ export default function ExamModeStep({
           onClick={() => setExamMode("THPT")}
           className={`relative p-6 rounded-3xl border-2 transition-all cursor-pointer group flex flex-col h-full ${
             examMode === "THPT"
-              ? "border-indigo-500 bg-indigo-50/40 dark:bg-indigo-900/20 shadow-md scale-[1.02]"
-              : "border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-600 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+              ? "border-teal-500 bg-teal-50/40 dark:bg-teal-900/20 shadow-md scale-[1.02]"
+              : "border-slate-200 dark:border-slate-700 hover:border-teal-300 dark:hover:border-teal-600 hover:bg-slate-50 dark:hover:bg-slate-800/50"
           }`}
         >
           {examMode === "THPT" && (
-            <div className="absolute -top-3 -right-3 bg-indigo-500 text-white text-[10px] font-black px-3 py-1 rounded-full shadow-sm uppercase tracking-wider animate-in zoom-in">
+            <div className="absolute -top-3 -right-3 bg-teal-500 text-white text-[10px] font-black px-3 py-1 rounded-full shadow-sm uppercase tracking-wider animate-in zoom-in">
               Đang Chọn
             </div>
           )}
           <div className="flex items-start gap-4">
-            <div className={`p-3 rounded-2xl ${examMode === "THPT" ? "bg-indigo-600 text-white shadow-sm" : "bg-slate-100 dark:bg-slate-800 text-slate-500 group-hover:bg-indigo-100 group-hover:text-indigo-600 transition-colors"}`}>
+            <div className={`p-3 rounded-2xl ${examMode === "THPT" ? "bg-teal-600 text-white shadow-sm" : "bg-slate-100 dark:bg-slate-800 text-slate-500 group-hover:bg-teal-100 group-hover:text-teal-600 transition-colors"}`}>
               <Zap className="w-6 h-6" />
             </div>
             <div>
@@ -204,7 +204,7 @@ export default function ExamModeStep({
         <button
           onClick={onNext}
           disabled={examMode === "CUSTOM" && !isCustomValid}
-          className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 dark:disabled:bg-slate-700 text-white font-bold rounded-xl transition-all shadow-sm active:scale-95 disabled:cursor-not-allowed"
+          className="flex items-center gap-2 px-6 py-2.5 bg-teal-600 hover:bg-teal-700 disabled:bg-slate-300 dark:disabled:bg-slate-700 text-white font-bold rounded-xl transition-all shadow-sm active:scale-95 disabled:cursor-not-allowed"
         >
           Tiếp tục <ArrowRight className="w-4 h-4" />
         </button>

@@ -125,10 +125,10 @@ export default function TeacherDashboard() {
   return (
     <div className="space-y-8 font-sans">
       {/* BANNER CHÀO MỪNG (Glassmorphism & Gradient) */}
-      <div className="relative rounded-3xl p-6 sm:p-8 text-white overflow-hidden shadow-lg border border-indigo-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-800 z-0"></div>
+      <div className="relative rounded-3xl p-6 sm:p-8 text-white overflow-hidden shadow-lg border border-teal-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+        <div className="absolute inset-0 bg-gradient-to-br from-teal-600 via-teal-700 to-violet-800 z-0"></div>
         <div className="absolute -right-20 -top-20 w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none z-0"></div>
-        <div className="absolute -left-10 -bottom-10 w-48 h-48 bg-indigo-400/20 rounded-full blur-2xl pointer-events-none z-0"></div>
+        <div className="absolute -left-10 -bottom-10 w-48 h-48 bg-teal-400/20 rounded-full blur-2xl pointer-events-none z-0"></div>
 
         <div className="relative z-10 space-y-2">
           <div className="bg-white/15 backdrop-blur-md text-white/90 border border-white/20 text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full inline-flex items-center gap-1.5 shadow-sm">
@@ -137,7 +137,7 @@ export default function TeacherDashboard() {
           <h1 className="text-2xl sm:text-3xl font-black tracking-tight mt-2">
             Xin chào, {teacherName}
           </h1>
-          <p className="text-indigo-100 text-sm font-medium max-w-xl leading-relaxed">
+          <p className="text-teal-100 text-sm font-medium max-w-xl leading-relaxed">
             Hãy bắt đầu quản lý lớp học và kiểm tra tiến độ làm bài của học sinh.
           </p>
         </div>
@@ -145,7 +145,7 @@ export default function TeacherDashboard() {
         <div className="relative z-10 shrink-0">
           <button
             onClick={() => navigate("/teacher/exams")}
-            className="bg-white hover:bg-slate-50 text-indigo-700 font-bold px-5 py-3 rounded-xl text-sm shadow-md transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap"
+            className="bg-white hover:bg-slate-50 text-teal-700 font-bold px-5 py-3 rounded-xl text-sm shadow-md transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap"
           >
             <Zap className="w-4 h-4 text-amber-500 fill-amber-500" />
             <span>Tạo Đề Thi Nhanh</span>
@@ -156,7 +156,7 @@ export default function TeacherDashboard() {
       {/* ── THỐNG KÊ NHANH ── */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {/* Card 1: Tổng Lớp Học */}
-        <div className={`${CARD_HOVER} p-6 flex items-center justify-between hover:border-indigo-300 dark:hover:border-indigo-700/60`}>
+        <div className={`${CARD_HOVER} p-6 flex items-center justify-between hover:border-teal-300 dark:hover:border-teal-700/60`}>
           <div className="space-y-1">
             <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Lớp Học</p>
             <div className="flex items-baseline gap-1.5">
@@ -165,7 +165,7 @@ export default function TeacherDashboard() {
             </div>
             <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Đang quản lý trực tiếp</p>
           </div>
-          <div className={`${ICON_BOX} bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 group-hover:bg-indigo-600 group-hover:text-white border-indigo-100 dark:border-indigo-800/60 transition-colors`}>
+          <div className={`${ICON_BOX} bg-teal-50 dark:bg-teal-900/40 text-teal-600 dark:text-teal-400 group-hover:bg-teal-600 group-hover:text-white border-teal-100 dark:border-teal-800/60 transition-colors`}>
             <BookOpen className="w-6 h-6" />
           </div>
         </div>
@@ -206,20 +206,20 @@ export default function TeacherDashboard() {
       {/* ── THAO TÁC NHANH ── */}
       <div>
         <h2 className="text-lg font-extrabold text-slate-800 dark:text-slate-100 tracking-tight mb-4 flex items-center gap-2">
-          <Zap className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+          <Zap className="w-5 h-5 text-teal-600 dark:text-teal-400" />
           <span>Thao Tác Nhanh</span>
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
           {/* Action 1: Tạo Đề Thi Mới */}
           <button
             onClick={() => navigate("/teacher/exams")}
-            className={`${CARD_HOVER} p-5 text-left flex items-center gap-4 cursor-pointer w-full hover:border-indigo-400 dark:hover:border-indigo-600`}
+            className={`${CARD_HOVER} p-5 text-left flex items-center gap-4 cursor-pointer w-full hover:border-teal-400 dark:hover:border-teal-600`}
           >
-            <div className={`${ICON_BOX} bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 group-hover:bg-indigo-600 group-hover:text-white border-indigo-100 dark:border-indigo-800/60 transition-colors`}>
+            <div className={`${ICON_BOX} bg-teal-50 dark:bg-teal-900/40 text-teal-600 dark:text-teal-400 group-hover:bg-teal-600 group-hover:text-white border-teal-100 dark:border-teal-800/60 transition-colors`}>
               <Zap className="w-5 h-5" />
             </div>
             <div>
-              <p className="font-bold text-base text-slate-800 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors tracking-tight">
+              <p className="font-bold text-base text-slate-800 dark:text-slate-100 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors tracking-tight">
                 Tạo Đề Thi Mới
               </p>
               <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-0.5">
@@ -271,12 +271,12 @@ export default function TeacherDashboard() {
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
           <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full overflow-hidden border border-slate-200 dark:border-slate-800 shadow-2xl transition-all">
             {/* Header Modal */}
-            <div className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white p-6 flex items-center justify-between">
+            <div className="bg-gradient-to-r from-teal-600 to-violet-600 text-white p-6 flex items-center justify-between">
               <div>
                 <h3 className="font-extrabold text-xl leading-tight tracking-tight">
                   Tạo Lớp Học Mới
                 </h3>
-                <p className="text-xs font-medium text-indigo-100 mt-1 opacity-90">
+                <p className="text-xs font-medium text-teal-100 mt-1 opacity-90">
                   Hệ thống sinh tự động Mã Join Code 6 ký tự
                 </p>
               </div>
@@ -299,7 +299,7 @@ export default function TeacherDashboard() {
                   placeholder="Ví dụ: Lớp 12A1 - Ôn thi THPT"
                   value={className}
                   onChange={(e) => setClassName(e.target.value)}
-                  className="w-full px-4 py-3 bg-slate-50/50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-900 focus:ring-4 focus:ring-indigo-500/10 text-slate-800 dark:text-slate-100 font-semibold transition-all shadow-sm"
+                  className="w-full px-4 py-3 bg-slate-50/50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-teal-500 focus:bg-white dark:focus:bg-slate-900 focus:ring-4 focus:ring-teal-500/10 text-slate-800 dark:text-slate-100 font-semibold transition-all shadow-sm"
                 />
               </div>
 
@@ -311,7 +311,7 @@ export default function TeacherDashboard() {
                   <select
                     value={selectedSubject}
                     onChange={(e) => setSelectedSubject(e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-50/50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-900 focus:ring-4 focus:ring-indigo-500/10 text-slate-800 dark:text-slate-100 font-semibold cursor-pointer transition-all shadow-sm"
+                    className="w-full px-4 py-3 bg-slate-50/50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-teal-500 focus:bg-white dark:focus:bg-slate-900 focus:ring-4 focus:ring-teal-500/10 text-slate-800 dark:text-slate-100 font-semibold cursor-pointer transition-all shadow-sm"
                   >
                     <option value="Hóa học">Hóa học</option>
                     <option value="Toán học">Toán học</option>
@@ -329,7 +329,7 @@ export default function TeacherDashboard() {
                   <select
                     value={gradeLevel}
                     onChange={(e) => setGradeLevel(e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-50/50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-900 focus:ring-4 focus:ring-indigo-500/10 text-slate-800 dark:text-slate-100 font-semibold cursor-pointer transition-all shadow-sm"
+                    className="w-full px-4 py-3 bg-slate-50/50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-teal-500 focus:bg-white dark:focus:bg-slate-900 focus:ring-4 focus:ring-teal-500/10 text-slate-800 dark:text-slate-100 font-semibold cursor-pointer transition-all shadow-sm"
                   >
                     <option value={10}>Khối 10</option>
                     <option value={11}>Khối 11</option>
@@ -349,7 +349,7 @@ export default function TeacherDashboard() {
                 <button
                   type="submit"
                   disabled={creatingClass}
-                  className="bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white font-semibold rounded-xl flex-1 py-2.5 px-4 text-sm disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-sm active:scale-[0.98] transition-all"
+                  className="bg-teal-600 hover:bg-teal-700 dark:bg-teal-500 dark:hover:bg-teal-600 text-white font-semibold rounded-xl flex-1 py-2.5 px-4 text-sm disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-sm active:scale-[0.98] transition-all"
                 >
                   {creatingClass ? (
                     <div className="flex items-center gap-2">

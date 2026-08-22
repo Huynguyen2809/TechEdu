@@ -215,12 +215,12 @@ export default function StudentLayout({ children }) {
       {/* RIGHT MAIN CONTENT AREA */}
       <div className="flex-1 min-w-0 flex flex-col min-h-screen bg-[#F8FAFC] dark:bg-slate-950 transition-colors duration-200">
         {/* TOPBAR */}
-        <header className="h-16 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200/60 dark:border-slate-800/60 shadow-sm px-4 sm:px-8 flex items-center justify-between sticky top-0 z-30 transition-all duration-200">
+        <header className="h-16 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-b border-white/20 dark:border-slate-700/30 shadow-[0_2px_10px_rgb(0,0,0,0.02)] px-4 sm:px-8 flex items-center justify-between sticky top-0 z-30 transition-all duration-200">
           {/* Left Title / Mobile Toggle */}
           <div className="flex items-center gap-3">
             <button
               onClick={() => setMobileSidebarOpen(true)}
-              className="lg:hidden p-2 rounded-xl text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 cursor-pointer transition-colors"
+              className="lg:hidden p-2 rounded-xl text-slate-500 hover:text-sky-600 dark:text-slate-400 dark:hover:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-900/30 cursor-pointer transition-colors"
             >
               <Menu className="w-5 h-5" />
             </button>
@@ -235,7 +235,7 @@ export default function StudentLayout({ children }) {
             <div className="relative" ref={notifRef}>
               <button
                 onClick={() => setShowNotifications(!showNotifications)}
-                className="relative p-2 rounded-xl text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-all cursor-pointer"
+                className="relative p-2 rounded-xl text-slate-500 hover:text-sky-600 dark:text-slate-400 dark:hover:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-900/30 transition-all cursor-pointer"
                 title="Thông báo"
               >
                 <Bell className="w-5 h-5" />
@@ -248,13 +248,13 @@ export default function StudentLayout({ children }) {
 
               {/* Notification Popover Dropdown (Glassmorphism) */}
               {showNotifications && (
-                <div className="absolute right-0 mt-3 w-80 sm:w-96 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl rounded-2xl shadow-xl border border-slate-200/60 dark:border-slate-700/60 overflow-hidden z-50 animate-fade-in origin-top-right">
-                  <div className="p-4 bg-gradient-to-r from-indigo-600 to-violet-600 text-white flex items-center justify-between">
+                <div className="absolute right-0 mt-3 w-80 sm:w-96 bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-slate-200/60 dark:border-slate-700/60 overflow-hidden z-50 animate-fade-in origin-top-right">
+                  <div className="p-4 bg-gradient-to-r from-sky-500 to-blue-600 text-white flex items-center justify-between shadow-sm">
                     <div className="flex items-center gap-2 font-bold text-sm">
                       <Bell className="w-4 h-4" />
                       <span>Thông báo của bạn</span>
                       {unreadCount > 0 && (
-                        <span className="bg-white/20 text-white text-[11px] px-2 py-0.5 rounded-full font-semibold">
+                        <span className="bg-white/20 text-white text-[11px] px-2 py-0.5 rounded-full font-semibold shadow-sm">
                           {unreadCount} mới
                         </span>
                       )}
@@ -262,7 +262,7 @@ export default function StudentLayout({ children }) {
                     {unreadCount > 0 && (
                       <button
                         onClick={markAllRead}
-                        className="text-xs text-indigo-100 hover:text-white underline cursor-pointer font-medium"
+                        className="text-xs text-sky-100 hover:text-white underline cursor-pointer font-medium transition-colors"
                       >
                         Đánh dấu đã đọc
                       </button>
@@ -286,7 +286,7 @@ export default function StudentLayout({ children }) {
                           key={n.id}
                           onClick={() => handleNotificationClick(n)}
                           className={`p-4 flex items-start gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer ${
-                            n.unread ? "bg-indigo-50/40 dark:bg-indigo-900/20" : ""
+                            n.unread ? "bg-sky-50/40 dark:bg-sky-900/20" : ""
                           }`}
                         >
                           <div className="mt-0.5 shrink-0">
@@ -313,7 +313,7 @@ export default function StudentLayout({ children }) {
                                 {n.title}
                               </p>
                               {n.unread && (
-                                <span className="w-2 h-2 rounded-full bg-indigo-500 shrink-0" />
+                                <span className="w-2 h-2 rounded-full bg-sky-500 shrink-0" />
                               )}
                             </div>
                             <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
@@ -333,14 +333,11 @@ export default function StudentLayout({ children }) {
             </div>
 
             {/* User Capsule Widget */}
-            <div className="flex items-center gap-2.5 bg-white dark:bg-slate-900 px-3 py-1.5 rounded-full border border-slate-200/60 dark:border-slate-700/60 shadow-sm">
-              <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-indigo-600 to-violet-500 text-white font-extrabold text-xs flex items-center justify-center shrink-0 shadow-inner">
-                {studentInitials}
-              </div>
-              <span className="text-xs font-bold text-slate-800 dark:text-slate-100 hidden md:inline-block max-w-[120px] truncate">
+            <div className="flex items-center gap-2.5 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-slate-200/60 dark:border-slate-700/60 shadow-sm transition-all hover:shadow-md cursor-pointer group">
+              <span className="text-xs font-bold text-slate-800 dark:text-slate-100 hidden md:inline-block max-w-[120px] truncate group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors">
                 {studentName}
               </span>
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-800/60">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border border-blue-100 dark:border-blue-800/60 transition-colors">
                 <Star className="w-2.5 h-2.5 fill-current" />
                 <span className="hidden lg:inline">Học sinh</span>
               </span>

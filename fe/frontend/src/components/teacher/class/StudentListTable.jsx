@@ -22,7 +22,7 @@ export default function StudentListTable({
       <div className="p-6 sm:p-8 border-b border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-lg font-extrabold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-            <GraduationCap className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+            <GraduationCap className="w-6 h-6 text-teal-600 dark:text-teal-400" />
             Danh Sách Học Sinh
           </h2>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
@@ -38,7 +38,7 @@ export default function StudentListTable({
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Tìm theo họ tên hoặc SĐT..."
-            className="w-full pl-10 pr-8 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-700 transition-all"
+            className="w-full pl-10 pr-8 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:bg-white dark:focus:bg-slate-700 transition-all"
           />
           {searchTerm && (
             <button
@@ -54,7 +54,7 @@ export default function StudentListTable({
       {/* Table Data */}
       {members.length === 0 ? (
         <div className="p-16 text-center max-w-md mx-auto space-y-4">
-          <div className="w-16 h-16 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 rounded-2xl flex items-center justify-center mx-auto shadow-inner">
+          <div className="w-16 h-16 bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 rounded-2xl flex items-center justify-center mx-auto shadow-inner">
             <Users className="w-8 h-8" />
           </div>
           <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">
@@ -62,7 +62,7 @@ export default function StudentListTable({
           </h3>
           <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
             Hãy gửi mã tham gia{" "}
-            <b className="font-mono text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 px-2 py-0.5 rounded">
+            <b className="font-mono text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/60 px-2 py-0.5 rounded">
               {joinCode}
             </b>{" "}
             cho học sinh của bạn để các em nhập vào hệ thống và gia nhập lớp.
@@ -93,7 +93,7 @@ export default function StudentListTable({
               {filteredMembers.map((member, index) => (
                 <tr
                   key={member.id || member.studentId || index}
-                  className="hover:bg-indigo-50/20 dark:hover:bg-slate-800/40 transition-colors"
+                  className="hover:bg-teal-50/20 dark:hover:bg-slate-800/40 transition-colors"
                 >
                   <td className="py-4 px-6 text-center text-slate-400 font-bold">
                     {index + 1}
@@ -120,7 +120,7 @@ export default function StudentListTable({
                   <td className="py-4 px-6 text-center">
                     {member.latestScore !== undefined &&
                     member.latestScore !== null ? (
-                      <span className="font-extrabold text-indigo-600 bg-indigo-50 dark:bg-indigo-950/60 dark:text-indigo-400 px-2.5 py-1 rounded-lg border border-indigo-100 dark:border-indigo-900">
+                      <span className="font-extrabold text-teal-600 bg-teal-50 dark:bg-teal-950/60 dark:text-teal-400 px-2.5 py-1 rounded-lg border border-teal-100 dark:border-teal-900">
                         {member.latestScore}
                       </span>
                     ) : (

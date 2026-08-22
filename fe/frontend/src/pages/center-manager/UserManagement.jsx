@@ -31,7 +31,7 @@ function RoleBadge({ role }) {
     );
   }
   return (
-    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 border border-blue-200/60 dark:border-blue-800/60 whitespace-nowrap shadow-sm">
+    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-800/60 whitespace-nowrap shadow-sm">
       <Award className="w-3.5 h-3.5 shrink-0" />
       <span>Giáo viên</span>
     </span>
@@ -292,8 +292,8 @@ export default function UserManagement() {
             <p className="text-2xl font-black text-purple-600 dark:text-purple-400">{headCount}</p>
           </div>
           <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/60 rounded-2xl p-4 md:p-5 shadow-sm">
-            <p className="text-[11px] text-blue-500 dark:text-blue-400 font-extrabold uppercase tracking-wider mb-1">Giáo viên</p>
-            <p className="text-2xl font-black text-blue-600 dark:text-blue-400">{teacherCount}</p>
+            <p className="text-[11px] text-indigo-500 dark:text-indigo-400 font-extrabold uppercase tracking-wider mb-1">Giáo viên</p>
+            <p className="text-2xl font-black text-indigo-600 dark:text-indigo-400">{teacherCount}</p>
           </div>
           <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/60 rounded-2xl p-4 md:p-5 shadow-sm">
             <p className="text-[11px] text-rose-500 dark:text-rose-400 font-extrabold uppercase tracking-wider mb-1">Đã khóa</p>
@@ -374,11 +374,7 @@ export default function UserManagement() {
 
                       <td className="py-4 px-6 text-left whitespace-nowrap">
                         <div className="flex items-center gap-3">
-                          <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ${
-                            user.isActive ? "bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300" : "bg-slate-100 dark:bg-slate-800 text-slate-500"
-                          }`}>
-                            {user.fullName.charAt(0)}
-                          </div>
+
                           <div>
                             <p className="font-bold text-slate-900 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                               {user.fullName}
@@ -619,9 +615,7 @@ export default function UserManagement() {
       {detailUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200/60 dark:border-slate-800/60 w-full max-w-sm overflow-hidden p-6 md:p-8 text-center animate-in zoom-in-95 duration-200">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 text-white font-black flex items-center justify-center text-3xl mx-auto shadow-lg shadow-indigo-500/20 mb-4 border-4 border-white dark:border-slate-800">
-              {detailUser.fullName.charAt(0)}
-            </div>
+
             <div className="mb-6">
               <h3 className="font-black text-slate-900 dark:text-slate-100 text-xl">
                 {detailUser.fullName}

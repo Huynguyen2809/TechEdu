@@ -25,7 +25,7 @@ export default function ExamPreviewStep({
           <h2 className="text-lg font-black text-slate-900 dark:text-slate-100 flex items-center gap-3">
             3. Xem Trước &amp; Xác Nhận Xuất Bản Bài Thi
             {examMode === "THPT" ? (
-              <span className="px-2.5 py-1 rounded-lg bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-400 text-[10px] font-black uppercase tracking-wider">Đề THPT</span>
+              <span className="px-2.5 py-1 rounded-lg bg-teal-100 dark:bg-teal-900/50 text-teal-700 dark:text-teal-400 text-[10px] font-black uppercase tracking-wider">Đề THPT</span>
             ) : (
               <span className="px-2.5 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-400 text-[10px] font-black uppercase tracking-wider">Đề Tùy chỉnh</span>
             )}
@@ -48,7 +48,7 @@ export default function ExamPreviewStep({
           <p className="text-[10px] text-slate-500 dark:text-slate-400 font-extrabold uppercase tracking-widest mb-1.5 flex items-center gap-1.5">
             <ListChecks className="w-3.5 h-3.5" /> Lớp học áp dụng
           </p>
-          <p className="text-sm font-black text-indigo-600 dark:text-indigo-400 leading-tight">
+          <p className="text-sm font-black text-teal-600 dark:text-teal-400 leading-tight">
             {className || "(Chưa chọn lớp)"}
           </p>
         </div>
@@ -64,8 +64,8 @@ export default function ExamPreviewStep({
       </div>
 
       {/* Chi tiết ca thi */}
-      <div className="bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 p-5 rounded-2xl border border-indigo-100/60 dark:border-indigo-800/40 space-y-3 shadow-sm">
-        <div className="flex items-center gap-2 text-sm font-black text-indigo-800 dark:text-indigo-300">
+      <div className="bg-gradient-to-r from-teal-50 to-emerald-50 dark:from-teal-900/20 dark:to-emerald-900/20 p-5 rounded-2xl border border-teal-100/60 dark:border-teal-800/40 space-y-3 shadow-sm">
+        <div className="flex items-center gap-2 text-sm font-black text-teal-800 dark:text-teal-300">
           <Calendar className="w-5 h-5" />
           <span>Thời gian diễn ra ca thi:</span>
         </div>
@@ -89,7 +89,7 @@ export default function ExamPreviewStep({
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
           <div className="bg-white dark:bg-slate-800/80 p-4 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 shadow-sm flex flex-col items-center justify-center gap-1">
-            <span className="font-black text-indigo-600 dark:text-indigo-400 text-3xl leading-none">
+            <span className="font-black text-teal-600 dark:text-teal-400 text-3xl leading-none">
               {part1Count}
             </span>
             <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Phần 1 (Trắc nghiệm)</span>

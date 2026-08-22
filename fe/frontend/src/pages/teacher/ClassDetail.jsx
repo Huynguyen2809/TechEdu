@@ -12,6 +12,7 @@ import ClassHeaderBanner from "../../components/teacher/class/ClassHeaderBanner"
 import StudentListTable from "../../components/teacher/class/StudentListTable";
 import EditClassNameModal from "../../components/teacher/class/modals/EditClassNameModal";
 import RemoveStudentModal from "../../components/teacher/class/modals/RemoveStudentModal";
+import PendingStudentList from "../../components/teacher/class/PendingStudentList";
 
 export default function ClassDetail() {
   const { id } = useParams();
@@ -20,6 +21,7 @@ export default function ClassDetail() {
   // State thông tin lớp và học sinh
   const [classInfo, setClassInfo] = useState(null);
   const [members, setMembers] = useState([]);
+  const [pendingMembers, setPendingMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -52,15 +54,17 @@ export default function ClassDetail() {
     setLoading(true);
     setError("");
     try {
-      const [infoData, membersData] = await Promise.all([
+      const [infoData, membersData, pendingData] = await Promise.all([
         classService.getClassDetails(id),
-        classService.getClassMembers(id)
+        classService.getClassMembers(id),
+        classService.getPendingMembers(id).catch(() => [])
       ]);
 
       if (isMounted()) {
         setClassInfo(infoData);
         setNewClassName(infoData?.name || "");
         setMembers(Array.isArray(membersData) ? membersData : []);
+        setPendingMembers(Array.isArray(pendingData) ? pendingData : []);
       }
     } catch (err) {
       if (isMounted()) {
@@ -152,6 +156,36 @@ export default function ClassDetail() {
     }
   };
 
+  const handleApproveMember = async (student) => {
+    const studentId = student.studentId || student.id;
+    setActionLoading(true);
+    try {
+      await classService.approveMember(id, studentId);
+      setPendingMembers(prev => prev.filter(m => (m.studentId || m.id) !== studentId));
+      // Thay vì gọi lại API, tạm thời reload lại data
+      fetchClassData(() => true);
+      showToast(`Đã duyệt học sinh "${student.fullName}" vào lớp.`);
+    } catch (err) {
+      showToast(err.response?.data?.message || "Lỗi khi duyệt", "error");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleRejectMember = async (student) => {
+    const studentId = student.studentId || student.id;
+    setActionLoading(true);
+    try {
+      await classService.rejectMember(id, studentId);
+      setPendingMembers(prev => prev.filter(m => (m.studentId || m.id) !== studentId));
+      showToast(`Đã từ chối học sinh "${student.fullName}".`);
+    } catch (err) {
+      showToast(err.response?.data?.message || "Lỗi khi từ chối", "error");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   // 5. Lọc học sinh theo từ khóa (Memorized)
   const filteredMembers = useMemo(() => {
     const term = searchTerm.toLowerCase().trim();
@@ -193,7 +227,7 @@ export default function ClassDetail() {
       <div>
         <button
           onClick={() => navigate("/teacher/classes")}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl text-slate-700 hover:text-indigo-600 font-semibold text-sm transition-all shadow-2xs cursor-pointer"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl text-slate-700 hover:text-teal-600 font-semibold text-sm transition-all shadow-2xs cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Quay lại Danh sách lớp</span>
@@ -211,7 +245,7 @@ export default function ClassDetail() {
       {/* Loading State */}
       {loading ? (
         <div className="py-24 text-center space-y-3">
-          <div className="w-10 h-10 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto"></div>
+          <div className="w-10 h-10 border-4 border-teal-200 border-t-teal-600 rounded-full animate-spin mx-auto"></div>
           <p className="text-sm text-slate-500 font-medium">
             Đang tải dữ liệu lớp học và danh sách học sinh...
           </p>
@@ -228,6 +262,13 @@ export default function ClassDetail() {
               setNewClassName(classInfo.name);
               setIsEditModalOpen(true);
             }}
+          />
+
+          <PendingStudentList 
+            pendingMembers={pendingMembers}
+            onApprove={handleApproveMember}
+            onReject={handleRejectMember}
+            actionLoading={actionLoading}
           />
 
           {/* Bảng Danh sách Học sinh */}

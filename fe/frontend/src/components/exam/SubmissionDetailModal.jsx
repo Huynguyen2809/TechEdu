@@ -1,19 +1,6 @@
 import React, { useState, useEffect } from "react";
-import submissionService from "../../services/submissionService";
-import axiosClient from "../../services/axiosClient";
-import {
-  X,
-  Calendar,
-  Clock,
-  CheckCircle2,
-  XCircle,
-  AlertCircle,
-  Lock,
-  FileText,
-  Award,
-  Sparkles,
-} from "lucide-react";
-
+import { FileText, CheckCircle2, XCircle, AlertCircle, Maximize2, Minimize2, Sparkles, AlertTriangle, Lock, X, Calendar, Clock, Award } from "lucide-react";
+import PDFViewer from "./PDFViewer";
 function formatDate(isoString) {
   if (!isoString) return "—";
   return new Date(isoString).toLocaleString("vi-VN", {
@@ -53,7 +40,7 @@ function PartBadge({ partType }) {
   );
 }
 
-export default function SubmissionDetailModal({ submissionId, onClose }) {
+export default function SubmissionDetailModal({ submissionId, onClose, role = "STUDENT" }) {
   const [detail, setDetail] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -66,7 +53,14 @@ export default function SubmissionDetailModal({ submissionId, onClose }) {
       setLoading(true);
       setError("");
       try {
-        const data = await submissionService.getMySubmissionDetail(submissionId);
+        let data;
+        if (role === "TEACHER" || role === "DEPARTMENT_HEAD") {
+          const { default: gradebookService } = await import("../../services/gradebookService");
+          data = await gradebookService.getSubmissionDetail(submissionId);
+        } else {
+          const { default: submissionService } = await import("../../services/submissionService");
+          data = await submissionService.getMySubmissionDetail(submissionId);
+        }
         setDetail(data);
       } catch (err) {
         setError(err.response?.data?.message || "Không thể lấy chi tiết bài thi.");
@@ -101,58 +95,6 @@ export default function SubmissionDetailModal({ submissionId, onClose }) {
   const rawExplanationPdfUrl = detail?.explanationFileUrl;
   const hasPdfSection = Boolean(rawExamPdfUrl || rawExplanationPdfUrl);
 
-  const [examPdfUrl, setExamPdfUrl] = useState(null);
-  const [explanationPdfUrl, setExplanationPdfUrl] = useState(null);
-  const [pdfLoading, setPdfLoading] = useState(false);
-
-  useEffect(() => {
-    let examBlobUrl = null;
-    let expBlobUrl = null;
-
-    const fetchPdfs = async () => {
-      setPdfLoading(true);
-      try {
-        if (rawExamPdfUrl) {
-          const fetchUrl = rawExamPdfUrl.startsWith('/api/v1') ? rawExamPdfUrl.replace('/api/v1', '') : rawExamPdfUrl;
-
-          const res1 = await axiosClient.get(fetchUrl, { responseType: 'blob' });
-          const blob1 = res1.data;
-          if (blob1.type === 'application/pdf') {
-            examBlobUrl = URL.createObjectURL(blob1);
-            setExamPdfUrl(examBlobUrl);
-          } else {
-            console.error("Lỗi: Dữ liệu trả về không phải là PDF (đề thi).", blob1.type);
-          }
-        }
-        if (rawExplanationPdfUrl && detail?.canViewExplanation) {
-          const fetchUrl = rawExplanationPdfUrl.startsWith('/api/v1') ? rawExplanationPdfUrl.replace('/api/v1', '') : rawExplanationPdfUrl;
-
-          const res2 = await axiosClient.get(fetchUrl, { responseType: 'blob' });
-          const blob2 = res2.data;
-          if (blob2.type === 'application/pdf') {
-            expBlobUrl = URL.createObjectURL(blob2);
-            setExplanationPdfUrl(expBlobUrl);
-          } else {
-            console.error("Lỗi: Dữ liệu trả về không phải là PDF (lời giải).", blob2.type);
-          }
-        }
-      } catch (err) {
-        console.error("Lỗi tải PDF:", err);
-      } finally {
-        setPdfLoading(false);
-      }
-    };
-
-    if (rawExamPdfUrl || (rawExplanationPdfUrl && detail?.canViewExplanation)) {
-      fetchPdfs();
-    }
-
-    return () => {
-      if (examBlobUrl) URL.revokeObjectURL(examBlobUrl);
-      if (expBlobUrl) URL.revokeObjectURL(expBlobUrl);
-    };
-  }, [rawExamPdfUrl, rawExplanationPdfUrl, detail?.canViewExplanation]);
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fade-in">
       <div className={`bg-white dark:bg-slate-900 cyber:bg-white rounded-3xl shadow-2xl cyber:shadow-[8px_8px_0_0_#0f172a] w-full max-h-[90vh] flex flex-col overflow-hidden border border-slate-200 dark:border-slate-800 cyber:border-2 cyber:border-slate-900 relative transition-all ${hasPdfSection ? "max-w-7xl" : "max-w-3xl"}`}>
@@ -164,11 +106,19 @@ export default function SubmissionDetailModal({ submissionId, onClose }) {
             </div>
             <div className="min-w-0">
               <h2 className="text-base font-extrabold truncate" title={detail?.examTitle || "Chi tiết bài làm"}>
-                {detail?.examTitle || "Chi Tiết Bài Làm"}
+                {detail?.studentName ? `${detail.studentName} - ` : ""}{detail?.examTitle || "Chi Tiết Bài Làm"}
               </h2>
-              <p className="text-xs text-indigo-100 dark:text-slate-400 truncate">
-                {detail?.className} {detail?.subjectName ? `· ${detail.subjectName}` : ""}
-              </p>
+              <div className="flex items-center gap-2 mt-0.5">
+                <p className="text-xs text-indigo-100 dark:text-slate-400 truncate">
+                  {detail?.className} {detail?.subjectName ? `· ${detail.subjectName}` : ""}
+                </p>
+                {detail?.warningCount > 0 && (
+                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-500/20 text-rose-100 border border-rose-400/30">
+                    <AlertTriangle className="w-3 h-3" />
+                    Gian lận: {detail.warningCount} lần
+                  </span>
+                )}
+              </div>
             </div>
           </div>
 
@@ -234,17 +184,10 @@ export default function SubmissionDetailModal({ submissionId, onClose }) {
                   {/* PDF embed content */}
                   <div className="flex-1 rounded-xl cyber:rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 cyber:border-2 cyber:border-slate-900 bg-white dark:bg-slate-900 cyber:bg-white flex flex-col justify-center items-center">
                     {activePdfTab === "EXAM" ? (
-                      pdfLoading ? (
-                        <div className="flex flex-col items-center justify-center p-10 text-slate-400">
-                          <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-3"></div>
-                          <p className="text-xs font-semibold">Đang tải đề thi...</p>
+                      rawExamPdfUrl ? (
+                        <div className="w-full h-full relative">
+                          <PDFViewer pdfUrl={rawExamPdfUrl} />
                         </div>
-                      ) : examPdfUrl ? (
-                        <iframe
-                          src={examPdfUrl}
-                          className="w-full h-full border-none"
-                          title="Đề Thi PDF"
-                        />
                       ) : (
                         <div className="text-center p-6 text-slate-400">
                           <FileText className="w-10 h-10 mx-auto mb-2 opacity-40" />
@@ -253,17 +196,10 @@ export default function SubmissionDetailModal({ submissionId, onClose }) {
                       )
                     ) : (
                       detail.canViewExplanation ? (
-                        pdfLoading ? (
-                          <div className="flex flex-col items-center justify-center p-10 text-slate-400">
-                            <div className="w-8 h-8 border-3 border-violet-200 border-t-violet-600 rounded-full animate-spin mb-3"></div>
-                            <p className="text-xs font-semibold">Đang tải lời giải...</p>
+                        rawExplanationPdfUrl ? (
+                          <div className="w-full h-full relative">
+                            <PDFViewer pdfUrl={rawExplanationPdfUrl} />
                           </div>
-                        ) : explanationPdfUrl ? (
-                          <iframe
-                            src={explanationPdfUrl}
-                            className="w-full h-full border-none"
-                            title="Lời Giải Chi Tiết PDF"
-                          />
                         ) : (
                           <div className="text-center p-6 text-slate-400 max-w-sm">
                             <FileText className="w-10 h-10 mx-auto mb-2 text-violet-300" />

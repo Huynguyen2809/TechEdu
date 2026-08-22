@@ -14,6 +14,9 @@ public class SubmitExamRequest {
     @Min(value = 0, message = "Thời gian làm bài không được âm!") // [FIX Bug #16]
     private Integer timeSpentSeconds; // Học sinh làm hết bao nhiêu giây
 
+    @Min(value = 0)
+    private Integer warningCount = 0;
+
     @Valid // Kích hoạt validate cho các phần tử bên trong
     @NotEmpty(message = "Danh sách câu trả lời không được để trống")
     @Size(max = 28, message = "Số lượng câu trả lời vượt quá giới hạn cho phép (tối đa 28 câu theo quy chế GD&ĐT 2025)!")

@@ -11,6 +11,11 @@ const classService = {
     return await axiosClient.post("/classes", classData);
   },
 
+  // 2.1 Lấy danh sách giáo viên cùng bộ môn
+  getDepartmentTeachers: async () => {
+    return await axiosClient.get("/classes/department-teachers");
+  },
+
   // 3. Gia nhập lớp học bằng mã (Học sinh) - ĐÃ ĐỔI TÊN ĐỂ KHỚP VỚI UI
   joinClassByCode: async (joinCode) => {
     return await axiosClient.post("/classes/join", { joinCode });
@@ -24,6 +29,21 @@ const classService = {
   // 5. Lấy danh sách học sinh trong lớp
   getClassMembers: async (classId) => {
     return await axiosClient.get(`/classes/${classId}/members`);
+  },
+
+  // 5.1 Lấy danh sách chờ duyệt
+  getPendingMembers: async (classId) => {
+    return await axiosClient.get(`/classes/${classId}/pending-members`);
+  },
+
+  // 5.2 Duyệt học sinh
+  approveMember: async (classId, studentId) => {
+    return await axiosClient.put(`/classes/${classId}/members/${studentId}/approve`);
+  },
+
+  // 5.3 Từ chối học sinh
+  rejectMember: async (classId, studentId) => {
+    return await axiosClient.put(`/classes/${classId}/members/${studentId}/reject`);
   },
 
   // 6. Xóa (mời) một học sinh ra khỏi lớp

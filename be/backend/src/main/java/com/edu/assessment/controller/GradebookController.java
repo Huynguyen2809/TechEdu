@@ -30,25 +30,36 @@ public class GradebookController {
         return (Long) session.getAttribute("USER_ID");
     }
 
+    private String getCurrentUserRole(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("USER_ROLE") == null) {
+            throw new IllegalStateException("Bạn chưa đăng nhập!");
+        }
+        return (String) session.getAttribute("USER_ROLE");
+    }
+
     // 1. API Xem bảng điểm tổng quan của 1 Đề thi
     @GetMapping("/exam/{examId}")
     public ResponseEntity<?> getExamGradebook(@PathVariable Long examId, HttpServletRequest httpServletRequest) {
         Long teacherId = getCurrentUserId(httpServletRequest);
-        return ResponseEntity.ok(gradebookService.getExamGradebook(examId, teacherId));
+        String role = getCurrentUserRole(httpServletRequest);
+        return ResponseEntity.ok(gradebookService.getExamGradebook(examId, teacherId, role));
     }
 
     // 2. API Xem chi tiết bài làm của 1 Học sinh (Đối chiếu đáp án Đúng/Sai)
     @GetMapping("/submission/{submissionId}/detail")
     public ResponseEntity<?> getSubmissionDetail(@PathVariable Long submissionId, HttpServletRequest httpServletRequest) {
         Long teacherId = getCurrentUserId(httpServletRequest);
-        return ResponseEntity.ok(gradebookService.getSubmissionDetail(submissionId, teacherId));
+        String role = getCurrentUserRole(httpServletRequest);
+        return ResponseEntity.ok(gradebookService.getSubmissionDetail(submissionId, teacherId, role));
     }
 
     // 3. API Tải file Excel Bảng điểm về máy
     @GetMapping("/exam/{examId}/export-excel")
     public ResponseEntity<byte[]> exportExcel(@PathVariable Long examId, HttpServletRequest httpServletRequest) throws IOException {
         Long teacherId = getCurrentUserId(httpServletRequest);
-        byte[] excelContent = gradebookService.exportGradebookToExcel(examId, teacherId);
+        String role = getCurrentUserRole(httpServletRequest);
+        byte[] excelContent = gradebookService.exportGradebookToExcel(examId, teacherId, role);
 
         // Cấu hình Header HTTP để Trình duyệt/Postman hiểu đây là file Excel tải về
         HttpHeaders headers = new HttpHeaders();

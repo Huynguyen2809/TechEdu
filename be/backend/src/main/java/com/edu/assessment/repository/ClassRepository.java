@@ -11,4 +11,5 @@ public interface ClassRepository extends JpaRepository<Class, Long> {
     Optional<Class> findByJoinCode(String joinCode);
     boolean existsByJoinCode(String joinCode);
     List<Class> findAllByTeacherIdAndIsArchivedFalse(Long teacherId);
+    List<Class> findAllByTeacherDepartmentIdAndIsArchivedFalse(Long departmentId);
 }

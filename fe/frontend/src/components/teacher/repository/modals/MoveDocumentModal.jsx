@@ -17,12 +17,12 @@ export default function MoveDocumentModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
       <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full overflow-hidden border border-slate-100 dark:border-slate-800 shadow-2xl">
-        <div className="bg-indigo-600 text-white p-6 flex items-center justify-between border-b border-indigo-700 dark:border-slate-800">
+        <div className="bg-teal-600 text-white p-6 flex items-center justify-between border-b border-teal-700 dark:border-slate-800">
           <div>
             <h3 className="font-extrabold text-lg leading-tight tracking-tight text-white flex items-center gap-2">
               <FolderInput className="w-5 h-5 text-amber-300" /> Di Chuyển File PDF
             </h3>
-            <p className="text-xs text-indigo-100 mt-0.5 truncate max-w-xs">
+            <p className="text-xs text-teal-100 mt-0.5 truncate max-w-xs">
               {moveDocTarget.title || moveDocTarget.fileName || "File PDF"}
             </p>
           </div>
@@ -42,7 +42,7 @@ export default function MoveDocumentModal({
             <select
               value={selectedTargetFolderId}
               onChange={(e) => setSelectedTargetFolderId(e.target.value)}
-              className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-800 dark:text-slate-100 focus:outline-none focus:border-indigo-500 cursor-pointer"
+              className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-800 dark:text-slate-100 focus:outline-none focus:border-teal-500 cursor-pointer"
             >
               <option value="">📁 Thư mục gốc</option>
               {allFoldersList.map((f) => (

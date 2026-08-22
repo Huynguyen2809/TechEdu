@@ -16,7 +16,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/center-manager")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('CENTER_MANAGER')")
+@PreAuthorize("hasAnyRole('CENTER_MANAGER', 'DEPARTMENT_HEAD')")
 public class CenterManagerController {
 
     private final CenterManagerService centerManagerService;
@@ -28,6 +28,16 @@ public class CenterManagerController {
     @GetMapping("/stats")
     public ResponseEntity<?> getSystemStats() {
         return ResponseEntity.ok(centerManagerService.getDashboardStats());
+    }
+
+    @GetMapping("/analytics")
+    public ResponseEntity<?> getAnalyticsDashboard(jakarta.servlet.http.HttpServletRequest request) {
+        jakarta.servlet.http.HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("USER_ID") == null) {
+            throw new IllegalStateException("Bạn chưa đăng nhập hoặc phiên làm việc đã hết hạn!");
+        }
+        Long userId = (Long) session.getAttribute("USER_ID");
+        return ResponseEntity.ok(centerManagerService.getAnalyticsDashboard(userId));
     }
 
 }

@@ -22,7 +22,7 @@ Dự án được chia thành 2 phần chính:
   ```
   *(Hoặc mở thư mục `be/backend` bằng IntelliJ IDEA/Eclipse và chạy class Main)*
 
-### 2. Frontend (React)
+### 2. Frontend (React + Vite)
 - Di chuyển vào thư mục frontend:
   ```bash
   cd fe/frontend
@@ -33,11 +33,19 @@ Dự án được chia thành 2 phần chính:
   ```
 - Khởi chạy ứng dụng môi trường dev:
   ```bash
-  npm start
+  npm run dev
   ```
 
+## 🔑 Tài khoản mặc định (DataSeeder)
+Hệ thống tự động sinh 4 tài khoản mặc định (Mật khẩu: `123456`):
+- **Center Manager (Giám đốc):** `0999999999`
+- **Department Head (Tổ trưởng):** `0888888888`
+- **Teacher (Giáo viên):** `0777777777`
+- **Student (Học sinh):** `0666666666`
+
+*(Lưu ý: Đăng nhập lần đầu sẽ yêu cầu đổi mật khẩu)*
+
 ## 📄 Tài liệu tham khảo
-- `BUG_NOTES.md`: Ghi chú các bug trong quá trình phát triển.
 - `APIs.docx`: Tài liệu mô tả API.
 
 ---

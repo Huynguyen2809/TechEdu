@@ -9,17 +9,17 @@ import {
  Users,
  Building2,
  FolderLock,
+ Tag,
+ ShieldCheck,
  LogOut,
  BrainCircuit,
  Star,
  Menu,
- X,
- ChevronLeft,
- ChevronRight,
  Bell,
  CheckCircle2,
  FileText
 } from "lucide-react";
+import AdminSidebar from "./AdminSidebar";
 
 export default function AdminLayout({ children }) {
  const navigate = useNavigate();
@@ -127,6 +127,16 @@ export default function AdminLayout({ children }) {
  path: "/center-manager/documents",
  icon: FolderLock,
  },
+ {
+ label: "Danh mục Môn",
+ path: "/center-manager/categories",
+ icon: Tag,
+ },
+ {
+ label: "Giám sát Bảo mật",
+ path: "/center-manager/security",
+ icon: ShieldCheck,
+ },
  ];
 
  const isPathActive = (path) => {
@@ -148,116 +158,19 @@ export default function AdminLayout({ children }) {
  )}
 
  {/* LEFT SIDEBAR */}
- <aside
- className={`fixed lg:sticky top-0 left-0 h-screen bg-white dark:bg-slate-900 border-r border-slate-200/60 dark:border-slate-800/60 flex flex-col justify-between z-50 transition-[width,transform] duration-300 ease-in-out p-3 overflow-hidden shadow-sm ${
- mobileSidebarOpen ? "translate-x-0 w-64" : "-translate-x-full lg:translate-x-0"
- } ${isCollapsed ? "lg:w-20" : "lg:w-64"} shrink-0`}
- >
- <div>
- {/* 1. KHU VỰC LOGO */}
- <div className={`flex items-center ${isCollapsed ? "justify-center flex-col gap-2" : "justify-between"} pb-4 border-b border-slate-200/60 dark:border-slate-800/60 min-h-[56px]`}>
- <Link to="/center-manager/dashboard" className="flex items-center gap-3 group shrink-0">
- <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-500 text-white flex items-center justify-center shadow-md group-hover:scale-105 transition-transform shrink-0">
- <BrainCircuit className="w-6 h-6" />
- </div>
- {!isCollapsed && (
- <div className="transition-opacity duration-200">
- <span className="font-extrabold text-lg text-slate-900 dark:text-slate-100 tracking-tight block leading-tight truncate">
- TechEdu
- </span>
- </div>
- )}
- </Link>
- 
- {/* Desktop Collapse Toggle */}
- <button
- onClick={() => setIsCollapsed(!isCollapsed)}
- className="hidden lg:flex p-1.5 rounded-lg text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors cursor-pointer shrink-0"
- title={isCollapsed ? "Mở rộng menu" : "Thu gọn menu"}
- >
- {isCollapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
- </button>
-
- {/* Mobile Close Button */}
- <button 
- onClick={() => setMobileSidebarOpen(false)}
- className="lg:hidden p-1.5 rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-colors"
- >
- <X className="w-5 h-5" />
- </button>
- </div>
-
- {/* Navigation Items */}
- <nav className="mt-5 space-y-2">
- {!isCollapsed && (
- <p className="px-3 text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2">
- Quản Lý Trung Tâm
- </p>
- )}
- {navItems.map((item) => {
- const Icon = item.icon;
- const active = isPathActive(item.path);
- return (
- <Link
- key={item.path}
- to={item.path}
- title={isCollapsed ? item.label : undefined}
- onClick={() => setMobileSidebarOpen(false)}
- className={
- isCollapsed
- ? `w-12 h-12 rounded-xl flex items-center justify-center mx-auto transition-all ${
- active
- ? "bg-indigo-50 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 shadow-sm border border-indigo-100 dark:border-indigo-500/30"
- : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-100"
- }`
- : `flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold transition-all ${
- active
- ? "bg-indigo-50 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 shadow-sm border border-indigo-100 dark:border-indigo-500/30"
- : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-100"
- }`
- }
- >
- <Icon className={`w-5 h-5 shrink-0 ${active ? "text-indigo-600 dark:text-indigo-400" : "text-slate-400 dark:text-slate-500"}`} />
- {!isCollapsed && <span className="truncate">{item.label}</span>}
- </Link>
- );
- })}
- </nav>
- </div>
-
- <div className="space-y-3">
- <ThemeToggle compact={isCollapsed} />
-
- {/* 3. KHU VỰC USER INFO (Sidebar dưới cùng) */}
- <div className={`flex items-center ${isCollapsed ? "justify-center p-1.5" : "justify-between gap-2 p-3"} rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/60 shadow-sm`}>
- {!isCollapsed && (
- <div className="min-w-0 flex-1">
- <p className="text-xs font-bold text-slate-800 dark:text-slate-100 truncate">{managerName}</p>
- {user?.email && (
- <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">{user.email}</p>
- )}
- <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-purple-100/50 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 border border-purple-200/60 dark:border-purple-800/60 mt-1">
- <Star className="w-3 h-3 fill-current" /> GIÁM ĐỐC
- </span>
- </div>
- )}
- <button
- onClick={handleLogout}
- className={`rounded-xl transition-colors cursor-pointer text-slate-500 dark:text-slate-400 hover:bg-rose-50 dark:hover:bg-rose-950/60 hover:text-rose-600 dark:hover:text-rose-400 ${
- isCollapsed ? "w-10 h-10 flex items-center justify-center" : "p-2"
- }`}
- title="Đăng xuất"
- >
- <LogOut className="w-5 h-5" />
- </button>
- </div>
- </div>
- </aside>
+ <AdminSidebar
+ user={user}
+ mobileSidebarOpen={mobileSidebarOpen}
+ setMobileSidebarOpen={setMobileSidebarOpen}
+ handleLogout={handleLogout}
+ isCollapsed={isCollapsed}
+ setIsCollapsed={setIsCollapsed}
+ />
 
  {/* RIGHT MAIN CONTENT AREA */}
  <div className="flex-1 min-w-0 flex flex-col min-h-screen bg-[#F8FAFC] dark:bg-slate-950 transition-colors duration-200">
  {/* TOP BAR */}
- <header className="h-16 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200/60 dark:border-slate-800/60 shadow-sm px-4 sm:px-8 flex items-center justify-between sticky top-0 z-30 transition-all duration-200">
+ <header className="h-16 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-b border-white/20 dark:border-slate-700/30 shadow-[0_2px_10px_rgb(0,0,0,0.02)] px-4 sm:px-8 flex items-center justify-between sticky top-0 z-30 transition-all duration-200">
  {/* Title / Mobile Toggle */}
  <div className="flex items-center gap-3">
  <button
@@ -290,13 +203,13 @@ export default function AdminLayout({ children }) {
 
  {/* Popover Dropdown */}
  {showNotifications && (
- <div className="absolute right-0 mt-3 w-80 sm:w-96 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl rounded-2xl shadow-xl border border-slate-200/60 dark:border-slate-700/60 overflow-hidden z-50 animate-fade-in origin-top-right">
- <div className="p-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white flex items-center justify-between">
+ <div className="absolute right-0 mt-3 w-80 sm:w-96 bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-slate-200/60 dark:border-slate-700/60 overflow-hidden z-50 animate-fade-in origin-top-right">
+ <div className="p-4 bg-gradient-to-r from-indigo-600 to-violet-600 text-white flex items-center justify-between shadow-sm">
  <div className="flex items-center gap-2 font-bold text-sm">
  <Bell className="w-4 h-4" />
  <span>Thông báo quản trị</span>
  {unreadCount > 0 && (
- <span className="bg-white/20 text-white text-[11px] px-2 py-0.5 rounded-full font-semibold">
+ <span className="bg-white/20 text-white text-[11px] px-2 py-0.5 rounded-full font-semibold shadow-sm">
  {unreadCount} mới
  </span>
  )}
@@ -304,7 +217,7 @@ export default function AdminLayout({ children }) {
  {unreadCount > 0 && (
  <button
  onClick={markAllRead}
- className="text-xs text-indigo-100 hover:text-white underline cursor-pointer font-medium"
+ className="text-xs text-indigo-100 hover:text-white underline cursor-pointer font-medium transition-colors"
  >
  Đánh dấu đã đọc
  </button>
@@ -362,14 +275,11 @@ export default function AdminLayout({ children }) {
  </div>
 
  {/* User Capsule Widget */}
- <div className="flex items-center gap-2.5 bg-white dark:bg-slate-900 px-3 py-1.5 rounded-full border border-slate-200/60 dark:border-slate-700/60 shadow-sm">
- <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-500 text-white font-extrabold text-xs flex items-center justify-center shrink-0 shadow-inner">
- {managerInitials}
- </div>
- <span className="text-xs font-bold text-slate-800 dark:text-slate-100 hidden md:inline-block max-w-[120px] truncate">
+ <div className="flex items-center gap-2.5 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-slate-200/60 dark:border-slate-700/60 shadow-sm transition-all hover:shadow-md cursor-pointer group">
+ <span className="text-xs font-bold text-slate-800 dark:text-slate-100 hidden md:inline-block max-w-[120px] truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
  {managerName}
  </span>
- <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-purple-50 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 border border-purple-100 dark:border-purple-800/60">
+ <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-violet-50 dark:bg-violet-900/40 text-violet-700 dark:text-violet-300 border border-violet-100 dark:border-violet-800/60 transition-colors">
  <Star className="w-2.5 h-2.5 fill-current" />
  <span className="hidden lg:inline">Giám đốc</span>
  </span>

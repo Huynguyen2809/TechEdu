@@ -37,6 +37,7 @@ public class ClassMember {
 
     public enum Status {
         ACTIVE,   // Đang học
-        REMOVED   // Bị giáo viên xóa khỏi lớp
+        REMOVED,  // Bị giáo viên xóa khỏi lớp
+        PENDING   // Đang chờ giáo viên duyệt
     }
 }

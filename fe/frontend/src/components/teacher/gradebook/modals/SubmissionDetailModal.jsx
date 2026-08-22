@@ -26,7 +26,7 @@ function getScoreBadgeStyle(score) {
     return "text-emerald-600 bg-emerald-50 border-emerald-200 font-black";
   }
   if (s >= 5.0) {
-    return "text-blue-600 bg-blue-50 border-blue-200 font-black";
+    return "text-emerald-600 bg-emerald-50 border-emerald-200 font-black";
   }
   return "text-amber-600 bg-amber-50 border-amber-200 font-black";
 }
@@ -56,13 +56,13 @@ export default function SubmissionDetailModal({ submissionId, onClose }) {
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/50">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold">
+            <div className="w-8 h-8 rounded-xl bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 flex items-center justify-center font-bold">
               <Eye className="w-4 h-4" />
             </div>
             <h2 className="font-extrabold text-slate-800 dark:text-slate-100 text-base">
               Chi tiết bài làm
               {detail && (
-                <span className="ml-2 text-indigo-600 dark:text-indigo-400 font-bold">
+                <span className="ml-2 text-teal-600 dark:text-teal-400 font-bold">
                   — {detail.studentName}
                 </span>
               )}
@@ -80,7 +80,7 @@ export default function SubmissionDetailModal({ submissionId, onClose }) {
         <div className="flex-1 overflow-y-auto p-6">
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <div className="w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
+              <div className="w-8 h-8 border-4 border-teal-200 border-t-teal-600 rounded-full animate-spin" />
             </div>
           ) : detail ? (
             <div className="space-y-5">

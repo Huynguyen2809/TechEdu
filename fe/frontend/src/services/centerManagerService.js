@@ -6,6 +6,10 @@ const centerManagerService = {
         return await axiosClient.get("/center-manager/stats");
     },
 
+    getAnalyticsDashboard: async () => {
+        return await axiosClient.get("/center-manager/analytics");
+    },
+
     // Quản lý Nhân sự (Giám đốc trung tâm)
     getAllStaff: async () => {
         return await axiosClient.get("/center-manager/users");

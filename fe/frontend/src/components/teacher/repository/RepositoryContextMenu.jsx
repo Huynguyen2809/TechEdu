@@ -51,7 +51,7 @@ export default function RepositoryContextMenu({
             }}
             className="w-full px-3 py-2 text-left rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2 text-slate-800 dark:text-slate-100 font-bold transition-colors cursor-pointer"
           >
-            <FolderPlus className="w-4 h-4 text-indigo-500" />
+            <FolderPlus className="w-4 h-4 text-teal-500" />
             <span>Tạo thư mục mới</span>
           </button>
 
@@ -90,9 +90,9 @@ export default function RepositoryContextMenu({
                   onSelectDoc(contextMenu.item);
                   onClose();
                 }}
-                className="w-full px-3 py-2 text-left rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2 text-indigo-600 dark:text-indigo-400 font-bold transition-colors cursor-pointer"
+                className="w-full px-3 py-2 text-left rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2 text-teal-600 dark:text-teal-400 font-bold transition-colors cursor-pointer"
               >
-                <Eye className="w-4 h-4 text-indigo-500" />
+                <Eye className="w-4 h-4 text-teal-500" />
                 <span>Xem trực tiếp PDF</span>
               </button>
 
@@ -136,9 +136,9 @@ export default function RepositoryContextMenu({
                 onOpenFolder(contextMenu.item);
                 onClose();
               }}
-              className="w-full px-3 py-2 text-left rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2 text-indigo-600 dark:text-indigo-400 font-bold transition-colors cursor-pointer"
+              className="w-full px-3 py-2 text-left rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2 text-teal-600 dark:text-teal-400 font-bold transition-colors cursor-pointer"
             >
-              <FolderOpen className="w-4 h-4 text-indigo-500" />
+              <FolderOpen className="w-4 h-4 text-teal-500" />
               <span>Mở thư mục</span>
             </button>
           )}

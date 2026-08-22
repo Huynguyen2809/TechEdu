@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { Search, Filter, Clock, Eye, Users, X } from "lucide-react";
+import { Search, Filter, Clock, Eye, Users, X, AlertTriangle } from "lucide-react";
 
 function formatTime(seconds) {
   if (!seconds) return "—";
@@ -25,7 +25,7 @@ function getScoreBadgeStyle(score) {
     return "text-emerald-600 bg-emerald-50 border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800 font-black";
   }
   if (s >= 5.0) {
-    return "text-blue-600 bg-blue-50 border-blue-200 dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-800 font-black";
+    return "text-emerald-600 bg-emerald-50 border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800 font-black";
   }
   return "text-amber-600 bg-amber-50 border-amber-200 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800 font-black";
 }
@@ -80,7 +80,7 @@ export default function GradebookTable({
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Tìm theo Tên hoặc SĐT..."
-              className="w-full pl-9 pr-7 py-1.5 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-indigo-500 font-semibold text-slate-800 dark:text-slate-100"
+              className="w-full pl-9 pr-7 py-1.5 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-teal-500 font-semibold text-slate-800 dark:text-slate-100"
             />
             {searchTerm && (
               <button
@@ -98,7 +98,7 @@ export default function GradebookTable({
               onClick={() => setResultFilter("ALL")}
               className={`px-2.5 py-1.5 rounded-xl text-xs font-extrabold cursor-pointer transition-colors whitespace-nowrap ${
                 resultFilter === "ALL"
-                  ? "bg-indigo-600 text-white"
+                  ? "bg-teal-600 text-white"
                   : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200"
               }`}
             >
@@ -154,7 +154,15 @@ export default function GradebookTable({
                     {idx + 1}
                   </td>
                   <td className="px-4 py-3.5 text-left font-extrabold text-slate-900 dark:text-slate-100">
-                    {s.fullName}
+                    <div className="flex items-center gap-2">
+                      {s.fullName}
+                      {s.warningCount > 0 && (
+                        <div className="flex items-center gap-1 px-1.5 py-0.5 bg-rose-100 text-rose-600 rounded-md" title={`Cảnh báo gian lận: ${s.warningCount} lần`}>
+                          <AlertTriangle className="w-3.5 h-3.5" />
+                          <span className="text-[10px] font-black">{s.warningCount}</span>
+                        </div>
+                      )}
+                    </div>
                   </td>
                   <td className="px-4 py-3.5 text-center text-slate-500 dark:text-slate-400 font-mono text-xs">
                     {s.phoneNumber || "—"}
@@ -182,7 +190,7 @@ export default function GradebookTable({
                   <td className="px-4 py-3.5 text-center">
                     <button
                       onClick={() => onSelectSubmission(s.submissionId)}
-                      className="p-2 rounded-xl hover:bg-indigo-50 dark:hover:bg-indigo-950/60 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors cursor-pointer inline-flex items-center justify-center"
+                      className="p-2 rounded-xl hover:bg-teal-50 dark:hover:bg-teal-950/60 text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 transition-colors cursor-pointer inline-flex items-center justify-center"
                       title="Xem chi tiết bài làm"
                     >
                       <Eye className="w-4 h-4" />

@@ -147,7 +147,7 @@ export default function DocumentManagement() {
       case "DOCX":
       case "DOC":
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 border border-blue-200/60 dark:border-blue-800/60 shadow-sm whitespace-nowrap">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-800/60 shadow-sm whitespace-nowrap">
             <FileText className="w-3.5 h-3.5 shrink-0" />
             <span>DOCX</span>
           </span>

@@ -12,6 +12,9 @@ export default function CreateClassModal({
   setCustomSubject,
   gradeLevel,
   setGradeLevel,
+  assignedTeacherId,
+  setAssignedTeacherId,
+  departmentTeachers,
   onSubmit,
   submitting,
   modalError
@@ -22,12 +25,12 @@ export default function CreateClassModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
       <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-100 dark:border-slate-800">
         {/* Header Modal */}
-        <div className="bg-indigo-600 text-white p-6 flex items-center justify-between border-b border-indigo-700 dark:border-slate-800">
+        <div className="bg-teal-600 text-white p-6 flex items-center justify-between border-b border-teal-700 dark:border-slate-800">
           <div>
             <h3 className="font-extrabold text-lg leading-tight tracking-tight text-white">
               Tạo Lớp Học Mới
             </h3>
-            <p className="text-xs text-indigo-100 mt-0.5">
+            <p className="text-xs text-teal-100 mt-0.5">
               Hệ thống tự động tạo mã lớp học
             </p>
           </div>
@@ -58,7 +61,7 @@ export default function CreateClassModal({
               value={className}
               onChange={(e) => setClassName(e.target.value)}
               placeholder="Nhập tên lớp học"
-              className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-700 transition-all font-semibold:ring-2:ring-slate-900"
+              className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:bg-white dark:focus:bg-slate-700 transition-all font-semibold:ring-2:ring-slate-900"
               autoFocus
             />
           </div>
@@ -71,7 +74,7 @@ export default function CreateClassModal({
             <select
               value={selectedSubject}
               onChange={(e) => setSelectedSubject(e.target.value)}
-              className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-semibold text-slate-800 dark:text-slate-100 focus:outline-none focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-700 transition-all cursor-pointer"
+              className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-semibold text-slate-800 dark:text-slate-100 focus:outline-none focus:border-teal-500 focus:bg-white dark:focus:bg-slate-700 transition-all cursor-pointer"
             >
               <option value="Toán học">Toán học</option>
               <option value="Hóa học">Hóa học</option>
@@ -88,7 +91,7 @@ export default function CreateClassModal({
                   value={customSubject}
                   onChange={(e) => setCustomSubject(e.target.value)}
                   placeholder="Nhập tên môn học khác ..."
-                  className="w-full px-4 py-2.5 bg-indigo-50/50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-900/60 rounded-xl text-sm font-semibold text-indigo-900 dark:text-indigo-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                  className="w-full px-4 py-2.5 bg-teal-50/50 dark:bg-teal-950/30 border border-teal-200 dark:border-teal-900/60 rounded-xl text-sm font-semibold text-teal-900 dark:text-teal-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 transition-all"
                   autoFocus
                 />
               </div>
@@ -103,13 +106,33 @@ export default function CreateClassModal({
             <select
               value={gradeLevel}
               onChange={(e) => setGradeLevel(Number(e.target.value))}
-              className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-semibold text-slate-800 dark:text-slate-100 focus:outline-none focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-700 transition-all cursor-pointer"
+              className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-semibold text-slate-800 dark:text-slate-100 focus:outline-none focus:border-teal-500 focus:bg-white dark:focus:bg-slate-700 transition-all cursor-pointer"
             >
               <option value={12}>Khối 12</option>
               <option value={11}>Khối 11</option>
               <option value={10}>Khối 10</option>
             </select>
           </div>
+
+          {/* 4. Chọn Giáo Viên (Nếu có danh sách) */}
+          {departmentTeachers && departmentTeachers.length > 1 && (
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+                Giáo viên phụ trách <span className="text-rose-500">*</span>
+              </label>
+              <select
+                value={assignedTeacherId}
+                onChange={(e) => setAssignedTeacherId(e.target.value)}
+                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-semibold text-slate-800 dark:text-slate-100 focus:outline-none focus:border-teal-500 focus:bg-white dark:focus:bg-slate-700 transition-all cursor-pointer"
+              >
+                {departmentTeachers.map((teacher) => (
+                  <option key={teacher.id} value={teacher.id}>
+                    {teacher.fullName}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           {/* Footer Thao tác */}
           <div className="flex items-center gap-3 pt-2 mt-6">
@@ -123,7 +146,7 @@ export default function CreateClassModal({
             <button
               type="submit"
               disabled={submitting}
-              className="bg-indigo-600 dark:bg-indigo-500 hover:bg-indigo-700 text-white font-semibold rounded-xl flex-1 py-2.5 px-4 text-sm disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
+              className="bg-teal-600 dark:bg-teal-500 hover:bg-teal-700 text-white font-semibold rounded-xl flex-1 py-2.5 px-4 text-sm disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
             >
               {submitting ? (
                 <>

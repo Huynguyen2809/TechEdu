@@ -35,7 +35,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Bật CORS
                 .headers(headers -> headers.frameOptions(frame -> frame.disable())) // Cho phép nhúng iframe
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/**", "/api/v1/files/**").permitAll()
+                        .requestMatchers("/api/v1/auth/**", "/api/v1/files/**", "/api/v1/repository/documents/view/**").permitAll()
                         .requestMatchers("/api/v1/center-manager/**").hasAnyRole("CENTER_MANAGER", "DEPARTMENT_HEAD")
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session

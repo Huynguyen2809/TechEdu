@@ -122,7 +122,10 @@ export default function PDFViewer({ pdfUrl }) {
   }
 
   return (
-    <div className="flex flex-col h-full bg-slate-200">
+    <div 
+      className="flex flex-col h-full bg-slate-200 select-none"
+      onContextMenu={(e) => e.preventDefault()}
+    >
       {/* ===== TOOLBAR DỌN DẸP ===== */}
       <div className="h-11 bg-slate-700 flex items-center justify-between px-4 gap-3 shrink-0 shadow-md">
         {/* Thông tin tổng trang */}
@@ -206,9 +209,9 @@ export default function PDFViewer({ pdfUrl }) {
                   pageNumber={index + 1}
                   width={containerWidth ? Math.min(1000, containerWidth) : undefined}
                   scale={scale}
-                  renderTextLayer={true}
-                  renderAnnotationLayer={true}
-                  className="bg-white"
+                  renderTextLayer={false}
+                  renderAnnotationLayer={false}
+                  className="bg-white pointer-events-none"
                 />
                 {/* Badge số trang góc dưới */}
                 <div className="absolute bottom-2.5 right-2.5 bg-slate-900/75 text-white text-[11px] font-mono font-bold px-2.5 py-1 rounded-md shadow-md pointer-events-none backdrop-blur-xs border border-white/10">

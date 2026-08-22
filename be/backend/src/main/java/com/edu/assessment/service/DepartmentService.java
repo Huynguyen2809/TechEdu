@@ -118,18 +118,16 @@ public class DepartmentService {
 
     @Transactional
     public void deleteDepartment(Long id) {
-        int teacherCount = userRepository.countByDepartmentId(id);
-        if (teacherCount > 0) {
-            throw new IllegalArgumentException("Không thể xóa Tổ chuyên môn đang có " + teacherCount + " nhân sự. Vui lòng chuyển các nhân sự này sang tổ khác trước khi xóa!");
-        }
-
         Department department = departmentRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy tổ chuyên môn!"));
 
-        User head = department.getHead();
-        if (head != null) {
-            head.setRole(User.Role.TEACHER);
-            userRepository.save(head);
+        List<User> members = userRepository.findByDepartmentId(id);
+        for (User member : members) {
+            member.setDepartment(null);
+            if (member.getRole() == User.Role.DEPARTMENT_HEAD) {
+                member.setRole(User.Role.TEACHER);
+            }
+            userRepository.save(member);
         }
 
         departmentRepository.delete(department);

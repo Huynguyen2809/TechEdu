@@ -125,10 +125,6 @@ public class CenterDocumentService {
             if (document.getFileUrl() != null && document.getFileUrl().contains("/api/v1/repository/documents/view/")) {
                 String gridFsId = document.getFileUrl().substring(document.getFileUrl().lastIndexOf("/") + 1);
                 gridFsTemplate.delete(new Query(Criteria.where("_id").is(gridFsId)));
-            } else if (document.getFileUrl() != null && document.getFileUrl().startsWith("/api/v1/files/")) {
-                String fileName = document.getFileUrl().replace("/api/v1/files/", "");
-                Path path = Paths.get("local-storage/uploads/" + fileName);
-                Files.deleteIfExists(path);
             }
         } catch (Exception e) {
             System.err.println("Lỗi khi xóa file: " + e.getMessage());

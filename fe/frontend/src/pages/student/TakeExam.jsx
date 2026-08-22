@@ -38,8 +38,11 @@ export default function TakeExam() {
   const [flaggedQuestions, setFlaggedQuestions] = useState({});
   // Đồng hồ đếm ngược (giây)
   const [timeLeft, setTimeLeft] = useState(0);
-  // Trạng thái nộp bài
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // Trạng thái đã ấn Bắt đầu thi chưa
+  const [hasStarted, setHasStarted] = useState(false);
+  // Cảnh báo gian lận
+  const [warningCount, setWarningCount] = useState(0);
   // Kết quả sau khi nộp bài thành công (khôi phục từ state nếu F5)
   const [result, setResult] = useState(location.state?.result || null);
   // Modal xác nhận nộp bài
@@ -127,6 +130,7 @@ export default function TakeExam() {
             const parsed = JSON.parse(savedDraft);
             if (parsed.answers) setAnswers(parsed.answers);
             if (parsed.flaggedQuestions) setFlaggedQuestions(parsed.flaggedQuestions);
+            if (parsed.warningCount) setWarningCount(parsed.warningCount);
             
             // Tính lại thời gian làm bài còn lại dựa trên Mốc thời gian kết thúc (endTimeTimestamp)
             if (parsed.endTimeTimestamp) {
@@ -146,6 +150,7 @@ export default function TakeExam() {
           localStorage.setItem(DRAFT_KEY, JSON.stringify({
             answers: {},
             flaggedQuestions: {},
+            warningCount: 0,
             endTimeTimestamp,
           }));
         }
@@ -162,7 +167,7 @@ export default function TakeExam() {
 
   // ─── EFFECT: Tự động lưu nháp mỗi khi chọn đáp án / cắm cờ ────────────────────
   useEffect(() => {
-    if (!examData || result) return;
+    if (!examData || result || !hasStarted) return;
     const existing = localStorage.getItem(DRAFT_KEY);
     let endTimeTimestamp = Date.now() + (timeLeft || 0) * 1000;
     if (existing) {
@@ -175,15 +180,57 @@ export default function TakeExam() {
     localStorage.setItem(DRAFT_KEY, JSON.stringify({
       answers,
       flaggedQuestions,
+      warningCount,
       endTimeTimestamp,
     }));
-  }, [answers, flaggedQuestions, examData, DRAFT_KEY, timeLeft, result]);
+  }, [answers, flaggedQuestions, warningCount, examData, DRAFT_KEY, timeLeft, result]);
 
 
+
+  // ─── EFFECT: Tự động lưu nháp mỗi khi chọn đáp án / cắm cờ ────────────────────
+
+  // ─── EFFECT: Anti-cheat (Toàn màn hình & Theo dõi chuyển tab) ───────────────
+  useEffect(() => {
+    if (!examData || result || isSubmitting || !hasStarted) return;
+
+    // Yêu cầu Fullscreen khi bắt đầu
+    const enterFullscreen = async () => {
+      try {
+        if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
+          await document.documentElement.requestFullscreen();
+        }
+      } catch (err) {}
+    };
+    enterFullscreen();
+
+    const handleCheat = () => {
+      setWarningCount(prev => {
+        const newCount = prev + 1;
+        setToastMessage(`🚨 CẢNH BÁO GIAN LẬN: Bạn vừa thoát toàn màn hình hoặc chuyển tab! (Vi phạm: ${newCount} lần)`);
+        setTimeout(() => setToastMessage(""), 5000);
+        return newCount;
+      });
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) handleCheat();
+    };
+    const handleBlur = () => {
+      handleCheat();
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("blur", handleBlur);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("blur", handleBlur);
+    };
+  }, [examData, result, isSubmitting]);
 
   // ─── EFFECT: Đếm ngược thời gian ───────────────────────────
   useEffect(() => {
-    if (timeLeft <= 0 || !examData || isSubmitting || result) return;
+    if (!hasStarted || timeLeft <= 0 || !examData || isSubmitting || result) return;
 
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
@@ -252,6 +299,7 @@ export default function TakeExam() {
       const payload = {
         timeSpentSeconds,
         answers: submitAnswers,
+        warningCount: warningCount,
       };
 
       try {
@@ -419,6 +467,37 @@ export default function TakeExam() {
   // ══════════════════════════════════════════════════════════════
   // RENDER CHÍNH: Phòng thi Split-Screen
   // ══════════════════════════════════════════════════════════════
+  
+  if (!hasStarted && examData && !result) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-white rounded-3xl p-8 shadow-xl border border-slate-100 text-center space-y-6">
+          <div className="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-2xl mx-auto flex items-center justify-center mb-2">
+            <AlertTriangle className="w-8 h-8" />
+          </div>
+          <div>
+            <h2 className="text-2xl font-black text-slate-800">{examData.title}</h2>
+            <p className="text-slate-500 mt-2 font-medium">Thời gian: {examData.durationMinutes} phút</p>
+          </div>
+          <div className="bg-amber-50 border border-amber-200 text-amber-800 text-sm p-4 rounded-xl text-left font-medium space-y-2">
+            <p>⚠️ <strong>Quy chế thi:</strong></p>
+            <ul className="list-disc pl-5 space-y-1">
+              <li>Hệ thống sẽ chuyển sang chế độ <strong>Toàn màn hình</strong>.</li>
+              <li>Hành vi <strong>chuyển tab</strong> hoặc <strong>thu nhỏ trình duyệt</strong> sẽ bị ghi nhận là gian lận.</li>
+              <li>Vui lòng chuẩn bị sẵn sàng trước khi bắt đầu.</li>
+            </ul>
+          </div>
+          <button
+            onClick={() => setHasStarted(true)}
+            className="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold rounded-xl shadow-lg cursor-pointer transition-all"
+          >
+            Tôi đã hiểu & Bắt đầu làm bài
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       <SplitScreenLayout

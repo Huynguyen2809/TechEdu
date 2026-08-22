@@ -54,9 +54,15 @@ export default function CreateExam() {
   const [endTime, setEndTime] = useState(toDatetimeLocal(defaultEnd));
 
   // PDF Repo Picker State
-  const [selectedDocId, setSelectedDocId] = useState(null);
   const [selectedExamPdf, setSelectedExamPdf] = useState(null);
+  const [selectedDocId, setSelectedDocId] = useState("");
   const [isRepoPickerOpen, setIsRepoPickerOpen] = useState(false);
+  const [pickerFilterType, setPickerFilterType] = useState(null); // EXAM or EXPLANATION
+
+  // Explanation Doc
+  const [selectedExplanationPdf, setSelectedExplanationPdf] = useState(null);
+  const [selectedExplanationDocId, setSelectedExplanationDocId] = useState("");
+  const [explanationPolicy, setExplanationPolicy] = useState("AFTER_EXAM_END");
 
   // Question Keys
   const [part1Keys, setPart1Keys] = useState([]);
@@ -204,6 +210,8 @@ export default function CreateExam() {
         durationMinutes: Number(durationMinutes),
         startTime: startTime ? `${startTime}:00` : null,
         endTime: endTime ? `${endTime}:00` : null,
+        explanationDocumentId: selectedExplanationDocId ? Number(selectedExplanationDocId) : null,
+        explanationPolicy: explanationPolicy,
         part1Count: part1Keys.length,
         part2Count: part2Keys.length,
         part3Count: part3Keys.length,
@@ -226,7 +234,7 @@ export default function CreateExam() {
   if (loadingClasses) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="w-10 h-10 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
+        <div className="w-10 h-10 border-4 border-teal-200 border-t-teal-600 rounded-full animate-spin" />
       </div>
     );
   }
@@ -236,11 +244,11 @@ export default function CreateExam() {
       {/* Step Header (Glassmorphism & Gradient) */}
       <div className="relative bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200/60 dark:border-slate-800/60 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 overflow-hidden">
         {/* Subtle background glow */}
-        <div className="absolute -left-10 -top-10 w-40 h-40 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none z-0"></div>
+        <div className="absolute -left-10 -top-10 w-40 h-40 bg-teal-500/10 rounded-full blur-3xl pointer-events-none z-0"></div>
         
         <div className="relative z-10">
           <h1 className="text-2xl font-black text-slate-900 dark:text-slate-100 flex items-center gap-3 tracking-tight">
-            <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center border border-indigo-100 dark:border-indigo-800/60 shadow-sm">
+            <div className="w-10 h-10 rounded-xl bg-teal-50 dark:bg-teal-900/40 text-teal-600 dark:text-teal-400 flex items-center justify-center border border-teal-100 dark:border-teal-800/60 shadow-sm">
               <FileText className="w-5 h-5" />
             </div>
             Tạo Đề Thi Mới
@@ -256,7 +264,7 @@ export default function CreateExam() {
             onClick={() => setStep(0)}
             className={`px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${
               step === 0
-                ? "bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm border border-slate-200/60 dark:border-slate-600"
+                ? "bg-white dark:bg-slate-700 text-teal-600 dark:text-teal-400 shadow-sm border border-slate-200/60 dark:border-slate-600"
                 : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
             }`}
           >
@@ -267,7 +275,7 @@ export default function CreateExam() {
             disabled={step === 0}
             className={`px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed ${
               step === 1
-                ? "bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm border border-slate-200/60 dark:border-slate-600"
+                ? "bg-white dark:bg-slate-700 text-teal-600 dark:text-teal-400 shadow-sm border border-slate-200/60 dark:border-slate-600"
                 : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
             }`}
           >
@@ -278,7 +286,7 @@ export default function CreateExam() {
             disabled={step === 0}
             className={`px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed ${
               step === 2
-                ? "bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm border border-slate-200/60 dark:border-slate-600"
+                ? "bg-white dark:bg-slate-700 text-teal-600 dark:text-teal-400 shadow-sm border border-slate-200/60 dark:border-slate-600"
                 : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
             }`}
           >
@@ -289,7 +297,7 @@ export default function CreateExam() {
             disabled={step === 0}
             className={`px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed ${
               step === 3
-                ? "bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm border border-slate-200/60 dark:border-slate-600"
+                ? "bg-white dark:bg-slate-700 text-teal-600 dark:text-teal-400 shadow-sm border border-slate-200/60 dark:border-slate-600"
                 : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
             }`}
           >
@@ -336,7 +344,18 @@ export default function CreateExam() {
             setEndTime={setEndTime}
             selectedExamPdf={selectedExamPdf}
             selectedDocId={selectedDocId}
-            onOpenRepoPicker={() => setIsRepoPickerOpen(true)}
+            onOpenRepoPicker={() => {
+              setPickerFilterType("EXAM");
+              setIsRepoPickerOpen(true);
+            }}
+            selectedExplanationPdf={selectedExplanationPdf}
+            selectedExplanationDocId={selectedExplanationDocId}
+            onOpenExplanationPicker={() => {
+              setPickerFilterType("EXPLANATION");
+              setIsRepoPickerOpen(true);
+            }}
+            explanationPolicy={explanationPolicy}
+            setExplanationPolicy={setExplanationPolicy}
           />
         )}
 
@@ -393,7 +412,7 @@ export default function CreateExam() {
           <button
             type="button"
             onClick={() => setStep((s) => s + 1)}
-            className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white font-bold text-sm rounded-xl flex items-center gap-2 cursor-pointer shadow-sm active:scale-95 transition-all"
+            className="px-6 py-2.5 bg-teal-600 hover:bg-teal-700 dark:bg-teal-500 dark:hover:bg-teal-600 text-white font-bold text-sm rounded-xl flex items-center gap-2 cursor-pointer shadow-sm active:scale-95 transition-all"
           >
             Tiếp theo <ArrowRight className="w-4 h-4" />
           </button>
@@ -417,11 +436,18 @@ export default function CreateExam() {
       {/* Modal Chọn File PDF */}
       {isRepoPickerOpen && (
         <RepositoryPickerModal
+          filterType={pickerFilterType}
           onSelect={(doc) => {
-            setSelectedDocId(doc.id);
-            setSelectedExamPdf(doc);
+            if (pickerFilterType === "EXPLANATION") {
+              setSelectedExplanationDocId(doc.id);
+              setSelectedExplanationPdf(doc);
+              showToast(`Đã chọn PDF Lời Giải: ${doc.title || doc.fileName}`);
+            } else {
+              setSelectedDocId(doc.id);
+              setSelectedExamPdf(doc);
+              showToast(`Đã chọn PDF Đề thi: ${doc.title || doc.fileName}`);
+            }
             setIsRepoPickerOpen(false);
-            showToast(`Đã chọn PDF: ${doc.title || doc.fileName}`);
           }}
           onClose={() => setIsRepoPickerOpen(false)}
         />

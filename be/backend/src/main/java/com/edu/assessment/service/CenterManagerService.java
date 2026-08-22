@@ -128,4 +128,58 @@ public class CenterManagerService {
         map.put("createdAt",   u.getCreatedAt() != null ? u.getCreatedAt().toString() : null);
         return map;
     }
+
+    // ─── Nghiep vu 4: Thong ke chuyen sau (Phan tich Pho diem) ────────────────
+    public Map<String, Object> getAnalyticsDashboard(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow();
+        Long departmentId = (user.getRole() == User.Role.DEPARTMENT_HEAD && user.getDepartment() != null) 
+            ? user.getDepartment().getId() : null;
+
+        List<com.edu.assessment.entity.ExamSubmission> allSubmissions = submissionRepository.findAll();
+        
+        if (departmentId != null) {
+            allSubmissions = allSubmissions.stream()
+                .filter(sub -> sub.getExam() != null && sub.getExam().getTeacher() != null && sub.getExam().getTeacher().getDepartment() != null 
+                            && sub.getExam().getTeacher().getDepartment().getId().equals(departmentId))
+                .collect(java.util.stream.Collectors.toList());
+        }
+
+        int totalSubmissions = allSubmissions.size();
+        int passCount = 0;
+        int failCount = 0;
+        
+        // Phân bổ: 0-2, 2.1-4, 4.1-6, 6.1-8, 8.1-10
+        int[] distribution = new int[5];
+
+        for (com.edu.assessment.entity.ExamSubmission sub : allSubmissions) {
+            double score = sub.getTotalScore();
+            if (score >= 5.0) {
+                passCount++;
+            } else {
+                failCount++;
+            }
+
+            if (score <= 2.0) distribution[0]++;
+            else if (score <= 4.0) distribution[1]++;
+            else if (score <= 6.0) distribution[2]++;
+            else if (score <= 8.0) distribution[3]++;
+            else distribution[4]++;
+        }
+
+        double passRate = totalSubmissions > 0 ? (double) passCount / totalSubmissions * 100 : 0.0;
+
+        return Map.of(
+            "totalSubmissions", totalSubmissions,
+            "passCount", passCount,
+            "failCount", failCount,
+            "passRate", Math.round(passRate * 100.0) / 100.0,
+            "scoreDistribution", Map.of(
+                "0-2", distribution[0],
+                "2-4", distribution[1],
+                "4-6", distribution[2],
+                "6-8", distribution[3],
+                "8-10", distribution[4]
+            )
+        );
+    }
 }

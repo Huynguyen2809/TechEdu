@@ -28,4 +28,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findAllNonCenterManagerUsersOrderByRole();
 
     int countByDepartmentId(Long departmentId);
+    List<User> findByDepartmentId(Long departmentId);
 }

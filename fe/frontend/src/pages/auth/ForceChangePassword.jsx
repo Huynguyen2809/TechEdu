@@ -1,8 +1,8 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import authService from "../../services/authService";
-import { Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
+import { Lock, Eye, EyeOff, AlertCircle, ShieldCheck, Sparkles, KeyRound } from "lucide-react";
 
 export default function ForceChangePassword() {
   const navigate = useNavigate();
@@ -62,65 +62,84 @@ export default function ForceChangePassword() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-4 relative overflow-hidden">
-      <div className="max-w-[450px] w-full bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-800 p-8 sm:p-10">
-        <div className="text-center mb-6">
-          <h1 className="text-2xl font-extrabold text-slate-800 dark:text-slate-100 mb-2">
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 sm:p-6 page-transition relative overflow-hidden font-sans">
+      {/* Background Ambient Glow Orbs */}
+      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-indigo-600/20 rounded-full blur-[120px] pointer-events-none animate-pulse-glow" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-amber-600/15 rounded-full blur-[120px] pointer-events-none animate-pulse-glow" style={{ animationDelay: '1.5s' }} />
+
+      {/* Grid Pattern Overlay */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b15_1px,transparent_1px),linear-gradient(to_bottom,#1e293b15_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none" />
+
+      {/* Main Container Card */}
+      <div className="max-w-[450px] w-full bg-slate-900/90 backdrop-blur-2xl rounded-3xl shadow-2xl border border-slate-800 p-8 sm:p-10 relative z-10 transition-all">
+        {/* Header Icon */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-500 to-indigo-600 text-white shadow-lg shadow-amber-500/20 mb-4 transform hover:scale-105 transition-transform">
+            <ShieldCheck className="w-8 h-8" />
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
             Đổi mật khẩu bảo mật
           </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            Vì lý do bảo mật, vui lòng thay đổi mật khẩu mặc định trước khi truy cập hệ thống.
+          <p className="text-xs font-medium text-slate-400 mt-2 leading-relaxed max-w-xs mx-auto">
+            Vì lý do an toàn tài khoản, vui lòng thay đổi mật khẩu mặc định trước khi sử dụng hệ thống TechEdu.
           </p>
         </div>
 
+        {/* Error Alert */}
         {error && (
-          <div className="mb-6 p-3.5 bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/60 rounded-xl flex items-center gap-2.5 text-rose-600 dark:text-rose-400 text-sm">
-            <AlertCircle className="w-5 h-5 flex-shrink-0" />
-            <span>{error}</span>
+          <div className="mb-6 p-4 bg-rose-950/50 border border-rose-800/80 rounded-2xl flex items-start gap-3 text-rose-300 text-xs sm:text-sm animate-fade-in shadow-inner">
+            <AlertCircle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
+            <span className="font-medium leading-relaxed">{error}</span>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+              Mật khẩu mới
+            </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                <Lock className="w-5 h-5" />
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                <Lock className="w-4 h-4" />
               </div>
               <input
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Mật khẩu mới"
-                className="w-full pl-11 pr-11 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:border-indigo-500 transition-all"
+                placeholder="Nhập mật khẩu mới (tối thiểu 6 ký tự)"
+                className="w-full pl-10 pr-11 py-3 bg-slate-950/80 border border-slate-800 rounded-xl text-white placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 transition-all font-medium"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer"
+                className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-slate-300 focus:outline-none cursor-pointer transition-colors"
               >
-                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
           </div>
 
           <div>
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+              Xác nhận mật khẩu mới
+            </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                <Lock className="w-5 h-5" />
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                <KeyRound className="w-4 h-4" />
               </div>
               <input
                 type={showConfirmPassword ? "text" : "password"}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Xác nhận mật khẩu mới"
-                className="w-full pl-11 pr-11 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:border-indigo-500 transition-all"
+                placeholder="Nhập lại mật khẩu mới"
+                className="w-full pl-10 pr-11 py-3 bg-slate-950/80 border border-slate-800 rounded-xl text-white placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 transition-all font-medium"
               />
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer"
+                className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-slate-300 focus:outline-none cursor-pointer transition-colors"
               >
-                {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
           </div>
@@ -129,12 +148,12 @@ export default function ForceChangePassword() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl shadow-md transition-all text-sm flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold py-3.5 px-5 rounded-xl shadow-lg shadow-indigo-600/30 transition-all duration-150 active:scale-[0.98] text-sm flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer border border-indigo-500/30"
             >
               {loading ? (
                 <>
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  <span>Đang xử lý...</span>
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  <span>Đang lưu mật khẩu...</span>
                 </>
               ) : (
                 <span>Xác nhận đổi mật khẩu</span>
@@ -146,3 +165,4 @@ export default function ForceChangePassword() {
     </div>
   );
 }
+

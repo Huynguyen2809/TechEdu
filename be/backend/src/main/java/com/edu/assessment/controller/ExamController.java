@@ -45,12 +45,12 @@ public class ExamController {
         return (String) session.getAttribute("USER_ROLE");
     }
 
-    // 1. API Giáo viên tạo đề thi mới (Kèm đáp án)
     @PreAuthorize("hasAnyRole('TEACHER', 'CENTER_MANAGER', 'DEPARTMENT_HEAD')")
     @PostMapping
     public ResponseEntity<?> createExam(@Valid @RequestBody CreateExamRequest request, HttpServletRequest httpServletRequest) {
         Long teacherId = getCurrentUserId(httpServletRequest);
-        return ResponseEntity.ok(examService.createExam(request, teacherId));
+        String role = getCurrentUserRole(httpServletRequest);
+        return ResponseEntity.ok(examService.createExam(request, teacherId, role));
     }
 
     // 2. API Học sinh vào phòng thi Split-screen (Lấy PDF & Khung phiếu trả lời)

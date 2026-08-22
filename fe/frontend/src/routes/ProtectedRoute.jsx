@@ -21,11 +21,11 @@ export default function ProtectedRoute({ children, allowedRoles }) {
     } else {
       console.warn("Bạn không có quyền truy cập vào khu vực này!");
     }
-    if (user.role === "TEACHER")
+    if (user.role === "TEACHER" || user.role === "DEPARTMENT_HEAD")
       return <Navigate to="/teacher/dashboard" replace />;
     if (user.role === "STUDENT")
       return <Navigate to="/student/dashboard" replace />;
-    if (user.role === "CENTER_MANAGER" || user.role === "DEPARTMENT_HEAD")
+    if (user.role === "CENTER_MANAGER")
       return <Navigate to="/center-manager/dashboard" replace />;
     return <Navigate to="/login" replace />;
   }

@@ -15,12 +15,12 @@ export default function EditClassNameModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs animate-fade-in">
       <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-200 dark:border-slate-800">
-        <div className="bg-indigo-600 text-white p-6 flex items-center justify-between border-b border-indigo-700 dark:border-slate-800">
+        <div className="bg-teal-600 text-white p-6 flex items-center justify-between border-b border-teal-700 dark:border-slate-800">
           <div>
             <h3 className="font-extrabold text-lg leading-tight tracking-tight text-white">
               Đổi Tên Lớp Học
             </h3>
-            <p className="text-xs text-indigo-100 mt-0.5">
+            <p className="text-xs text-teal-100 mt-0.5">
               Cập nhật lại tên hiển thị cho lớp học này
             </p>
           </div>
@@ -49,7 +49,7 @@ export default function EditClassNameModal({
               value={newClassName}
               onChange={(e) => setNewClassName(e.target.value)}
               placeholder="Nhập tên lớp học mới..."
-              className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-700 transition-all font-semibold"
+              className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:bg-white dark:focus:bg-slate-700 transition-all font-semibold"
               autoFocus
             />
           </div>
@@ -65,7 +65,7 @@ export default function EditClassNameModal({
             <button
               type="submit"
               disabled={submittingEdit}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm shadow-md transition-all flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+              className="bg-teal-600 hover:bg-teal-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm shadow-md transition-all flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
             >
               {submittingEdit ? (
                 <>

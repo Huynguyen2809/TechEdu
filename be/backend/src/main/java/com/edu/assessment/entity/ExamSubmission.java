@@ -33,6 +33,10 @@ public class ExamSubmission {
     @Column(name = "time_spent_seconds", nullable = false)
     private Integer timeSpentSeconds; // Thời gian hoàn thành bài thi (giây)
 
+    @Builder.Default
+    @Column(name = "warning_count", nullable = false, columnDefinition = "int default 0")
+    private Integer warningCount = 0; // Số lần cảnh báo gian lận
+
     @OneToMany(mappedBy = "submission", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SubmissionAnswer> answers;
 

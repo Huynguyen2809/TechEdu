@@ -54,9 +54,10 @@ public class RepositoryController {
             @RequestParam("file") MultipartFile file,
             @RequestParam(value = "folderId", required = false) Long folderId,
             @RequestParam("fileType") String fileType,
+            @RequestParam(value = "isDepartmentMaterial", required = false, defaultValue = "false") Boolean isDepartmentMaterial,
             HttpServletRequest httpServletRequest) throws Exception {
         Long teacherId = getCurrentUserId(httpServletRequest);
-        return ResponseEntity.ok(repositoryService.uploadDocument(file, folderId, fileType, teacherId));
+        return ResponseEntity.ok(repositoryService.uploadDocument(file, folderId, fileType, isDepartmentMaterial, teacherId));
     }
 
     // 3. API Lấy danh sách Folder và File (Khám phá kho đề)
@@ -184,7 +185,7 @@ public class RepositoryController {
     @PreAuthorize("permitAll()") // Tuỳ chỉnh phân quyền nếu cần
     public ResponseEntity<InputStreamResource> viewDocument(@PathVariable String fileId) {
         try {
-            GridFSFile gridFSFile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(fileId)));
+            GridFSFile gridFSFile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(new org.bson.types.ObjectId(fileId))));
             if (gridFSFile == null) {
                 return ResponseEntity.notFound().build();
             }
@@ -195,7 +196,10 @@ public class RepositoryController {
                     .contentType(MediaType.APPLICATION_PDF)
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + gridFSFile.getFilename() + "\"")
                     .body(new InputStreamResource(resource.getInputStream()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

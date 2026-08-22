@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import authService from "../../services/authService";
-import { Phone, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
+import { Phone, Lock, Eye, EyeOff, AlertCircle, GraduationCap, ShieldCheck, Sparkles, ArrowRight } from "lucide-react";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -50,9 +50,9 @@ export default function Login() {
       }
 
       // Điều hướng theo vai trò (RBAC) - dùng role từ server trả về, không đọc từ context
-      if (userData.role === "CENTER_MANAGER" || userData.role === "DEPARTMENT_HEAD") {
+      if (userData.role === "CENTER_MANAGER") {
         navigate("/center-manager/dashboard");
-      } else if (userData.role === "TEACHER") {
+      } else if (userData.role === "TEACHER" || userData.role === "DEPARTMENT_HEAD") {
         navigate("/teacher/dashboard");
       } else {
         navigate("/student/dashboard");
@@ -73,109 +73,133 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 cyber:bg-[#F8FAFC] flex items-center justify-center p-4 page-transition relative overflow-hidden">
-      {/* Container Card chính */}
-      <div className="max-w-[450px] w-full bg-white dark:bg-slate-900 cyber:bg-white rounded-2xl shadow-xl dark:shadow-none border border-slate-200/80 dark:border-slate-800 cyber:border-2 cyber:border-slate-900 cyber:shadow-[8px_8px_0_0_#0f172a] cyber:rounded-2xl p-8 sm:p-10 transition-all">
-        {/* Tiêu đề */}
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 sm:p-6 page-transition relative overflow-hidden font-sans">
+      {/* Background Ambient Glow Orbs */}
+      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-indigo-600/20 rounded-full blur-[120px] pointer-events-none animate-pulse-glow" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-violet-600/20 rounded-full blur-[120px] pointer-events-none animate-pulse-glow" style={{ animationDelay: '1.5s' }} />
+
+      {/* Grid Pattern Overlay */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b15_1px,transparent_1px),linear-gradient(to_bottom,#1e293b15_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none" />
+
+      {/* Main Container Card */}
+      <div className="max-w-[440px] w-full bg-slate-900/90 backdrop-blur-2xl rounded-3xl shadow-2xl border border-slate-800 p-8 sm:p-10 relative z-10 transition-all">
+        {/* Brand Header */}
         <div className="text-center mb-8">
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-800 dark:text-slate-100 cyber:text-slate-900">
-            Đăng nhập
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25 mb-4 transform hover:scale-105 transition-transform">
+            <GraduationCap className="w-8 h-8" />
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+            TechEdu Online
           </h1>
+          <p className="text-xs font-semibold text-slate-400 mt-1.5 flex items-center justify-center gap-1">
+            <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+            Hệ thống Thi & Đánh giá THPT GD&ĐT 2025
+          </p>
         </div>
 
-        {/* Cảnh báo lỗi */}
+        {/* Error Alert */}
         {error && (
-          <div className="mb-6 p-3.5 bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/60 rounded-xl flex items-center gap-2.5 text-rose-600 dark:text-rose-400 text-sm animate-shake cyber:bg-rose-100 cyber:text-slate-900 cyber:border-2 cyber:border-slate-900 cyber:shadow-[3px_3px_0_0_#0f172a]">
-            <AlertCircle className="w-5 h-5 flex-shrink-0" />
-            <span>{error}</span>
+          <div className="mb-6 p-4 bg-rose-950/50 border border-rose-800/80 rounded-2xl flex items-start gap-3 text-rose-300 text-xs sm:text-sm animate-fade-in shadow-inner">
+            <AlertCircle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
+            <span className="font-medium leading-relaxed">{error}</span>
           </div>
         )}
 
         <form onSubmit={handleLogin} className="space-y-4">
-          {/* Input Số điện thoại */}
+          {/* Phone Input */}
           <div>
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+              Số điện thoại
+            </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500 cyber:text-slate-900">
-                <Phone className="w-5 h-5" />
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                <Phone className="w-4 h-4" />
               </div>
               <input
                 type="tel"
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
-                placeholder="Nhập số điện thoại"
+                placeholder="Nhập 10 số điện thoại"
                 maxLength={10}
-                className="w-full pl-11 pr-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 placeholder-slate-400 text-sm focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-400 transition-all cyber:bg-white cyber:border-2 cyber:border-slate-900 cyber:shadow-[4px_4px_0_0_#0f172a] cyber:rounded-xl cyber:text-slate-900 cyber:focus:translate-x-[2px] cyber:focus:translate-y-[2px] cyber:focus:shadow-[2px_2px_0_0_#0f172a]"
+                className="w-full pl-10 pr-4 py-3 bg-slate-950/80 border border-slate-800 rounded-xl text-white placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 transition-all font-medium"
               />
             </div>
           </div>
 
-          {/* Input Mật khẩu */}
+          {/* Password Input */}
           <div>
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+              Mật khẩu
+            </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500 cyber:text-slate-900">
-                <Lock className="w-5 h-5" />
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                <Lock className="w-4 h-4" />
               </div>
               <input
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Mật khẩu"
-                className="w-full pl-11 pr-11 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 placeholder-slate-400 text-sm focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-400 transition-all cyber:bg-white cyber:border-2 cyber:border-slate-900 cyber:shadow-[4px_4px_0_0_#0f172a] cyber:rounded-xl cyber:text-slate-900 cyber:focus:translate-x-[2px] cyber:focus:translate-y-[2px] cyber:focus:shadow-[2px_2px_0_0_#0f172a]"
+                placeholder="Mật khẩu tài khoản"
+                className="w-full pl-10 pr-11 py-3 bg-slate-950/80 border border-slate-800 rounded-xl text-white placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 transition-all font-medium"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 cyber:text-slate-900 cyber:hover:text-indigo-600 focus:outline-none cursor-pointer"
+                className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-slate-300 focus:outline-none cursor-pointer transition-colors"
               >
                 {showPassword ? (
-                  <EyeOff className="w-5 h-5" />
+                  <EyeOff className="w-4 h-4" />
                 ) : (
-                  <Eye className="w-5 h-5" />
+                  <Eye className="w-4 h-4" />
                 )}
               </button>
             </div>
           </div>
 
-          {/* Link Quên mật khẩu */}
-          <div className="flex justify-start pt-1">
+          {/* Forgot Password */}
+          <div className="flex justify-end pt-1">
             <a
               href="#forgot"
-              className="text-sm text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors cyber:text-slate-900 cyber:hover:text-indigo-600 cyber:font-bold"
+              className="text-xs font-semibold text-slate-400 hover:text-indigo-400 transition-colors"
             >
               Quên mật khẩu?
             </a>
           </div>
 
-          {/* Nút Đăng nhập */}
+          {/* Submit Button */}
           <div className="pt-2">
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl shadow-md transition-all text-sm sm:text-base flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer cyber:bg-indigo-600 cyber:text-white cyber:font-bold cyber:border-2 cyber:border-slate-900 cyber:shadow-[4px_4px_0_0_#0f172a] cyber:rounded-xl cyber:hover:-translate-y-0.5 cyber:active:translate-x-1 cyber:active:translate-y-1 cyber:active:shadow-none"
+              className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold py-3.5 px-5 rounded-xl shadow-lg shadow-indigo-600/30 transition-all duration-150 active:scale-[0.98] text-sm flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer border border-indigo-500/30"
             >
               {loading ? (
                 <>
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  <span>Đang xử lý...</span>
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  <span>Đang kết nối...</span>
                 </>
               ) : (
-                <span>Đăng nhập</span>
+                <>
+                  <span>Đăng nhập hệ thống</span>
+                  <ArrowRight className="w-4 h-4" />
+                </>
               )}
             </button>
           </div>
         </form>
 
-        {/* Chuyển hướng sang Đăng ký */}
-        <div className="mt-8 text-center text-sm text-slate-600 dark:text-slate-400 cyber:text-slate-900">
+        {/* Footer Link */}
+        <div className="mt-8 pt-6 border-t border-slate-800/80 text-center text-xs text-slate-400 font-medium">
           Bạn chưa có tài khoản?{" "}
           <Link
             to="/register"
-            className="font-medium text-indigo-600 dark:text-indigo-400 hover:underline ml-1 cyber:font-bold cyber:text-indigo-600"
+            className="font-bold text-indigo-400 hover:text-indigo-300 hover:underline ml-1"
           >
-            Tạo một tài khoản mới
+            Đăng ký học sinh mới
           </Link>
         </div>
       </div>
     </div>
   );
 }
+

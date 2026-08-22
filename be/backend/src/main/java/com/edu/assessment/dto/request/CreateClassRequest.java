@@ -18,4 +18,6 @@ public class CreateClassRequest {
     @Min(value = 10, message = "Khối lớp nhỏ nhất là 10")
     @Max(value = 12, message = "Khối lớp lớn nhất là 12")
     private Integer gradeLevel;
+
+    private Long assignedTeacherId;
 }

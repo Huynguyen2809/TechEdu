@@ -29,7 +29,7 @@ export default function RepositoryTable({
     <div
       className={`relative min-h-[420px] bg-white dark:bg-slate-900 rounded-3xl border ${
         dragActive
-          ? "border-2 border-dashed border-indigo-500 bg-indigo-50/50 dark:bg-indigo-950/20"
+          ? "border-2 border-dashed border-teal-500 bg-teal-50/50 dark:bg-teal-950/20"
           : "border-slate-200/80 dark:border-slate-800"
       } shadow-sm dark:shadow-none overflow-hidden transition-all flex flex-col justify-between`}
       onDragEnter={onDragEnter}
@@ -42,9 +42,9 @@ export default function RepositoryTable({
       }}
     >
       {dragActive && (
-        <div className="absolute inset-0 bg-indigo-600/10 backdrop-blur-xs rounded-3xl flex flex-col items-center justify-center border-2 border-dashed border-indigo-600 z-30 pointer-events-none">
-          <UploadCloud className="w-14 h-14 text-indigo-600 animate-bounce" />
-          <p className="text-lg font-black text-indigo-900 dark:text-indigo-200 mt-2">
+        <div className="absolute inset-0 bg-teal-600/10 backdrop-blur-xs rounded-3xl flex flex-col items-center justify-center border-2 border-dashed border-teal-600 z-30 pointer-events-none">
+          <UploadCloud className="w-14 h-14 text-teal-600 animate-bounce" />
+          <p className="text-lg font-black text-teal-900 dark:text-teal-200 mt-2">
             Thả File PDF vào đây để Upload!
           </p>
         </div>
@@ -52,7 +52,7 @@ export default function RepositoryTable({
 
       {loading ? (
         <div className="py-24 text-center p-6 space-y-3">
-          <div className="w-9 h-9 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto"></div>
+          <div className="w-9 h-9 border-4 border-teal-200 border-t-teal-600 rounded-full animate-spin mx-auto"></div>
           <p className="text-xs text-slate-400 font-medium">Đang tải kho tài liệu...</p>
         </div>
       ) : error ? (
@@ -61,7 +61,7 @@ export default function RepositoryTable({
         </div>
       ) : folders.length === 0 && documents.length === 0 ? (
         <div className="text-center py-20 space-y-4 my-auto p-6">
-          <div className="w-20 h-20 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-500 rounded-3xl flex items-center justify-center mx-auto border border-indigo-100 dark:border-indigo-900/60 shadow-2xs">
+          <div className="w-20 h-20 bg-teal-50 dark:bg-teal-950/60 text-teal-500 rounded-3xl flex items-center justify-center mx-auto border border-teal-100 dark:border-teal-900/60 shadow-2xs">
             <FileJson className="w-10 h-10" />
           </div>
           <div className="space-y-1 max-w-sm mx-auto">
@@ -126,7 +126,7 @@ export default function RepositoryTable({
                       <div className="w-9 h-9 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-500 flex items-center justify-center border border-amber-200/60 dark:border-amber-900/60 shrink-0 group-hover:scale-110 transition-transform">
                         <Folder className="w-5 h-5 fill-amber-400/20" />
                       </div>
-                      <span className="font-bold text-slate-800 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                      <span className="font-bold text-slate-800 dark:text-slate-100 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
                         {folder.name}
                       </span>
                     </div>
@@ -188,7 +188,7 @@ export default function RepositoryTable({
                         >
                           <FileText className="w-5 h-5" />
                         </div>
-                        <span className="font-bold text-slate-800 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-1">
+                        <span className="font-bold text-slate-800 dark:text-slate-100 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors line-clamp-1">
                           {doc.title || doc.fileName}
                         </span>
                       </div>

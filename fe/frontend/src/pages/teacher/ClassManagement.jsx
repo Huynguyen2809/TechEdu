@@ -35,6 +35,8 @@ export default function ClassManagement() {
   const [selectedSubject, setSelectedSubject] = useState("Hóa học");
   const [customSubject, setCustomSubject] = useState("");
   const [gradeLevel, setGradeLevel] = useState(12);
+  const [assignedTeacherId, setAssignedTeacherId] = useState("");
+  const [departmentTeachers, setDepartmentTeachers] = useState([]);
 
   const [submitting, setSubmitting] = useState(false);
   const [modalError, setModalError] = useState("");
@@ -75,6 +77,22 @@ export default function ClassManagement() {
 
     fetchMyClasses(isMounted);
 
+    // Lấy danh sách giáo viên bộ môn
+    const fetchTeachers = async () => {
+      try {
+        const teachers = await classService.getDepartmentTeachers();
+        if (isMounted() && Array.isArray(teachers)) {
+          setDepartmentTeachers(teachers);
+          if (teachers.length > 0) {
+            setAssignedTeacherId(teachers[0].id);
+          }
+        }
+      } catch (err) {
+        console.error("Lỗi lấy danh sách giáo viên", err);
+      }
+    };
+    fetchTeachers();
+
     return () => {
       mounted = false;
     };
@@ -103,7 +121,8 @@ export default function ClassManagement() {
       await classService.createClass({
         name: className.trim(),
         subjectName: finalSubjectName,
-        gradeLevel: Number(gradeLevel)
+        gradeLevel: Number(gradeLevel),
+        assignedTeacherId: assignedTeacherId ? Number(assignedTeacherId) : undefined
       });
 
       setClassName("");
@@ -180,12 +199,12 @@ export default function ClassManagement() {
       {/* Header trang & Nút Tạo lớp */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <h1 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight flex items-center gap-2">
-          <Users className="w-7 h-7 text-indigo-600 dark:text-indigo-400" />
+          <Users className="w-7 h-7 text-teal-600 dark:text-teal-400" />
           <span>Quản lý lớp học</span>
         </h1>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="bg-indigo-600 dark:bg-indigo-500 hover:bg-indigo-700 dark:hover:bg-indigo-600 text-white font-semibold rounded-xl px-5 py-2.5 flex items-center gap-2 text-sm whitespace-nowrap shadow-sm hover:shadow-md cursor-pointer transition-all active:scale-[0.98]"
+          className="bg-teal-600 dark:bg-teal-500 hover:bg-teal-700 dark:hover:bg-teal-600 text-white font-semibold rounded-xl px-5 py-2.5 flex items-center gap-2 text-sm whitespace-nowrap shadow-sm hover:shadow-md cursor-pointer transition-all active:scale-[0.98]"
         >
           <Plus className="w-4 h-4 text-amber-300" />
           <span>Tạo Lớp Học Mới</span>
@@ -203,14 +222,14 @@ export default function ClassManagement() {
       {/* DANH SÁCH LỚP HỌC DẠNG BẢNG NGANG */}
       {loading ? (
         <div className="py-20 text-center space-y-3">
-          <div className="w-10 h-10 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto"></div>
+          <div className="w-10 h-10 border-4 border-teal-200 border-t-teal-600 rounded-full animate-spin mx-auto"></div>
           <p className="text-xs text-slate-400 dark:text-slate-500 font-medium">
             Đang tải danh sách lớp học...
           </p>
         </div>
       ) : classes.length === 0 ? (
         <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/60 dark:border-slate-800/60 flex flex-col items-center py-20 gap-4 shadow-sm">
-          <div className="w-16 h-16 bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 rounded-2xl flex items-center justify-center border border-indigo-100 dark:border-indigo-800/60 shadow-sm">
+          <div className="w-16 h-16 bg-teal-50 dark:bg-teal-900/40 text-teal-600 dark:text-teal-400 rounded-2xl flex items-center justify-center border border-teal-100 dark:border-teal-800/60 shadow-sm">
             <Users className="w-8 h-8" />
           </div>
           <div className="text-center">
@@ -223,7 +242,7 @@ export default function ClassManagement() {
           </div>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="mt-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 text-white font-semibold text-sm rounded-xl inline-flex items-center gap-2 cursor-pointer transition-all shadow-sm active:scale-[0.98]"
+            className="mt-2 px-6 py-2.5 bg-teal-600 hover:bg-teal-700 dark:bg-teal-500 text-white font-semibold text-sm rounded-xl inline-flex items-center gap-2 cursor-pointer transition-all shadow-sm active:scale-[0.98]"
           >
             <Plus className="w-4 h-4 text-amber-300" />
             <span>Tạo Lớp Ngay</span>
@@ -254,6 +273,9 @@ export default function ClassManagement() {
         setCustomSubject={setCustomSubject}
         gradeLevel={gradeLevel}
         setGradeLevel={setGradeLevel}
+        assignedTeacherId={assignedTeacherId}
+        setAssignedTeacherId={setAssignedTeacherId}
+        departmentTeachers={departmentTeachers}
         onSubmit={handleCreateClass}
         submitting={submitting}
         modalError={modalError}

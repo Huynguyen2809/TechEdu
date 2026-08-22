@@ -12,7 +12,7 @@ import {
 import GradebookSidebar from "../../components/teacher/gradebook/GradebookSidebar";
 import GradebookStats from "../../components/teacher/gradebook/GradebookStats";
 import GradebookTable from "../../components/teacher/gradebook/GradebookTable";
-import SubmissionDetailModal from "../../components/teacher/gradebook/modals/SubmissionDetailModal";
+import SubmissionDetailModal from "../../components/exam/SubmissionDetailModal";
 
 export default function Gradebook() {
   const [selectedExamId, setSelectedExamId] = useState(null);
@@ -164,7 +164,7 @@ export default function Gradebook() {
       {/* ── HEADER ── */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <h1 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight flex items-center gap-2">
-          <BarChart2 className="w-7 h-7 text-indigo-600 dark:text-indigo-400" />
+          <BarChart2 className="w-7 h-7 text-teal-600 dark:text-teal-400" />
           <span>Sổ điểm &amp; Báo cáo kết quả</span>
         </h1>
 
@@ -202,7 +202,7 @@ export default function Gradebook() {
           {/* Placeholder khi chưa chọn */}
           {!selectedExamId && !loading && (
             <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/60 dark:border-slate-800/60 shadow-sm flex flex-col items-center justify-center py-24 gap-4 text-center">
-              <div className="w-16 h-16 bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 rounded-3xl flex items-center justify-center border border-indigo-100 dark:border-indigo-800/60 shadow-inner">
+              <div className="w-16 h-16 bg-teal-50 dark:bg-teal-900/40 text-teal-600 dark:text-teal-400 rounded-3xl flex items-center justify-center border border-teal-100 dark:border-teal-800/60 shadow-inner">
                 <BarChart2 className="w-8 h-8" />
               </div>
               <p className="text-sm font-bold text-slate-700 dark:text-slate-300">
@@ -215,7 +215,7 @@ export default function Gradebook() {
           {loading && (
             <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/60 dark:border-slate-800/60 shadow-sm flex items-center justify-center py-24">
               <div className="flex flex-col items-center gap-3">
-                <div className="w-10 h-10 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
+                <div className="w-10 h-10 border-4 border-teal-200 border-t-teal-600 rounded-full animate-spin" />
                 <p className="text-sm text-slate-500 font-medium">
                   Đang tổng hợp dữ liệu bảng điểm...
                 </p>
@@ -237,21 +237,21 @@ export default function Gradebook() {
           {gradebook && stats && (
             <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 space-y-6">
               {/* Tiêu đề exam đang xem (Glassmorphism) */}
-              <div className="relative bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-800 rounded-2xl p-6 shadow-lg border border-indigo-500/30 flex items-center justify-between overflow-hidden">
+              <div className="relative bg-gradient-to-br from-teal-600 via-teal-700 to-violet-800 rounded-2xl p-6 shadow-lg border border-teal-500/30 flex items-center justify-between overflow-hidden">
                 <div className="absolute -right-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none z-0"></div>
-                <div className="absolute -left-10 -bottom-10 w-32 h-32 bg-indigo-400/20 rounded-full blur-xl pointer-events-none z-0"></div>
+                <div className="absolute -left-10 -bottom-10 w-32 h-32 bg-teal-400/20 rounded-full blur-xl pointer-events-none z-0"></div>
                 
                 <div className="relative z-10">
                   <h2 className="text-xl font-black text-white tracking-tight">
                     {gradebook.examTitle}
                   </h2>
-                  <p className="text-sm text-indigo-100 font-medium mt-1 flex items-center gap-2">
+                  <p className="text-sm text-teal-100 font-medium mt-1 flex items-center gap-2">
                     Lớp: <span className="font-bold text-white bg-white/20 px-2 py-0.5 rounded-lg border border-white/20">{gradebook.className}</span>
                   </p>
                 </div>
                 <div className="relative z-10 flex flex-col items-center justify-center bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl px-5 py-3 shadow-inner">
                   <span className="text-2xl font-black text-amber-300 leading-none">{stats.total}</span>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-100 mt-1">bài nộp</span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-teal-100 mt-1">bài nộp</span>
                 </div>
               </div>
 
@@ -275,6 +275,7 @@ export default function Gradebook() {
         <SubmissionDetailModal
           submissionId={selectedSubmission}
           onClose={() => setSelectedSubmission(null)}
+          role="TEACHER"
         />
       )}
     </div>

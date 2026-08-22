@@ -24,12 +24,14 @@ public class GradebookService {
     private final UserRepository userRepository;
 
     // 1. Nghiệp vụ: Xem bảng điểm tổng quan của 1 Kỳ thi (Dành cho Giáo viên)
-    public Map<String, Object> getExamGradebook(Long examId, Long teacherId) {
+    public Map<String, Object> getExamGradebook(Long examId, Long teacherId, String role) {
         Exam exam = examRepository.findById(examId)
                 .orElseThrow(() -> new IllegalArgumentException("Bài kiểm tra không tồn tại"));
 
-        if (!exam.getTeacher().getId().equals(teacherId)) {
-            throw new IllegalStateException("Bạn không có quyền xem bảng điểm của bài kiểm tra này!");
+        if ("TEACHER".equals(role) || "DEPARTMENT_HEAD".equals(role)) {
+            if (!exam.getTeacher().getId().equals(teacherId)) {
+                throw new IllegalStateException("Bạn không có quyền xem bảng điểm của bài kiểm tra này!");
+            }
         }
 
         List<ExamSubmission> submissions = submissionRepository.findAllByExamIdWithStudentOrderByTotalScoreDesc(examId);
@@ -42,6 +44,7 @@ public class GradebookService {
             map.put("phoneNumber", sub.getStudent().getPhoneNumber());
             map.put("totalScore", sub.getTotalScore());
             map.put("timeSpentSeconds", sub.getTimeSpentSeconds());
+            map.put("warningCount", sub.getWarningCount());
             map.put("submittedAt", sub.getSubmittedAt().toString());
             return map;
         }).toList();
@@ -67,12 +70,14 @@ public class GradebookService {
 
     // 2. Nghiệp vụ: Xem chi tiết bài làm của 1 Học sinh (Đối chiếu đáp án)
     @Transactional(readOnly = true)
-    public Map<String, Object> getSubmissionDetail(Long submissionId, Long teacherId) {
+    public Map<String, Object> getSubmissionDetail(Long submissionId, Long teacherId, String role) {
         ExamSubmission sub = submissionRepository.findByIdWithAnswers(submissionId)
                 .orElseThrow(() -> new IllegalArgumentException("Bài nộp không tồn tại"));
 
-        if (!sub.getExam().getTeacher().getId().equals(teacherId)) {
-            throw new IllegalStateException("Bạn không có quyền xem bài làm này!");
+        if ("TEACHER".equals(role) || "DEPARTMENT_HEAD".equals(role)) {
+            if (!sub.getExam().getTeacher().getId().equals(teacherId)) {
+                throw new IllegalStateException("Bạn không có quyền xem bài làm này!");
+            }
         }
 
         // Sắp xếp câu trả lời theo thứ tự câu hỏi 1, 2, 3...
@@ -93,23 +98,40 @@ public class GradebookService {
             return map;
         }).toList();
 
-        return Map.of(
-                "submissionId", sub.getId(),
-                "studentName", sub.getStudent().getFullName(),
-                "examTitle", sub.getExam().getTitle(),
-                "totalScore", sub.getTotalScore(),
-                "timeSpentSeconds", sub.getTimeSpentSeconds(),
-                "details", answerDetails
-        );
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("submissionId", sub.getId());
+        result.put("studentName", sub.getStudent().getFullName());
+        result.put("examTitle", sub.getExam().getTitle());
+        result.put("className", sub.getExam().getClazz().getName());
+        result.put("subjectName", sub.getExam().getClazz().getSubjectName());
+        result.put("totalScore", sub.getTotalScore());
+        result.put("timeSpentSeconds", sub.getTimeSpentSeconds());
+        result.put("warningCount", sub.getWarningCount());
+        result.put("submittedAt", sub.getSubmittedAt());
+        result.put("details", answerDetails);
+        result.put("canViewExplanation", true); // Teacher/Head can always view
+        result.put("explanationPolicy", sub.getExam().getExplanationPolicy() != null ? sub.getExam().getExplanationPolicy().name() : "AFTER_EXAM_END");
+        result.put("endTime", sub.getExam().getEndTime());
+        
+        if (sub.getExam().getDocument() != null) {
+            result.put("examFileUrl", sub.getExam().getDocument().getFileUrl());
+        }
+        if (sub.getExam().getExplanationDocument() != null) {
+            result.put("explanationFileUrl", sub.getExam().getExplanationDocument().getFileUrl());
+        }
+
+        return result;
     }
 
     // 3. Nghiệp vụ: Xuất file Excel (.xlsx) Bảng điểm chuyên nghiệp
-    public byte[] exportGradebookToExcel(Long examId, Long teacherId) throws IOException {
+    public byte[] exportGradebookToExcel(Long examId, Long teacherId, String role) throws IOException {
         Exam exam = examRepository.findById(examId)
                 .orElseThrow(() -> new IllegalArgumentException("Bài kiểm tra không tồn tại"));
 
-        if (!exam.getTeacher().getId().equals(teacherId)) {
-            throw new IllegalStateException("Bạn không có quyền xuất dữ liệu của kỳ thi này!");
+        if ("TEACHER".equals(role) || "DEPARTMENT_HEAD".equals(role)) {
+            if (!exam.getTeacher().getId().equals(teacherId)) {
+                throw new IllegalStateException("Bạn không có quyền xuất dữ liệu của kỳ thi này!");
+            }
         }
 
         List<ExamSubmission> submissions = submissionRepository.findAllByExamIdWithStudentOrderByTotalScoreDesc(examId);

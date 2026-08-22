@@ -32,6 +32,8 @@ import CenterManagerDashboard from "../pages/center-manager/CenterManagerDashboa
 import UserManagement from "../pages/center-manager/UserManagement";
 import DepartmentManagement from "../pages/center-manager/DepartmentManagement";
 import DocumentManagement from "../pages/center-manager/DocumentManagement";
+import CategoryManagement from "../pages/center-manager/CategoryManagement";
+import SecurityOverview from "../pages/center-manager/SecurityOverview";
 
 export default function AppRouter() {
   return (
@@ -92,17 +94,19 @@ export default function AppRouter() {
         }
       />
 
-      {/* ======= LUỒNG QUẢN TRỊ (CENTER MANAGER / DEPARTMENT HEAD) ======= */}
+      {/* ======= LUỒNG QUẢN TRỊ (CENTER MANAGER) ======= */}
       <Route
         path="/center-manager/*"
         element={
-          <ProtectedRoute allowedRoles={["CENTER_MANAGER", "DEPARTMENT_HEAD"]}>
+          <ProtectedRoute allowedRoles={["CENTER_MANAGER"]}>
             <AdminLayout>
               <Routes>
                 <Route path="dashboard"   element={<CenterManagerDashboard />} />
                 <Route path="users"       element={<UserManagement />} />
                 <Route path="departments" element={<DepartmentManagement />} />
                 <Route path="documents"   element={<DocumentManagement />} />
+                <Route path="categories"  element={<CategoryManagement />} />
+                <Route path="security"    element={<SecurityOverview />} />
                 {/* Fallback */}
                 <Route path="*" element={<Navigate to="dashboard" replace />} />
               </Routes>

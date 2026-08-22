@@ -44,5 +44,38 @@ public class DataSeeder implements CommandLineRunner {
         } else {
             log.info("--- Tài khoản Center Manager hệ thống đã tồn tại, bỏ qua bước khởi tạo ---");
         }
+
+        // Seed Department Head
+        if (!userRepository.existsByPhoneNumber("0888888888")) {
+            userRepository.save(User.builder()
+                    .phoneNumber("0888888888")
+                    .passwordHash(passwordEncoder.encode("123456"))
+                    .fullName("Tổ trưởng chuyên môn")
+                    .role(User.Role.DEPARTMENT_HEAD)
+                    .isActive(true)
+                    .build());
+        }
+
+        // Seed Teacher
+        if (!userRepository.existsByPhoneNumber("0777777777")) {
+            userRepository.save(User.builder()
+                    .phoneNumber("0777777777")
+                    .passwordHash(passwordEncoder.encode("123456"))
+                    .fullName("Giáo viên Demo")
+                    .role(User.Role.TEACHER)
+                    .isActive(true)
+                    .build());
+        }
+
+        // Seed Student
+        if (!userRepository.existsByPhoneNumber("0666666666")) {
+            userRepository.save(User.builder()
+                    .phoneNumber("0666666666")
+                    .passwordHash(passwordEncoder.encode("123456"))
+                    .fullName("Học sinh Demo")
+                    .role(User.Role.STUDENT)
+                    .isActive(true)
+                    .build());
+        }
     }
 }

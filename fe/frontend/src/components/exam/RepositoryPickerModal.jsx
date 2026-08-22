@@ -171,7 +171,7 @@ export default function RepositoryPickerModal({ onSelect, onClose, filterType = 
 
               {/* Documents */}
               {filteredDocs.map((doc) => {
-                const isSelectable = !filterType || doc.fileType === filterType || doc.title.toLowerCase().endsWith(".pdf");
+                const isSelectable = !filterType || doc.fileType === filterType;
                 return (
                   <button
                     key={doc.id}

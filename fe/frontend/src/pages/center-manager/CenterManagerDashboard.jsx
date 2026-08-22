@@ -4,7 +4,8 @@ import centerManagerService from "../../services/centerManagerService";
 import {
   Users, GraduationCap, FileText,
   TrendingUp, ChevronRight,
-  Activity, Award, Building2, FolderLock
+  Activity, Award, Building2, FolderLock,
+  Tag, ShieldCheck
 } from "lucide-react";
 
 // ─── StatCard ──────────────────────────────────────────────────────────
@@ -69,13 +70,18 @@ function QuickLink({ icon: Icon, label, desc, path, color }) {
 export default function CenterManagerDashboard() {
   const navigate = useNavigate();
   const [stats, setStats] = useState(null);
+  const [analytics, setAnalytics] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
       try {
-        const data = await centerManagerService.getSystemStats();
-        setStats(data);
+        const [statsData, analyticsData] = await Promise.all([
+          centerManagerService.getSystemStats(),
+          centerManagerService.getAnalyticsDashboard().catch(() => null)
+        ]);
+        setStats(statsData);
+        setAnalytics(analyticsData);
       } catch {
         // Giữ null nếu lỗi
       } finally {
@@ -131,7 +137,7 @@ export default function CenterManagerDashboard() {
             icon={Award}
             label="Giáo viên"
             value={stats?.totalTeachers}
-            color="bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 border border-blue-200/60 dark:border-blue-800/40"
+            color="bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-800/40"
             onClick={() => navigate("/center-manager/users")}
           />
           <StatCard
@@ -157,6 +163,64 @@ export default function CenterManagerDashboard() {
         </div>
       </div>
 
+      {/* ANALYTICS SECTION */}
+      {analytics && (
+        <div className="space-y-4">
+          <h2 className="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-wider flex items-center gap-2">
+            <div className="w-1 h-4 bg-indigo-600 rounded-full"></div>
+            Phân Tích Chuyên Sâu
+          </h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            {/* Phổ điểm */}
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-800/60 p-6 shadow-sm">
+              <h3 className="text-base font-extrabold text-slate-800 dark:text-slate-100 mb-6 flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-indigo-500" /> Phân Bổ Điểm Số
+              </h3>
+              <div className="space-y-4">
+                {['0-2', '2-4', '4-6', '6-8', '8-10'].map((range, idx) => {
+                  const count = analytics.scoreDistribution?.[range] || 0;
+                  const total = analytics.totalSubmissions || 1;
+                  const percentage = Math.round((count / total) * 100);
+                  return (
+                    <div key={range} className="flex items-center gap-4">
+                      <div className="w-12 text-xs font-bold text-slate-500 dark:text-slate-400 text-right">{range}</div>
+                      <div className="flex-1 h-3 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-indigo-500 dark:bg-indigo-400 rounded-full"
+                          style={{ width: `${percentage}%` }}
+                        ></div>
+                      </div>
+                      <div className="w-12 text-xs font-bold text-slate-700 dark:text-slate-300">{count}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Tỷ lệ Đạt */}
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-800/60 p-6 shadow-sm flex flex-col items-center justify-center text-center">
+              <h3 className="text-base font-extrabold text-slate-800 dark:text-slate-100 mb-6 flex items-center gap-2">
+                <ShieldCheck className="w-5 h-5 text-emerald-500" /> Tỷ Lệ Đạt (≥ 5.0)
+              </h3>
+              
+              <div className="relative w-40 h-40 rounded-full border-[12px] border-slate-100 dark:border-slate-800 flex items-center justify-center shadow-inner">
+                <div 
+                  className="absolute inset-0 rounded-full border-[12px] border-emerald-500 dark:border-emerald-400"
+                  style={{ clipPath: `polygon(0 0, 100% 0, 100% ${analytics.passRate}%, 0 ${analytics.passRate}%)` }}
+                ></div>
+                <div className="z-10 flex flex-col items-center justify-center">
+                  <span className="text-4xl font-black text-slate-800 dark:text-slate-100">{analytics.passRate}%</span>
+                  <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">{analytics.passCount} Học sinh</span>
+                </div>
+              </div>
+              <p className="mt-6 text-sm text-slate-500 dark:text-slate-400 font-medium max-w-sm">
+                Tổng cộng có <b className="text-slate-700 dark:text-slate-300">{analytics.totalSubmissions}</b> lượt thi. Tỷ lệ học sinh đạt điểm trung bình trở lên là <b>{analytics.passRate}%</b>.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* QUICK LINKS */}
       <div className="space-y-4">
         <h2 className="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-wider flex items-center gap-2">
@@ -169,7 +233,7 @@ export default function CenterManagerDashboard() {
             label="Quản lý Nhân sự"
             desc="Cấp phát tài khoản, phân quyền & khóa/mở khóa nhân viên trên toàn hệ thống"
             path="/center-manager/users"
-            color="bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-blue-500/30"
+            color="bg-gradient-to-br from-indigo-500 to-indigo-600 text-white shadow-indigo-500/30"
           />
           <QuickLink
             icon={Building2}
@@ -185,8 +249,23 @@ export default function CenterManagerDashboard() {
             path="/center-manager/documents"
             color="bg-gradient-to-br from-indigo-500 to-indigo-600 text-white shadow-indigo-500/30"
           />
+          <QuickLink
+            icon={Tag}
+            label="Danh mục Môn học"
+            desc="Quản lý khung chương trình khối 10, 11, 12 chuẩn Bộ GD&ĐT 2025"
+            path="/center-manager/categories"
+            color="bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-amber-500/30"
+          />
+          <QuickLink
+            icon={ShieldCheck}
+            label="Giám sát Bảo mật"
+            desc="Theo dõi trạng thái kết nối server, kiểm tra các chuẩn an toàn hệ thống"
+            path="/center-manager/security"
+            color="bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-emerald-500/30"
+          />
         </div>
       </div>
     </div>
   );
 }
+

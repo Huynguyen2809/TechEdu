@@ -35,7 +35,7 @@ export default function GradebookStats({ stats }) {
         icon={Users}
         label="Đã nộp bài"
         value={stats.total}
-        color="bg-indigo-50 text-indigo-600 border-indigo-100 dark:bg-indigo-950/60 dark:text-indigo-400 dark:border-indigo-900"
+        color="bg-teal-50 text-teal-600 border-teal-100 dark:bg-teal-950/60 dark:text-teal-400 dark:border-teal-900"
         sub="học sinh"
       />
       <StatCard

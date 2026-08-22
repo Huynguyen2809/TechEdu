@@ -42,28 +42,36 @@ public class ExamService {
 
     // Nghiệp vụ 1: Giáo viên tạo bài kiểm tra mới kèm Đáp án chuẩn
     @Transactional
-    public Map<String, Object> createExam(CreateExamRequest request, Long teacherId) {
+    public Map<String, Object> createExam(CreateExamRequest request, Long teacherId, String role) {
         User teacher = userRepository.findById(teacherId)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy Giáo viên"));
 
         Class clazz = classRepository.findById(request.getClassId())
                 .orElseThrow(() -> new IllegalArgumentException("Lớp học không tồn tại"));
-        if (!clazz.getTeacher().getId().equals(teacherId)) {
-            throw new IllegalStateException("Bạn không có quyền tạo bài kiểm tra cho lớp của người khác!");
+        
+        if ("TEACHER".equals(role)) {
+            if (!clazz.getTeacher().getId().equals(teacherId)) {
+                throw new IllegalStateException("Bạn không có quyền tạo bài kiểm tra cho lớp của người khác!");
+            }
         }
 
         Document document = documentRepository.findById(request.getDocumentId())
                 .orElseThrow(() -> new IllegalArgumentException("File tài liệu PDF không tồn tại"));
-        if (!document.getTeacher().getId().equals(teacherId)) {
-            throw new IllegalStateException("Bạn không có quyền sử dụng file tài liệu này!");
+        
+        if ("TEACHER".equals(role)) {
+            if (!document.getTeacher().getId().equals(teacherId) && !Boolean.TRUE.equals(document.getIsDepartmentMaterial())) {
+                throw new IllegalStateException("Bạn không có quyền sử dụng file tài liệu này!");
+            }
         }
 
         Document explanationDoc = null;
         if (request.getExplanationDocumentId() != null) {
             explanationDoc = documentRepository.findById(request.getExplanationDocumentId())
                     .orElseThrow(() -> new IllegalArgumentException("File lời giải PDF không tồn tại"));
-            if (!explanationDoc.getTeacher().getId().equals(teacherId)) {
-                throw new IllegalStateException("Bạn không có quyền sử dụng file lời giải này!");
+            if ("TEACHER".equals(role)) {
+                if (!explanationDoc.getTeacher().getId().equals(teacherId) && !Boolean.TRUE.equals(explanationDoc.getIsDepartmentMaterial())) {
+                    throw new IllegalStateException("Bạn không có quyền sử dụng file lời giải này!");
+                }
             }
         }
 
@@ -315,6 +323,7 @@ public class ExamService {
                 .student(student)
                 .totalScore(totalEarnedScore)
                 .timeSpentSeconds(request.getTimeSpentSeconds())
+                .warningCount(request.getWarningCount())
                 .build();
 
         for (SubmissionAnswer sa : submissionAnswers) {
@@ -335,7 +344,15 @@ public class ExamService {
     // Nghiệp vụ 4: Lấy danh sách bài kiểm tra dành cho Học sinh / Giáo viên trong lớp
     public List<Map<String, Object>> getExamsForClass(Long classId, Long userId, String role) {
 
-        if ("TEACHER".equals(role) || "CENTER_MANAGER".equals(role) || "DEPARTMENT_HEAD".equals(role)) {
+        if ("TEACHER".equals(role) || "CENTER_MANAGER".equals(role)) {
+            if (!"CENTER_MANAGER".equals(role)) {
+                Class targetClass = classRepository.findById(classId).orElseThrow();
+                if ("TEACHER".equals(role)) {
+                    if (!targetClass.getTeacher().getId().equals(userId)) {
+                        throw new IllegalStateException("Bạn không có quyền xem kỳ thi của lớp này!");
+                    }
+                }
+            }
             // Đối với giáo viên, trả về số lượng bài nộp
             List<Exam> exams = examRepository.findAllByClazzIdAndIsPublishedTrueOrderByStartTimeDesc(classId);
             return exams.stream().map(e -> {

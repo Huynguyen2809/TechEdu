@@ -46,12 +46,12 @@ function Part1Matrix({ keys = [], onUpdate, examMode }) {
   return (
     <div className="space-y-6">
       {/* Quick Import Box */}
-      <div className="bg-indigo-50/50 dark:bg-indigo-900/10 border border-indigo-200/60 dark:border-indigo-800/40 rounded-2xl p-5 space-y-4">
+      <div className="bg-teal-50/50 dark:bg-teal-900/10 border border-teal-200/60 dark:border-teal-800/40 rounded-2xl p-5 space-y-4">
         <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-indigo-100 dark:bg-indigo-800/60 rounded-lg">
-            <Zap className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+          <div className="p-1.5 bg-teal-100 dark:bg-teal-800/60 rounded-lg">
+            <Zap className="w-4 h-4 text-teal-600 dark:text-teal-400" />
           </div>
-          <p className="text-sm font-extrabold text-indigo-900 dark:text-indigo-100 uppercase tracking-wide">
+          <p className="text-sm font-extrabold text-teal-900 dark:text-teal-100 uppercase tracking-wide">
             Nhập nhanh bảng đáp án
           </p>
         </div>
@@ -62,13 +62,13 @@ function Part1Matrix({ keys = [], onUpdate, examMode }) {
             "Dán chuỗi đáp án vào đây...\nVí dụ: 1A 2B 3C 4D 5A\nHoặc: 1.A 2.B 3.C 4.D 5.A"
           }
           rows={3}
-          className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-indigo-200 dark:border-indigo-800/60 rounded-xl text-sm font-mono text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 resize-none placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-all shadow-sm"
+          className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-teal-200 dark:border-teal-800/60 rounded-xl text-sm font-mono text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-4 focus:ring-teal-500/10 resize-none placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-all shadow-sm"
         />
         <div className="flex items-center gap-4">
           <button
             type="button"
             onClick={handleQuickImport}
-            className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl cursor-pointer transition-all shadow-sm active:scale-95"
+            className="flex items-center gap-2 px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white text-sm font-bold rounded-xl cursor-pointer transition-all shadow-sm active:scale-95"
           >
             <Zap className="w-4 h-4" />
             Nhập nhanh
@@ -109,7 +109,7 @@ function Part1Matrix({ keys = [], onUpdate, examMode }) {
         {safeKeys.map((ans, idx) => (
           <div
             key={idx}
-            className="flex flex-col gap-3 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 p-4 hover:border-indigo-300 dark:hover:border-indigo-700 transition-all shadow-sm hover:shadow-md group"
+            className="flex flex-col gap-3 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 p-4 hover:border-teal-300 dark:hover:border-teal-700 transition-all shadow-sm hover:shadow-md group"
           >
             <div className="flex items-center justify-between">
               <span className="font-extrabold text-slate-700 dark:text-slate-200 text-sm">
@@ -138,8 +138,8 @@ function Part1Matrix({ keys = [], onUpdate, examMode }) {
                   onClick={() => onUpdate(idx, "correctAnswer", opt)}
                   className={`flex-1 aspect-square rounded-xl font-black text-sm transition-all cursor-pointer active:scale-95 ${
                     ans.correctAnswer === opt
-                      ? "bg-indigo-600 text-white shadow-md shadow-indigo-500/20 scale-105"
-                      : "bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-600 hover:text-indigo-600 dark:hover:text-indigo-400"
+                      ? "bg-teal-600 text-white shadow-md shadow-teal-500/20 scale-105"
+                      : "bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:border-teal-300 dark:hover:border-teal-600 hover:text-teal-600 dark:hover:text-teal-400"
                   }`}
                 >
                   {opt}
@@ -173,7 +173,7 @@ function Part2Matrix({ keys = [], onUpdate, examMode }) {
         return (
           <div
             key={idx}
-            className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 p-5 space-y-4 hover:border-indigo-300 transition-all shadow-sm hover:shadow-md"
+            className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 p-5 space-y-4 hover:border-teal-300 transition-all shadow-sm hover:shadow-md"
           >
             <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-3">
               <p className="font-extrabold text-slate-800 dark:text-slate-100 text-base">
@@ -241,7 +241,7 @@ function Part3Matrix({ keys = [], onUpdate, examMode }) {
       {safeKeys.map((ans, idx) => (
         <div
           key={idx}
-          className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 p-4 flex flex-col gap-3 hover:border-indigo-300 transition-all shadow-sm hover:shadow-md"
+          className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 p-4 flex flex-col gap-3 hover:border-teal-300 transition-all shadow-sm hover:shadow-md"
         >
           <div className="flex items-center justify-between">
             <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm">
@@ -269,7 +269,7 @@ function Part3Matrix({ keys = [], onUpdate, examMode }) {
               value={ans.correctAnswer}
               onChange={(e) => onUpdate(idx, "correctAnswer", e.target.value)}
               placeholder="Nhập đáp án ngắn vào đây..."
-              className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all shadow-sm"
+              className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold text-slate-900 dark:text-white focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all shadow-sm"
             />
           </div>
         </div>
@@ -296,7 +296,7 @@ export default function QuestionEditorStep({
     <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/60 dark:border-slate-800/60 p-6 md:p-8 space-y-6 shadow-sm transition-all duration-300">
       <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-indigo-50 dark:bg-indigo-900/30 rounded-xl text-indigo-600 dark:text-indigo-400">
+          <div className="p-2 bg-teal-50 dark:bg-teal-900/30 rounded-xl text-teal-600 dark:text-teal-400">
             <ListChecks className="w-5 h-5" />
           </div>
           <div>
@@ -335,7 +335,7 @@ export default function QuestionEditorStep({
           onClick={() => setActivePartTab("PART_1")}
           className={`flex-1 sm:flex-none px-5 py-2.5 rounded-xl text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-2 ${
             activePartTab === "PART_1"
-              ? "bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm border border-slate-200/60 dark:border-slate-600"
+              ? "bg-white dark:bg-slate-700 text-teal-600 dark:text-teal-400 shadow-sm border border-slate-200/60 dark:border-slate-600"
               : "text-slate-600 dark:text-slate-400 hover:bg-white/50 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-200"
           }`}
         >
@@ -348,7 +348,7 @@ export default function QuestionEditorStep({
           onClick={() => setActivePartTab("PART_2")}
           className={`flex-1 sm:flex-none px-5 py-2.5 rounded-xl text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-2 ${
             activePartTab === "PART_2"
-              ? "bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm border border-slate-200/60 dark:border-slate-600"
+              ? "bg-white dark:bg-slate-700 text-teal-600 dark:text-teal-400 shadow-sm border border-slate-200/60 dark:border-slate-600"
               : "text-slate-600 dark:text-slate-400 hover:bg-white/50 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-200"
           }`}
         >
@@ -361,7 +361,7 @@ export default function QuestionEditorStep({
           onClick={() => setActivePartTab("PART_3")}
           className={`flex-1 sm:flex-none px-5 py-2.5 rounded-xl text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-2 ${
             activePartTab === "PART_3"
-              ? "bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm border border-slate-200/60 dark:border-slate-600"
+              ? "bg-white dark:bg-slate-700 text-teal-600 dark:text-teal-400 shadow-sm border border-slate-200/60 dark:border-slate-600"
               : "text-slate-600 dark:text-slate-400 hover:bg-white/50 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-200"
           }`}
         >

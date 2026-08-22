@@ -62,6 +62,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleGenericException(Exception e) {
+        e.printStackTrace();
+        try {
+            java.io.PrintWriter pw = new java.io.PrintWriter("global-error.log");
+            e.printStackTrace(pw);
+            pw.close();
+        } catch(Exception ignored) {}
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("message", "Lỗi hệ thống: " + (e.getMessage() != null ? e.getMessage() : "Unknown error")));
     }
