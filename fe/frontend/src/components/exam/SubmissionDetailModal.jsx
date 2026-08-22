@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { FileText, CheckCircle2, XCircle, AlertCircle, Maximize2, Minimize2, Sparkles, AlertTriangle, Lock, X, Calendar, Clock, Award } from "lucide-react";
 import PDFViewer from "./PDFViewer";
+import gradebookService from "../../services/gradebookService";
+import submissionService from "../../services/submissionService";
 function formatDate(isoString) {
   if (!isoString) return "—";
   return new Date(isoString).toLocaleString("vi-VN", {
@@ -55,10 +57,8 @@ export default function SubmissionDetailModal({ submissionId, onClose, role = "S
       try {
         let data;
         if (role === "TEACHER" || role === "DEPARTMENT_HEAD") {
-          const { default: gradebookService } = await import("../../services/gradebookService");
           data = await gradebookService.getSubmissionDetail(submissionId);
         } else {
-          const { default: submissionService } = await import("../../services/submissionService");
           data = await submissionService.getMySubmissionDetail(submissionId);
         }
         setDetail(data);
