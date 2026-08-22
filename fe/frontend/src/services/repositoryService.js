@@ -69,6 +69,11 @@ const repositoryService = {
   toggleFileType: async (documentId) => {
     return await axiosClient.put(`/repository/documents/${documentId}/toggle-type`);
   },
+
+  // 11. Lấy danh sách Tài liệu dùng chung theo Tổ bộ môn của Giáo viên
+  getSharedDepartmentDocuments: async () => {
+    return await axiosClient.get("/repository/shared-documents");
+  },
 };
 
 export default repositoryService;

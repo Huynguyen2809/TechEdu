@@ -117,5 +117,26 @@
   }
 }
 
+/* Fix hiển thị màu nền & chữ của thẻ select/option ở cả chế độ Sáng và Tối */
+select {
+  color-scheme: light;
+}
+
+.dark select {
+  color-scheme: dark;
+}
+
+select option,
+select optgroup {
+  background-color: #ffffff;
+  color: #1e293b;
+}
+
+.dark select option,
+.dark select optgroup {
+  background-color: #0f172a;
+  color: #f1f5f9;
+}
+
 
 

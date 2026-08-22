@@ -40,4 +40,20 @@ public class CenterManagerController {
         return ResponseEntity.ok(centerManagerService.getAnalyticsDashboard(userId));
     }
 
+    @GetMapping("/categories")
+    public ResponseEntity<?> getCategories() {
+        return ResponseEntity.ok(centerManagerService.getCategories());
+    }
+
+    @PostMapping("/categories")
+    public ResponseEntity<?> createCategory(@RequestBody Map<String, Object> data) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(centerManagerService.createSubject(data));
+    }
+
+    @DeleteMapping("/categories/{id}")
+    public ResponseEntity<?> deleteCategory(@PathVariable Long id) {
+        centerManagerService.deleteSubject(id);
+        return ResponseEntity.ok(Map.of("message", "Đã xóa môn học thành công!"));
+    }
+
 }

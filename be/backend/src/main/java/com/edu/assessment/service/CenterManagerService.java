@@ -32,6 +32,7 @@ public class CenterManagerService {
     private final ClassRepository classRepository;
     private final ExamRepository examRepository;
     private final ExamSubmissionRepository submissionRepository;
+    private final com.edu.assessment.repository.SubjectRepository subjectRepository;
 
     // ─── Nghiep vu 1: Thong ke tong quan he thong ─────────────────────────
     public DashboardStatsResponse getDashboardStats() {
@@ -181,5 +182,65 @@ public class CenterManagerService {
                 "8-10", distribution[4]
             )
         );
+    }
+
+    // ─── Nghiep vu 5: Danh muc Khoi & Mon hoc (Category & Subject Management) ─
+    @Transactional(readOnly = true)
+    public Map<String, Object> getCategories() {
+        List<com.edu.assessment.entity.Subject> allSubjects = subjectRepository.findAllByOrderByGradeLevelAscIdAsc();
+        
+        // Nhóm theo khối lớp (10, 11, 12)
+        Map<String, List<com.edu.assessment.entity.Subject>> subjectsByGrade = new LinkedHashMap<>();
+        subjectsByGrade.put("10", new ArrayList<>());
+        subjectsByGrade.put("11", new ArrayList<>());
+        subjectsByGrade.put("12", new ArrayList<>());
+
+        for (com.edu.assessment.entity.Subject subject : allSubjects) {
+            String gradeKey = String.valueOf(subject.getGradeLevel());
+            subjectsByGrade.computeIfAbsent(gradeKey, k -> new ArrayList<>()).add(subject);
+        }
+
+        List<Integer> grades = List.of(10, 11, 12);
+
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("grades", grades);
+        result.put("subjectsByGrade", subjectsByGrade);
+        result.put("allSubjects", allSubjects);
+        return result;
+    }
+
+    @Transactional
+    public com.edu.assessment.entity.Subject createSubject(Map<String, Object> data) {
+        String name = (String) data.get("name");
+        Integer gradeLevel = data.get("gradeLevel") != null ? Integer.valueOf(data.get("gradeLevel").toString()) : 12;
+        String icon = data.get("icon") != null ? (String) data.get("icon") : "BookOpen";
+        String color = data.get("color") != null ? (String) data.get("color") : "indigo";
+        String description = (String) data.get("description");
+
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Tên môn học không được để trống!");
+        }
+
+        if (subjectRepository.existsByNameAndGradeLevel(name.trim(), gradeLevel)) {
+            throw new IllegalArgumentException("Môn học '" + name.trim() + "' đã tồn tại trong Khối " + gradeLevel + "!");
+        }
+
+        com.edu.assessment.entity.Subject subject = com.edu.assessment.entity.Subject.builder()
+                .name(name.trim())
+                .gradeLevel(gradeLevel)
+                .icon(icon)
+                .color(color)
+                .description(description)
+                .build();
+
+        return subjectRepository.save(subject);
+    }
+
+    @Transactional
+    public void deleteSubject(Long id) {
+        if (!subjectRepository.existsById(id)) {
+            throw new IllegalArgumentException("Không tìm thấy môn học với ID: " + id);
+        }
+        subjectRepository.deleteById(id);
     }
 }

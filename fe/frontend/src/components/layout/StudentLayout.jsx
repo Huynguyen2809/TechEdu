@@ -15,7 +15,8 @@ import {
   X,
   Star,
   CheckCircle2,
-  Calendar
+  Calendar,
+  KeyRound
 } from "lucide-react";
 
 export default function StudentLayout({ children }) {
@@ -224,9 +225,12 @@ export default function StudentLayout({ children }) {
             >
               <Menu className="w-5 h-5" />
             </button>
-            <span className="text-sm font-extrabold text-slate-800 dark:text-slate-100 tracking-tight hidden sm:inline-flex items-center gap-2">
-              <span>Hệ Thống Trắc Nghiệm & Đánh Giá Năng Lực TechEdu</span>
-            </span>
+            <div className="hidden sm:flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-sky-500/10 via-indigo-500/10 to-blue-500/10 dark:from-sky-500/20 dark:via-indigo-500/20 dark:to-blue-500/20 border border-sky-200/60 dark:border-sky-800/60 shadow-xs backdrop-blur-md">
+              <KeyRound className="w-4 h-4 text-amber-500 shrink-0" />
+              <span className="text-xs md:text-sm font-black bg-gradient-to-r from-sky-600 via-indigo-600 to-blue-600 dark:from-sky-300 dark:via-indigo-300 dark:to-blue-300 bg-clip-text text-transparent tracking-tight">
+                Học là con đường ngắn nhất dẫn đến thành công !
+              </span>
+            </div>
           </div>
 
           {/* Right Action Widgets */}

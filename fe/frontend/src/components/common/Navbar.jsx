@@ -68,8 +68,8 @@ export default function Navbar() {
             <span className="font-bold text-slate-900 text-lg leading-tight block truncate">
               TechEdu
             </span>
-            <span className="text-[11px] text-slate-500 font-medium truncate">
-              Khối THPT (Toán - Lý - Hóa)
+            <span className="text-xs font-black bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent truncate block">
+              🔑 Học là con đường ngắn nhất dẫn đến thành công !
             </span>
           </div>
         </div>

@@ -19,6 +19,10 @@ const authService = {
 
   changePasswordFirstLogin: async (newPassword) => {
     return await axiosClient.post("/auth/change-password-first-login", { newPassword });
+  },
+
+  changePassword: async (data) => {
+    return await axiosClient.post("/auth/change-password", data);
   }
 };
 

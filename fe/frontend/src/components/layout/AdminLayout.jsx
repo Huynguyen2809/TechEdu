@@ -10,16 +10,18 @@ import {
  Building2,
  FolderLock,
  Tag,
- ShieldCheck,
  LogOut,
  BrainCircuit,
  Star,
  Menu,
  Bell,
  CheckCircle2,
- FileText
+ FileText,
+ KeyRound
 } from "lucide-react";
+import centerManagerService from "../../services/centerManagerService";
 import AdminSidebar from "./AdminSidebar";
+import ChangePasswordModal from "../common/ChangePasswordModal";
 
 export default function AdminLayout({ children }) {
  const navigate = useNavigate();
@@ -33,55 +35,97 @@ export default function AdminLayout({ children }) {
  const notifRef = useRef(null);
  const [notifications, setNotifications] = useState([]);
 
+ const [showProfileMenu, setShowProfileMenu] = useState(false);
+ const profileMenuRef = useRef(null);
+ const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+
  useEffect(() => {
- document.title = "TechEdu - Phân Hệ Giám Đốc Trung Tâm";
+   document.title = "TechEdu - Phân Hệ Quản Lý Trung Tâm";
  }, []);
 
- // Click outside to close notification dropdown
+ // Click outside to close notification dropdown & profile menu
  useEffect(() => {
- const handleClickOutside = (e) => {
- if (notifRef.current && !notifRef.current.contains(e.target)) {
- setShowNotifications(false);
- }
- };
- document.addEventListener("mousedown", handleClickOutside);
- return () => document.removeEventListener("mousedown", handleClickOutside);
+   const handleClickOutside = (e) => {
+     if (notifRef.current && !notifRef.current.contains(e.target)) {
+       setShowNotifications(false);
+     }
+     if (profileMenuRef.current && !profileMenuRef.current.contains(e.target)) {
+       setShowProfileMenu(false);
+     }
+   };
+   document.addEventListener("mousedown", handleClickOutside);
+   return () => document.removeEventListener("mousedown", handleClickOutside);
  }, []);
 
- let managerName = user?.fullName || user?.name || "Giám đốc";
- if (managerName.toLowerCase().includes("quản trị viên hệ thống") || managerName.toLowerCase().includes("quản trị")) {
- managerName = "Giám đốc";
+ let managerName = user?.fullName || user?.name || "Quản lý trung tâm";
+ if (managerName.toLowerCase().includes("quản trị viên hệ thống") || managerName.toLowerCase().includes("quản trị") || managerName.toLowerCase().includes("giám đốc")) {
+   managerName = "Quản lý trung tâm";
  }
  const managerInitials = managerName.charAt(0).toUpperCase();
 
- // Notifications for Center Manager
+ // Notifications for Center Manager từ API thực tế
  useEffect(() => {
- setNotifications([
- {
- id: "notif_staff_1",
- title: "Tài khoản nhân sự mới",
- desc: "Có 2 tài khoản giáo viên mới được cấp phát trong hệ thống.",
- time: "Hôm nay",
- unread: true,
- type: "user",
- link: "/center-manager/users"
- },
- {
- id: "notif_dept_1",
- title: "Cập nhật Tổ chuyên môn",
- desc: "Tổ Toán - Tin vừa phân công Tổ trưởng mới.",
- time: "Hôm qua",
- unread: false,
- type: "dept",
- link: "/center-manager/departments"
- }
- ]);
- }, []);
+   if (!user?.id) return;
+   const fetchAdminNotifications = async () => {
+     try {
+       const [stats, depts] = await Promise.all([
+         centerManagerService.getSystemStats().catch(() => null),
+         centerManagerService.getAllDepartments().catch(() => [])
+       ]);
+
+       const readIds = JSON.parse(localStorage.getItem(`read_notifs_admin_${user.id}`) || "[]");
+       const realNotifs = [];
+
+       if (stats?.totalStaff) {
+         realNotifs.push({
+           id: "notif_staff_summary",
+           title: "Tổng quan nhân sự",
+           desc: `Hệ thống hiện có ${stats.totalStaff} nhân sự (${stats.totalTeachers || 0} giáo viên).`,
+           time: "Hôm nay",
+           unread: !readIds.includes("notif_staff_summary"),
+           type: "user",
+           link: "/center-manager/users"
+         });
+       }
+
+       if (Array.isArray(depts) && depts.length > 0) {
+         realNotifs.push({
+           id: "notif_dept_summary",
+           title: "Tổ chuyên môn hoạt động",
+           desc: `Có ${depts.length} Tổ bộ môn đang hoạt động và quản lý học liệu.`,
+           time: "Hôm nay",
+           unread: !readIds.includes("notif_dept_summary"),
+           type: "dept",
+           link: "/center-manager/departments"
+         });
+       }
+
+       if (stats?.totalSharedDocuments) {
+         realNotifs.push({
+           id: "notif_docs_summary",
+           title: "Kho học liệu dùng chung",
+           desc: `Đang lưu trữ ${stats.totalSharedDocuments} tài liệu quy chế và biểu mẫu chuẩn.`,
+           time: "Mới nhất",
+           unread: !readIds.includes("notif_docs_summary"),
+           type: "file",
+           link: "/center-manager/documents"
+         });
+       }
+
+       setNotifications(realNotifs);
+     } catch (err) {
+       console.error("Lỗi tải thông báo quản trị:", err);
+     }
+   };
+
+   fetchAdminNotifications();
+ }, [user?.id]);
 
  const unreadCount = notifications.filter((n) => n.unread).length;
 
  const markAllRead = () => {
  setNotifications((prev) => prev.map((n) => ({ ...n, unread: false })));
+ localStorage.setItem(`read_notifs_admin_${user.id}`, JSON.stringify(notifications.map(n => n.id)));
  };
 
  const handleNotificationClick = (n) => {
@@ -132,11 +176,6 @@ export default function AdminLayout({ children }) {
  path: "/center-manager/categories",
  icon: Tag,
  },
- {
- label: "Giám sát Bảo mật",
- path: "/center-manager/security",
- icon: ShieldCheck,
- },
  ];
 
  const isPathActive = (path) => {
@@ -173,16 +212,19 @@ export default function AdminLayout({ children }) {
  <header className="h-16 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-b border-white/20 dark:border-slate-700/30 shadow-[0_2px_10px_rgb(0,0,0,0.02)] px-4 sm:px-8 flex items-center justify-between sticky top-0 z-30 transition-all duration-200">
  {/* Title / Mobile Toggle */}
  <div className="flex items-center gap-3">
- <button
- onClick={() => setMobileSidebarOpen(true)}
- className="lg:hidden p-2 rounded-xl text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors cursor-pointer"
- >
- <Menu className="w-5 h-5" />
- </button>
- <span className="text-sm font-extrabold text-slate-800 dark:text-slate-100 tracking-tight hidden sm:inline-block">
- Hệ Thống Quản Lý &amp; Đánh Giá Giảng Dạy TechEdu
- </span>
- </div>
+  <button
+  onClick={() => setMobileSidebarOpen(true)}
+  className="lg:hidden p-2 rounded-xl text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors cursor-pointer"
+  >
+  <Menu className="w-5 h-5" />
+  </button>
+  <div className="hidden sm:flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 dark:from-indigo-500/20 dark:via-purple-500/20 dark:to-pink-500/20 border border-indigo-200/60 dark:border-indigo-800/60 shadow-xs backdrop-blur-md">
+    <KeyRound className="w-4 h-4 text-amber-500 shrink-0" />
+    <span className="text-xs md:text-sm font-black bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 dark:from-indigo-400 dark:via-violet-300 dark:to-purple-400 bg-clip-text text-transparent tracking-tight">
+      Học là con đường ngắn nhất dẫn đến thành công !
+    </span>
+  </div>
+  </div>
 
  {/* Right Action Widgets */}
  <div className="flex items-center gap-3">
@@ -274,27 +316,70 @@ export default function AdminLayout({ children }) {
  )}
  </div>
 
- {/* User Capsule Widget */}
- <div className="flex items-center gap-2.5 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-slate-200/60 dark:border-slate-700/60 shadow-sm transition-all hover:shadow-md cursor-pointer group">
- <span className="text-xs font-bold text-slate-800 dark:text-slate-100 hidden md:inline-block max-w-[120px] truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
- {managerName}
- </span>
- <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-violet-50 dark:bg-violet-900/40 text-violet-700 dark:text-violet-300 border border-violet-100 dark:border-violet-800/60 transition-colors">
- <Star className="w-2.5 h-2.5 fill-current" />
- <span className="hidden lg:inline">Giám đốc</span>
- </span>
- </div>
- </div>
- </header>
+  {/* User Capsule Widget & Profile Dropdown */}
+  <div className="relative" ref={profileMenuRef}>
+    <button
+      onClick={() => setShowProfileMenu(!showProfileMenu)}
+      className="flex items-center gap-2.5 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-slate-200/60 dark:border-slate-700/60 shadow-sm transition-all hover:shadow-md cursor-pointer group"
+    >
+      <span className="text-xs font-bold text-slate-800 dark:text-slate-100 hidden md:inline-block max-w-[120px] truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+        {managerName}
+      </span>
+      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-violet-50 dark:bg-violet-900/40 text-violet-700 dark:text-violet-300 border border-violet-100 dark:border-violet-800/60 transition-colors">
+        <Star className="w-2.5 h-2.5 fill-current" />
+        <span className="hidden lg:inline">Quản lý</span>
+      </span>
+    </button>
 
- {/* MAIN PAGE BODY */}
- <main className="bg-[#F8FAFC] dark:bg-slate-950 min-h-screen flex-1 p-6 md:p-8 overflow-y-auto max-w-[1600px] w-full mx-auto transition-colors duration-200">
- <div key={location.pathname} className="page-transition">
- {children}
- </div>
- </main>
- </div>
- </div>
- </ToastProvider>
- );
+    {/* Profile Dropdown Menu */}
+    {showProfileMenu && (
+      <div className="absolute right-0 mt-2.5 w-56 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-800 p-2 z-50 animate-fade-in origin-top-right space-y-1">
+        <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-800">
+          <p className="text-xs font-black text-slate-900 dark:text-white truncate">{managerName}</p>
+          <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mt-0.5">Quản Lý Trung Tâm</p>
+        </div>
+
+        <button
+          onClick={() => {
+            setShowProfileMenu(false);
+            setIsPasswordModalOpen(true);
+          }}
+          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors cursor-pointer text-left"
+        >
+          <KeyRound className="w-4 h-4 text-indigo-500" />
+          <span>Đổi mật khẩu</span>
+        </button>
+
+        <button
+          onClick={() => {
+            setShowProfileMenu(false);
+            logout();
+          }}
+          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 transition-colors cursor-pointer text-left"
+        >
+          <LogOut className="w-4 h-4 text-rose-500" />
+          <span>Đăng xuất</span>
+        </button>
+      </div>
+    )}
+  </div>
+  </div>
+  </header>
+
+  {/* MAIN PAGE BODY */}
+  <main className="bg-[#F8FAFC] dark:bg-slate-950 min-h-screen flex-1 p-6 md:p-8 overflow-y-auto max-w-[1600px] w-full mx-auto transition-colors duration-200">
+  <div key={location.pathname} className="page-transition">
+  {children}
+  </div>
+  </main>
+  </div>
+  </div>
+
+  {/* MODAL ĐỔI MẬT KHẨU */}
+  <ChangePasswordModal
+    isOpen={isPasswordModalOpen}
+    onClose={() => setIsPasswordModalOpen(false)}
+  />
+  </ToastProvider>
+  );
 }

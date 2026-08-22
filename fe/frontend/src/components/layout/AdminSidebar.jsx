@@ -7,7 +7,6 @@ import {
   Building2,
   FolderLock,
   Tag,
-  ShieldCheck,
   LogOut,
   BrainCircuit,
   Star,
@@ -32,7 +31,6 @@ export default function AdminSidebar({
     { label: "Tổ chuyên môn", path: "/center-manager/departments", icon: Building2 },
     { label: "Tài liệu chung", path: "/center-manager/documents", icon: FolderLock },
     { label: "Danh mục Môn", path: "/center-manager/categories", icon: Tag },
-    { label: "Giám sát Bảo mật", path: "/center-manager/security", icon: ShieldCheck },
   ];
 
   const isPathActive = (path) => {
@@ -42,9 +40,9 @@ export default function AdminSidebar({
     return location.pathname.startsWith(path);
   };
 
-  let managerName = user?.fullName || user?.name || "Giám đốc";
-  if (managerName.toLowerCase().includes("quản trị viên hệ thống") || managerName.toLowerCase().includes("quản trị")) {
-    managerName = "Giám đốc";
+  let managerName = user?.fullName || user?.name || "Quản lý trung tâm";
+  if (managerName.toLowerCase().includes("quản trị viên hệ thống") || managerName.toLowerCase().includes("quản trị") || managerName.toLowerCase().includes("giám đốc")) {
+    managerName = "Quản lý trung tâm";
   }
 
   return (
@@ -144,7 +142,7 @@ export default function AdminSidebar({
                 text-violet-700 dark:text-violet-300
                 border border-violet-200/60 dark:border-violet-800/60
                 mt-1.5 shadow-sm">
-                <Star className="w-3 h-3 fill-current" /> GIÁM ĐỐC
+                <Star className="w-3 h-3 fill-current" /> QUẢN LÝ TRUNG TÂM
               </span>
             </div>
           )}

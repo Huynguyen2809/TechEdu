@@ -77,11 +77,8 @@ export default function CreateClassModal({
               className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-semibold text-slate-800 dark:text-slate-100 focus:outline-none focus:border-teal-500 focus:bg-white dark:focus:bg-slate-700 transition-all cursor-pointer"
             >
               <option value="Toán học">Toán học</option>
-              <option value="Hóa học">Hóa học</option>
               <option value="Vật lý">Vật lý</option>
-              <option value="Tiếng Anh">Tiếng Anh</option>
-              <option value="Sinh học">Sinh học</option>
-              <option value="OTHER">Môn khác ...</option>
+              <option value="Hóa học">Hóa học</option>
             </select>
 
             {selectedSubject === "OTHER" && (

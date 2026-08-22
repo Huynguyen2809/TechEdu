@@ -34,9 +34,10 @@ public class CenterDocumentController {
     public ResponseEntity<?> uploadSharedDocument(
             @RequestParam("file") MultipartFile file,
             @RequestParam("name") String name,
+            @RequestParam(value = "departmentId", required = false) Long departmentId,
             HttpServletRequest request) throws Exception {
         Long uploaderId = getCurrentUserId(request);
-        return ResponseEntity.ok(centerDocumentService.uploadSharedDocument(file, name, uploaderId));
+        return ResponseEntity.ok(centerDocumentService.uploadSharedDocument(file, name, departmentId, uploaderId));
     }
 
     @DeleteMapping("/{documentId}")

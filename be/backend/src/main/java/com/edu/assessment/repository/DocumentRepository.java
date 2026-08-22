@@ -13,5 +13,13 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
 
     List<Document> findAllByFileTypeOrderByIdDesc(Document.FileType fileType);
 
+    List<Document> findAllByFileTypeAndDepartmentIdOrderByIdDesc(Document.FileType fileType, Long departmentId);
+
+    List<Document> findAllByFileTypeAndDepartmentIsNullOrderByIdDesc(Document.FileType fileType);
+
+    List<Document> findAllByFileTypeAndDepartmentIdOrFileTypeAndDepartmentIsNullOrderByIdDesc(
+            Document.FileType fileType1, Long departmentId,
+            Document.FileType fileType2);
+
     long countByFileType(Document.FileType fileType);
 }

@@ -51,4 +51,10 @@ public class AuthController {
         authService.changePasswordFirstLogin(newPassword);
         return ResponseEntity.ok(Map.of("message", "Đổi mật khẩu thành công!"));
     }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<?> changePassword(@Valid @RequestBody com.edu.assessment.dto.request.ChangePasswordRequest request) {
+        authService.changePassword(request);
+        return ResponseEntity.ok(Map.of("message", "Đổi mật khẩu thành công!"));
+    }
 }

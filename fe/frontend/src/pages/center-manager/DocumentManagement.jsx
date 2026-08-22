@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   FolderLock,
   Upload,
@@ -12,17 +12,22 @@ import {
   AlertCircle,
   File,
   Calendar,
-  HardDrive
+  HardDrive,
+  Building2,
+  Filter
 } from "lucide-react";
 import centerManagerService from "../../services/centerManagerService";
 
 export default function DocumentManagement() {
   const [documents, setDocuments] = useState([]);
+  const [departments, setDepartments] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedDeptFilter, setSelectedDeptFilter] = useState("ALL");
   const [isLoading, setIsLoading] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [docName, setDocName] = useState("");
+  const [selectedDeptId, setSelectedDeptId] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const [formError, setFormError] = useState("");
   const [isUploading, setIsUploading] = useState(false);
@@ -37,25 +42,39 @@ export default function DocumentManagement() {
     }, 3500);
   };
 
-  const fetchDocuments = async () => {
+  const fetchInitialData = async () => {
     setIsLoading(true);
     try {
-      const response = await centerManagerService.getAllDocuments();
-      setDocuments(response);
+      const [docsRes, deptsRes] = await Promise.all([
+        centerManagerService.getAllDocuments(),
+        centerManagerService.getAllDepartments()
+      ]);
+      setDocuments(docsRes || []);
+      setDepartments(deptsRes?.data || deptsRes || []);
     } catch (error) {
-      console.error("Lỗi khi tải danh sách tài liệu:", error);
-      showToast("Không thể tải danh sách tài liệu", "error");
+      console.error("Lỗi khi tải dữ liệu:", error);
+      showToast("Không thể tải danh sách tài liệu hoặc bộ môn", "error");
     } finally {
       setIsLoading(false);
     }
   };
 
-  React.useEffect(() => {
-    fetchDocuments();
+  const fetchDocuments = async () => {
+    try {
+      const response = await centerManagerService.getAllDocuments();
+      setDocuments(response || []);
+    } catch (error) {
+      console.error("Lỗi khi tải danh sách tài liệu:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchInitialData();
   }, []);
 
   const handleOpenModal = () => {
     setDocName("");
+    setSelectedDeptId("");
     setSelectedFile(null);
     setFormError("");
     setIsModalOpen(true);
@@ -64,6 +83,7 @@ export default function DocumentManagement() {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setDocName("");
+    setSelectedDeptId("");
     setSelectedFile(null);
     setFormError("");
   };
@@ -95,6 +115,9 @@ export default function DocumentManagement() {
       const formData = new FormData();
       formData.append("file", selectedFile);
       formData.append("name", docName.trim());
+      if (selectedDeptId) {
+        formData.append("departmentId", selectedDeptId);
+      }
 
       await centerManagerService.uploadDocument(formData);
       showToast(`Đã tải lên tài liệu "${docName.trim()}" thành công!`);
@@ -130,10 +153,19 @@ export default function DocumentManagement() {
     }
   };
 
-  const filteredDocuments = documents.filter((doc) =>
-    doc.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    doc.fileType.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredDocuments = documents.filter((doc) => {
+    const matchesSearch =
+      doc.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (doc.fileType && doc.fileType.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (doc.departmentName && doc.departmentName.toLowerCase().includes(searchTerm.toLowerCase()));
+
+    const matchesDept =
+      selectedDeptFilter === "ALL" ||
+      (selectedDeptFilter === "COMMON" && !doc.departmentId) ||
+      (doc.departmentId && String(doc.departmentId) === String(selectedDeptFilter));
+
+    return matchesSearch && matchesDept;
+  });
 
   const getFileBadge = (fileType) => {
     switch (fileType) {
@@ -170,6 +202,47 @@ export default function DocumentManagement() {
     }
   };
 
+  const getDepartmentBadge = (deptName) => {
+    if (!deptName || deptName === "Tất cả bộ môn") {
+      return (
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700/60 shadow-sm whitespace-nowrap">
+          <Building2 className="w-3 h-3 text-slate-400" />
+          <span>Tất cả</span>
+        </span>
+      );
+    }
+    if (deptName.includes("Toán")) {
+      return (
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800/60 shadow-sm whitespace-nowrap">
+          <Building2 className="w-3 h-3 text-indigo-500" />
+          <span>{deptName}</span>
+        </span>
+      );
+    }
+    if (deptName.includes("Lý") || deptName.includes("Vật lý")) {
+      return (
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-violet-50 dark:bg-violet-900/40 text-violet-700 dark:text-violet-300 border border-violet-200/60 dark:border-violet-800/60 shadow-sm whitespace-nowrap">
+          <Building2 className="w-3 h-3 text-violet-500" />
+          <span>{deptName}</span>
+        </span>
+      );
+    }
+    if (deptName.includes("Hóa")) {
+      return (
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 border border-amber-200/60 dark:border-amber-800/60 shadow-sm whitespace-nowrap">
+          <Building2 className="w-3 h-3 text-amber-500" />
+          <span>{deptName}</span>
+        </span>
+      );
+    }
+    return (
+      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-teal-50 dark:bg-teal-900/40 text-teal-700 dark:text-teal-300 border border-teal-200/60 dark:border-teal-800/60 shadow-sm whitespace-nowrap">
+        <Building2 className="w-3 h-3 text-teal-500" />
+        <span>{deptName}</span>
+      </span>
+    );
+  };
+
   return (
     <div className="space-y-6 font-sans animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Toast notification */}
@@ -192,12 +265,17 @@ export default function DocumentManagement() {
 
       {/* HEADER TRANG & ACTION */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-5 md:p-6 rounded-3xl border border-slate-200/60 dark:border-slate-800/60 shadow-sm">
-        <h1 className="text-xl md:text-2xl font-black text-slate-900 dark:text-slate-100 tracking-tight flex items-center gap-3">
-          <div className="p-2.5 bg-indigo-50 dark:bg-indigo-900/40 rounded-xl text-indigo-600 dark:text-indigo-400">
-            <FolderLock className="w-6 h-6 shrink-0" />
-          </div>
-          Kho Tài liệu Chung
-        </h1>
+        <div>
+          <h1 className="text-xl md:text-2xl font-black text-slate-900 dark:text-slate-100 tracking-tight flex items-center gap-3">
+            <div className="p-2.5 bg-indigo-50 dark:bg-indigo-900/40 rounded-xl text-indigo-600 dark:text-indigo-400">
+              <FolderLock className="w-6 h-6 shrink-0" />
+            </div>
+            Kho Tài liệu Dùng chung
+          </h1>
+          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">
+            Quản lý và phân phối tài liệu biểu mẫu, đề tài chuyên môn theo từng tổ bộ môn
+          </p>
+        </div>
 
         <button
           onClick={handleOpenModal}
@@ -209,7 +287,7 @@ export default function DocumentManagement() {
       </div>
 
       {/* STATS & SEARCH TOOLBAR */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/60 dark:border-slate-800/60 shadow-sm">
+      <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/60 dark:border-slate-800/60 shadow-sm">
         <div className="flex items-center gap-3">
           <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/60 rounded-xl px-4 py-2.5 shadow-sm flex items-center gap-3">
             <div className="p-2 bg-white dark:bg-slate-900 rounded-lg text-indigo-500 shadow-sm border border-slate-100 dark:border-slate-800">
@@ -222,107 +300,141 @@ export default function DocumentManagement() {
           </div>
         </div>
 
-        <div className="relative min-w-[280px] w-full sm:max-w-md">
-          <Search className="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Tìm kiếm tài liệu..."
-            className="w-full pl-11 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/60 rounded-xl text-sm font-semibold text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all shadow-sm"
-          />
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto">
+          {/* Lọc theo Bộ môn */}
+          <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/60 rounded-xl px-3 py-2">
+            <Filter className="w-4 h-4 text-slate-400 shrink-0" />
+            <select
+              value={selectedDeptFilter}
+              onChange={(e) => setSelectedDeptFilter(e.target.value)}
+              className="bg-transparent text-xs font-bold text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer pr-2"
+            >
+              <option value="ALL" className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">Tất cả tài liệu</option>
+              <option value="COMMON" className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">Tất cả (Chung)</option>
+              {departments.map((dept) => (
+                <option key={dept.id} value={dept.id} className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">
+                  {dept.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="relative min-w-[240px] flex-1 sm:max-w-md">
+            <Search className="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Tìm kiếm tài liệu, bộ môn..."
+              className="w-full pl-11 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/60 rounded-xl text-sm font-semibold text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all shadow-sm"
+            />
+          </div>
         </div>
       </div>
 
       {/* BẢNG DỮ LIỆU */}
       <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/60 dark:border-slate-800/60 shadow-sm overflow-hidden">
         <div className="overflow-x-auto w-full min-h-[320px]">
-          <table className="w-full text-center border-collapse min-w-[750px]">
-            <thead>
-              <tr className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200/60 dark:border-slate-800/60 text-xs font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                <th className="py-4 px-6 w-16 text-center whitespace-nowrap">STT</th>
-                <th className="py-4 px-6 text-left whitespace-nowrap">Tên tài liệu</th>
-                <th className="py-4 px-6 text-center whitespace-nowrap">Định dạng</th>
-                <th className="py-4 px-6 text-center whitespace-nowrap">Dung lượng</th>
-                <th className="py-4 px-6 text-center whitespace-nowrap">Ngày tải lên</th>
-                <th className="py-4 px-6 text-center w-36 whitespace-nowrap">Thao tác</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 text-sm">
-              {filteredDocuments.length > 0 ? (
-                filteredDocuments.map((doc, index) => (
-                  <tr
-                    key={doc.id}
-                    className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors group cursor-pointer"
-                  >
-                    <td className="py-4 px-6 font-bold text-slate-400 dark:text-slate-500 text-center whitespace-nowrap">
-                      {index + 1}
-                    </td>
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center h-[320px] gap-3">
+              <div className="w-9 h-9 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+              <p className="text-slate-500 dark:text-slate-400 font-bold text-sm">Đang tải danh sách tài liệu...</p>
+            </div>
+          ) : (
+            <table className="w-full text-center border-collapse min-w-[850px]">
+              <thead>
+                <tr className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200/60 dark:border-slate-800/60 text-xs font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                  <th className="py-4 px-6 w-16 text-center whitespace-nowrap">STT</th>
+                  <th className="py-4 px-6 text-left whitespace-nowrap">Tên tài liệu</th>
+                  <th className="py-4 px-6 text-center whitespace-nowrap">Bộ môn áp dụng</th>
+                  <th className="py-4 px-6 text-center whitespace-nowrap">Định dạng</th>
+                  <th className="py-4 px-6 text-center whitespace-nowrap">Dung lượng</th>
+                  <th className="py-4 px-6 text-center whitespace-nowrap">Ngày tải lên</th>
+                  <th className="py-4 px-6 text-center w-36 whitespace-nowrap">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 text-sm">
+                {filteredDocuments.length > 0 ? (
+                  filteredDocuments.map((doc, index) => (
+                    <tr
+                      key={doc.id}
+                      onDoubleClick={() => handleDownload(doc)}
+                      className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors group cursor-pointer select-none"
+                      title="Double click để mở / xem tài liệu"
+                    >
+                      <td className="py-4 px-6 font-bold text-slate-400 dark:text-slate-500 text-center whitespace-nowrap">
+                        {index + 1}
+                      </td>
 
-                    <td className="py-4 px-6 text-left font-bold text-slate-800 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors whitespace-nowrap">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 border border-indigo-100 dark:border-indigo-800/60">
-                          <FileText className="w-5 h-5" />
+                      <td className="py-4 px-6 text-left font-bold text-slate-800 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors whitespace-nowrap">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 border border-indigo-100 dark:border-indigo-800/60">
+                            <FileText className="w-5 h-5" />
+                          </div>
+                          <span
+                            className="max-w-[280px] sm:max-w-[340px] truncate block"
+                            title={doc.name}
+                          >
+                            {doc.name}
+                          </span>
                         </div>
-                        <span
-                          className="max-w-[300px] sm:max-w-[380px] truncate block"
-                          title={doc.name}
-                        >
-                          {doc.name}
-                        </span>
-                      </div>
-                    </td>
+                      </td>
 
-                    <td className="py-4 px-6 text-center whitespace-nowrap">
-                      {getFileBadge(doc.fileType)}
-                    </td>
+                      <td className="py-4 px-6 text-center whitespace-nowrap">
+                        {getDepartmentBadge(doc.departmentName)}
+                      </td>
 
-                    <td className="py-4 px-6 text-center font-mono text-xs text-slate-500 dark:text-slate-400 font-bold whitespace-nowrap">
-                      {doc.size}
-                    </td>
+                      <td className="py-4 px-6 text-center whitespace-nowrap">
+                        {getFileBadge(doc.fileType)}
+                      </td>
 
-                    <td className="py-4 px-6 text-center text-xs text-slate-500 dark:text-slate-400 font-bold whitespace-nowrap">
-                      <div className="flex items-center justify-center gap-2">
-                        <div className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400">
-                          <Calendar className="w-3.5 h-3.5 shrink-0" />
+                      <td className="py-4 px-6 text-center font-mono text-xs text-slate-500 dark:text-slate-400 font-bold whitespace-nowrap">
+                        {doc.size}
+                      </td>
+
+                      <td className="py-4 px-6 text-center text-xs text-slate-500 dark:text-slate-400 font-bold whitespace-nowrap">
+                        <div className="flex items-center justify-center gap-2">
+                          <div className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400">
+                            <Calendar className="w-3.5 h-3.5 shrink-0" />
+                          </div>
+                          <span>{doc.uploadedDate}</span>
                         </div>
-                        <span>{doc.uploadedDate}</span>
-                      </div>
-                    </td>
+                      </td>
 
-                    <td className="py-4 px-6 text-center whitespace-nowrap">
-                      <div className="flex items-center justify-center gap-2">
-                        <button
-                          onClick={() => handleDownload(doc)}
-                          className="p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors cursor-pointer border border-transparent hover:border-indigo-200 dark:hover:border-indigo-800/60"
-                          title="Tải xuống/Xem"
-                        >
-                          <Download className="w-4 h-4" />
-                        </button>
+                      <td className="py-4 px-6 text-center whitespace-nowrap">
+                        <div className="flex items-center justify-center gap-2">
+                          <button
+                            onClick={() => handleDownload(doc)}
+                            className="p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors cursor-pointer border border-transparent hover:border-indigo-200 dark:hover:border-indigo-800/60"
+                            title="Tải xuống / Xem trước"
+                          >
+                            <Download className="w-4 h-4" />
+                          </button>
 
-                        <button
-                          onClick={() => handleDelete(doc.id, doc.name)}
-                          className="p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/30 transition-colors cursor-pointer border border-transparent hover:border-rose-200 dark:hover:border-rose-800/60"
-                          title="Xóa tài liệu"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                          <button
+                            onClick={() => handleDelete(doc.id, doc.name)}
+                            className="p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/30 transition-colors cursor-pointer border border-transparent hover:border-rose-200 dark:hover:border-rose-800/60"
+                            title="Xóa tài liệu"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={7} className="py-16 text-center whitespace-nowrap">
+                      <div className="flex flex-col items-center justify-center gap-2">
+                        <FolderLock className="w-8 h-8 text-slate-300 dark:text-slate-600" />
+                        <p className="text-slate-500 dark:text-slate-400 font-bold text-sm">Không tìm thấy tài liệu nào phù hợp.</p>
                       </div>
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={6} className="py-16 text-center whitespace-nowrap">
-                    <div className="flex flex-col items-center justify-center gap-2">
-                      <FolderLock className="w-8 h-8 text-slate-300 dark:text-slate-600" />
-                      <p className="text-slate-500 dark:text-slate-400 font-bold text-sm">Không tìm thấy tài liệu nào phù hợp.</p>
-                    </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                )}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
 
@@ -335,7 +447,7 @@ export default function DocumentManagement() {
                 <div className="p-2 bg-indigo-100 dark:bg-indigo-900/40 rounded-xl text-indigo-600 dark:text-indigo-400">
                   <Upload className="w-5 h-5" />
                 </div>
-                Tải lên tài liệu
+                Tải lên tài liệu dùng chung
               </h3>
               <button
                 onClick={handleCloseModal}
@@ -375,9 +487,31 @@ export default function DocumentManagement() {
                     type="text"
                     value={docName}
                     onChange={(e) => setDocName(e.target.value)}
-                    placeholder="Ví dụ: Quy chế chuyên môn 2026"
+                    placeholder="Ví dụ: Đề cương ôn tập HK1 môn Hóa 12"
                     className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/60 rounded-xl text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 font-bold transition-all"
                   />
+                </div>
+
+                <div className="group">
+                  <label className="block text-xs font-extrabold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-2 group-focus-within:text-indigo-600 transition-colors">
+                    <Building2 className="w-4 h-4 text-slate-400 group-focus-within:text-indigo-500" />
+                    Phân loại Bộ môn áp dụng
+                  </label>
+                  <select
+                    value={selectedDeptId}
+                    onChange={(e) => setSelectedDeptId(e.target.value)}
+                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/60 rounded-xl text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 font-bold transition-all cursor-pointer"
+                  >
+                    <option value="" className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">-- Tất cả (Dùng chung) --</option>
+                    {departments.map((dept) => (
+                      <option key={dept.id} value={dept.id} className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">
+                        {dept.name}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1 font-medium">
+                    Giáo viên thuộc bộ môn được chọn sẽ nhìn thấy tài liệu này trong kho của mình.
+                  </p>
                 </div>
               </div>
 
@@ -385,6 +519,7 @@ export default function DocumentManagement() {
                 <button
                   type="button"
                   onClick={handleCloseModal}
+                  disabled={isUploading}
                   className="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold text-sm hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
                 >
                   Hủy

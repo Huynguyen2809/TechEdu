@@ -63,6 +63,19 @@ const centerManagerService = {
 
     deleteDocument: async (id) => {
         return await axiosClient.delete(`/center-manager/documents/${id}`);
+    },
+
+    // Quản lý Danh mục Môn học & Khối lớp (Giám đốc trung tâm)
+    getCategories: async () => {
+        return await axiosClient.get("/center-manager/categories");
+    },
+
+    createCategory: async (data) => {
+        return await axiosClient.post("/center-manager/categories", data);
+    },
+
+    deleteCategory: async (id) => {
+        return await axiosClient.delete(`/center-manager/categories/${id}`);
     }
 };
 

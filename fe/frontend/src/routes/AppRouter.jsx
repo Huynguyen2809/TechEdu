@@ -33,7 +33,6 @@ import UserManagement from "../pages/center-manager/UserManagement";
 import DepartmentManagement from "../pages/center-manager/DepartmentManagement";
 import DocumentManagement from "../pages/center-manager/DocumentManagement";
 import CategoryManagement from "../pages/center-manager/CategoryManagement";
-import SecurityOverview from "../pages/center-manager/SecurityOverview";
 
 export default function AppRouter() {
   return (
@@ -106,7 +105,6 @@ export default function AppRouter() {
                 <Route path="departments" element={<DepartmentManagement />} />
                 <Route path="documents"   element={<DocumentManagement />} />
                 <Route path="categories"  element={<CategoryManagement />} />
-                <Route path="security"    element={<SecurityOverview />} />
                 {/* Fallback */}
                 <Route path="*" element={<Navigate to="dashboard" replace />} />
               </Routes>

@@ -69,6 +69,13 @@ public class RepositoryController {
         return ResponseEntity.ok(repositoryService.getRepositoryContent(folderId, teacherId));
     }
 
+    // 3.1 API Lấy danh sách Tài liệu dùng chung theo Tổ bộ môn của Giáo viên
+    @GetMapping("/shared-documents")
+    public ResponseEntity<?> getSharedDepartmentDocuments(HttpServletRequest httpServletRequest) {
+        Long teacherId = getCurrentUserId(httpServletRequest);
+        return ResponseEntity.ok(repositoryService.getSharedDepartmentDocuments(teacherId));
+    }
+
     // 4. API Di chuyển file sang thư mục khác (Hỗ trợ cả PUT và POST)
     @RequestMapping(value = { "/documents/{documentId}/move", "/documents/move" }, method = { RequestMethod.PUT,
             RequestMethod.POST })

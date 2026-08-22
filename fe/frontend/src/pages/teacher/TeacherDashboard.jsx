@@ -313,12 +313,9 @@ export default function TeacherDashboard() {
                     onChange={(e) => setSelectedSubject(e.target.value)}
                     className="w-full px-4 py-3 bg-slate-50/50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-teal-500 focus:bg-white dark:focus:bg-slate-900 focus:ring-4 focus:ring-teal-500/10 text-slate-800 dark:text-slate-100 font-semibold cursor-pointer transition-all shadow-sm"
                   >
-                    <option value="Hóa học">Hóa học</option>
                     <option value="Toán học">Toán học</option>
                     <option value="Vật lý">Vật lý</option>
-                    <option value="Sinh học">Sinh học</option>
-                    <option value="Tiếng Anh">Tiếng Anh</option>
-                    <option value="Ngữ văn">Ngữ văn</option>
+                    <option value="Hóa học">Hóa học</option>
                   </select>
                 </div>
 

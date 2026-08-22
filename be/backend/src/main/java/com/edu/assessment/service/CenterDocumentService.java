@@ -1,7 +1,9 @@
 package com.edu.assessment.service;
 
+import com.edu.assessment.entity.Department;
 import com.edu.assessment.entity.Document;
 import com.edu.assessment.entity.User;
+import com.edu.assessment.repository.DepartmentRepository;
 import com.edu.assessment.repository.DocumentRepository;
 import com.edu.assessment.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +27,7 @@ public class CenterDocumentService {
 
     private final DocumentRepository documentRepository;
     private final UserRepository userRepository;
+    private final DepartmentRepository departmentRepository;
     private final GridFsTemplate gridFsTemplate;
 
     public List<Map<String, Object>> getAllSharedDocuments() {
@@ -55,20 +55,35 @@ public class CenterDocumentService {
             }
             
             map.put("uploadedDate", doc.getCreatedAt() != null ? doc.getCreatedAt().format(formatter) : "");
-            map.put("uploadedBy", doc.getTeacher() != null ? doc.getTeacher().getFullName() : "Giám đốc trung tâm");
+            map.put("uploadedBy", doc.getTeacher() != null ? doc.getTeacher().getFullName() : "Quản lý trung tâm");
             map.put("fileUrl", doc.getFileUrl());
+
+            // Thêm thông tin Tổ bộ môn
+            if (doc.getDepartment() != null) {
+                map.put("departmentId", doc.getDepartment().getId());
+                map.put("departmentName", doc.getDepartment().getName());
+            } else {
+                map.put("departmentId", null);
+                map.put("departmentName", "Tất cả bộ môn");
+            }
             return map;
         }).toList();
     }
 
     @Transactional
-    public Map<String, Object> uploadSharedDocument(MultipartFile file, String name, Long uploaderId) throws IOException {
+    public Map<String, Object> uploadSharedDocument(MultipartFile file, String name, Long departmentId, Long uploaderId) throws IOException {
         if (file.isEmpty()) {
             throw new IllegalArgumentException("Vui lòng chọn file để tải lên!");
         }
 
         User uploader = userRepository.findById(uploaderId)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy thông tin người tải lên"));
+
+        Department department = null;
+        if (departmentId != null) {
+            department = departmentRepository.findById(departmentId)
+                    .orElse(null);
+        }
 
         String originalFileName = file.getOriginalFilename();
         if (originalFileName == null) {
@@ -99,6 +114,7 @@ public class CenterDocumentService {
                 .fileSizeKb(file.getSize() / 1024)
                 .teacher(uploader)
                 .folder(null) // Tài liệu chung không nằm trong folder cá nhân nào
+                .department(department)
                 .isDepartmentMaterial(false)
                 .build();
 

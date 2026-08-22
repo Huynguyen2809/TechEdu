@@ -5,7 +5,7 @@ import {
   Users, GraduationCap, FileText,
   TrendingUp, ChevronRight,
   Activity, Award, Building2, FolderLock,
-  Tag, ShieldCheck
+  Tag, CheckCircle2
 } from "lucide-react";
 
 // ─── StatCard ──────────────────────────────────────────────────────────
@@ -200,7 +200,7 @@ export default function CenterManagerDashboard() {
             {/* Tỷ lệ Đạt */}
             <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-800/60 p-6 shadow-sm flex flex-col items-center justify-center text-center">
               <h3 className="text-base font-extrabold text-slate-800 dark:text-slate-100 mb-6 flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5 text-emerald-500" /> Tỷ Lệ Đạt (≥ 5.0)
+                <CheckCircle2 className="w-5 h-5 text-emerald-500" /> Tỷ Lệ Đạt (≥ 5.0)
               </h3>
               
               <div className="relative w-40 h-40 rounded-full border-[12px] border-slate-100 dark:border-slate-800 flex items-center justify-center shadow-inner">
@@ -255,13 +255,6 @@ export default function CenterManagerDashboard() {
             desc="Quản lý khung chương trình khối 10, 11, 12 chuẩn Bộ GD&ĐT 2025"
             path="/center-manager/categories"
             color="bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-amber-500/30"
-          />
-          <QuickLink
-            icon={ShieldCheck}
-            label="Giám sát Bảo mật"
-            desc="Theo dõi trạng thái kết nối server, kiểm tra các chuẩn an toàn hệ thống"
-            path="/center-manager/security"
-            color="bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-emerald-500/30"
           />
         </div>
       </div>

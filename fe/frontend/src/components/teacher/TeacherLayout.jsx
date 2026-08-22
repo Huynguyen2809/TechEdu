@@ -17,7 +17,8 @@ import {
   Bell,
   CheckCircle2,
   FileText,
-  AlertCircle
+  AlertCircle,
+  KeyRound
 } from "lucide-react";
 import TeacherSidebar from "./TeacherSidebar";
 
@@ -201,9 +202,12 @@ export default function TeacherLayout({ children }) {
               >
                 <Menu className="w-5 h-5" />
               </button>
-              <span className="text-sm font-extrabold text-slate-800 dark:text-slate-100 tracking-tight hidden sm:inline-block">
-                Hệ Thống Quản Lý &amp; Đánh Giá Giảng Dạy TechEdu
-              </span>
+              <div className="hidden sm:flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-teal-500/10 via-emerald-500/10 to-teal-500/10 dark:from-teal-500/20 dark:via-emerald-500/20 dark:to-teal-500/20 border border-teal-200/60 dark:border-teal-800/60 shadow-xs backdrop-blur-md">
+                <KeyRound className="w-4 h-4 text-amber-500 shrink-0" />
+                <span className="text-xs md:text-sm font-black bg-gradient-to-r from-teal-600 via-emerald-600 to-teal-700 dark:from-teal-300 dark:via-emerald-300 dark:to-teal-300 bg-clip-text text-transparent tracking-tight">
+                  Học là con đường ngắn nhất dẫn đến thành công !
+                </span>
+              </div>
             </div>
 
             <div className="flex items-center gap-3">

@@ -27,6 +27,10 @@ public class Document {
     @JoinColumn(name = "folder_id")
     private Folder folder; // Nằm trong thư mục nào (null = Nằm ngoài Root)
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id")
+    private Department department; // Áp dụng cho bộ môn nào (null = Dùng chung toàn trung tâm)
+
     @Column(name = "title", length = 255, nullable = false)
     private String title; // Tên file hiển thị trên UI, ví dụ: "De_thi_giua_ky_Toan_12.pdf"
 

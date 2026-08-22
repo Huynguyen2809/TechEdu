@@ -1,19 +1,20 @@
 package com.edu.assessment.config;
 
 import com.edu.assessment.entity.Department;
+import com.edu.assessment.entity.Subject;
 import com.edu.assessment.entity.User;
 import com.edu.assessment.repository.DepartmentRepository;
+import com.edu.assessment.repository.SubjectRepository;
 import com.edu.assessment.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Random;
 import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -23,97 +24,80 @@ public class DatabaseSeeder implements CommandLineRunner {
 
     private final DepartmentRepository departmentRepository;
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
+    private final SubjectRepository subjectRepository;
+    private final JdbcTemplate jdbcTemplate;
 
     @Override
     public void run(String... args) throws Exception {
-        try {
-            // Fix schema since Hibernate update doesn't remove NOT NULL constraints
-            jdbcTemplate.execute("ALTER TABLE departments MODIFY COLUMN head_id bigint NULL;");
-        } catch (Exception e) {
-            log.warn("Không thể alter table departments: {}", e.getMessage());
-        }
+        log.info("═════════════════════════════════════════════════════════════");
+        log.info("  BẮT ĐẦU CÀI ĐẶT LẠI HỆ THỐNG MỚI (CLEAN SYSTEM RESET)");
+        log.info("═════════════════════════════════════════════════════════════");
 
-        if (departmentRepository.count() == 0) {
-            log.info("--- BẮT ĐẦU KHỞI TẠO DỮ LIỆU TỔ CHUYÊN MÔN MẶC ĐỊNH ---");
+        // Hệ thống đã được làm sạch hoàn toàn.
+        // Chỉ tự động khởi tạo khi bảng rỗng (đảm bảo không mất dữ liệu của người dùng sau này).
 
-            User centerManager = userRepository.findByPhoneNumber("0999999999")
-                    .orElse(null);
+        // 1. Lấy thông tin Quản Lý Trung Tâm
+        User centerManager = userRepository.findByPhoneNumber("0999999999").orElse(null);
 
-            if (centerManager != null) {
-                List<String> defaultDepartments = List.of(
-                        "Tổ Toán học",
-                        "Tổ Vật lý",
-                        "Tổ Hóa học",
-                        "Tổ Tiếng Anh"
-                );
+        // 2. Khởi tạo 3 Tổ chuyên môn mặc định (Toán, Lý, Hóa)
+        if (departmentRepository.count() == 0 && centerManager != null) {
+            log.info("--- KHỞI TẠO 3 TỔ CHUYÊN MÔN MẶC ĐỊNH ---");
+            List<String> defaultDepartments = List.of(
+                    "Tổ Toán học",
+                    "Tổ Vật lý",
+                    "Tổ Hóa học"
+            );
 
-                for (String name : defaultDepartments) {
-                    Department department = Department.builder()
-                            .name(name)
-                            .head(null)
-                            .center(centerManager)
-                            .build();
-                    departmentRepository.save(department);
-                }
-                log.info(">>> Đã khởi tạo thành công 4 Tổ chuyên môn mặc định.");
-            } else {
-                log.warn(">>> Không tìm thấy Center Manager mặc định. Bỏ qua khởi tạo Tổ chuyên môn.");
+            for (String name : defaultDepartments) {
+                Department department = Department.builder()
+                        .name(name)
+                        .head(null)
+                        .center(centerManager)
+                        .build();
+                departmentRepository.save(department);
             }
-            log.info("-----------------------------------------------------");
+            log.info(">>> Đã tạo 3 Tổ chuyên môn mặc định: Tổ Toán học, Tổ Vật lý, Tổ Hóa học.");
         }
 
-        if (userRepository.countByRole(User.Role.TEACHER) == 0 && userRepository.countByRole(User.Role.DEPARTMENT_HEAD) == 0) {
-            log.info("--- BẮT ĐẦU KHỞI TẠO GIÁO VIÊN MẪU ---");
-            List<Department> departments = departmentRepository.findAll();
-            if (departments.size() >= 4) {
-                String[] firstNames = {"Nguyễn", "Trần", "Lê", "Phạm", "Hoàng", "Huỳnh", "Phan", "Vũ", "Võ", "Đặng"};
-                String[] middleNames = {"Văn", "Thị", "Hữu", "Minh", "Thanh", "Ngọc", "Hoàng", "Xuân", "Thu", "Đức"};
-                String[] lastNames = {"Anh", "Bình", "Cường", "Dung", "Em", "Phong", "Giang", "Hải", "Hương", "Linh"};
-                
-                Random random = new Random();
-                String defaultPassword = passwordEncoder.encode("123456");
-                List<User> teachers = new ArrayList<>();
-                
-                for (int i = 0; i < 15; i++) {
-                    String fullName = firstNames[random.nextInt(firstNames.length)] + " " +
-                                      middleNames[random.nextInt(middleNames.length)] + " " +
-                                      lastNames[random.nextInt(lastNames.length)];
-                    String phone = String.format("09%08d", 80000000 + i);
-                    
-                    Department dept = departments.get(i % 4);
-                    
-                    User teacher = User.builder()
-                            .fullName(fullName)
-                            .phoneNumber(phone)
-                            .passwordHash(defaultPassword)
-                            .role(User.Role.TEACHER)
-                            .isActive(true)
-                            .isFirstLogin(true)
-                            .department(dept)
-                            .build();
-                    teachers.add(teacher);
-                }
-                userRepository.saveAll(teachers);
-                log.info(">>> Đã tạo 15 Giáo viên mẫu!");
-                
-                log.info("--- BẮT ĐẦU CHỈ ĐỊNH TỔ TRƯỞNG ---");
-                for (Department dept : departments) {
-                    User head = teachers.stream()
-                                        .filter(t -> t.getDepartment().getId().equals(dept.getId()))
-                                        .findFirst()
-                                        .orElse(null);
-                    if (head != null) {
-                        head.setRole(User.Role.DEPARTMENT_HEAD);
-                        userRepository.save(head);
-                        
-                        dept.setHead(head);
-                        departmentRepository.save(dept);
-                    }
-                }
-                log.info("Database Seeding: Đã tạo thành công dữ liệu mẫu!");
+        // 3. Khởi tạo Danh mục Môn học cho 3 khối (10, 11, 12)
+        if (subjectRepository.count() == 0) {
+            log.info("--- KHỞI TẠO DANH MỤC MÔN HỌC MẶC ĐỊNH (TOÁN, LÝ, HÓA) ---");
+            List<Subject> defaultSubjects = new ArrayList<>();
+
+            for (int grade : List.of(10, 11, 12)) {
+                defaultSubjects.add(Subject.builder()
+                        .name("Toán học")
+                        .gradeLevel(grade)
+                        .code("MATH_" + grade)
+                        .icon("Calculator")
+                        .color("indigo")
+                        .description("Toán học Khối " + grade)
+                        .build());
+                defaultSubjects.add(Subject.builder()
+                        .name("Vật lý")
+                        .gradeLevel(grade)
+                        .code("PHYS_" + grade)
+                        .icon("Atom")
+                        .color("violet")
+                        .description("Vật lý Khối " + grade)
+                        .build());
+                defaultSubjects.add(Subject.builder()
+                        .name("Hóa học")
+                        .gradeLevel(grade)
+                        .code("CHEM_" + grade)
+                        .icon("Beaker")
+                        .color("amber")
+                        .description("Hóa học Khối " + grade)
+                        .build());
             }
+
+            subjectRepository.saveAll(defaultSubjects);
+            log.info(">>> Đã tạo 9 Môn học mặc định cho các khối 10, 11, 12.");
         }
+
+        log.info("═════════════════════════════════════════════════════════════");
+        log.info("  HỆ THỐNG ĐÃ SẴN SÀNG NHƯ MỚI - DUY NHẤT 1 TÀI KHOẢN QUẢN LÝ");
+        log.info("  SĐT: 0999999999 | Mật khẩu: 123456");
+        log.info("═════════════════════════════════════════════════════════════");
     }
 }

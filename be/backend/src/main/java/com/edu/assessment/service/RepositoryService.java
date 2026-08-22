@@ -181,7 +181,11 @@ public class RepositoryService {
         Document document = documentRepository.findById(documentId)
                 .orElseThrow(() -> new IllegalArgumentException("File tài liệu không tồn tại!"));
 
-        if (!document.getTeacher().getId().equals(teacherId)) {
+        if (document.getFileType() == Document.FileType.SHARED_MATERIAL) {
+            throw new IllegalStateException("Không thể di chuyển tài liệu dùng chung của hệ thống!");
+        }
+
+        if (document.getTeacher() == null || !document.getTeacher().getId().equals(teacherId)) {
             throw new IllegalStateException("Bạn không có quyền di chuyển file này!");
         }
 
@@ -203,8 +207,7 @@ public class RepositoryService {
                 "targetFolderId", targetFolderId != null ? targetFolderId : "ROOT");
     }
 
-    // Nghiệp vụ 5: Lấy toàn bộ thư mục của Giáo viên để phục vụ dropdown chọn thư
-    // mục đích
+    // Nghiệp vụ 5: Lấy toàn bộ thư mục của Giáo viên để phục vụ dropdown chọn thư mục đích
     public List<Map<String, Object>> getAllFolders(Long teacherId) {
         List<Folder> folders = folderRepository.findAllByTeacherId(teacherId);
         return folders.stream().map(f -> Map.<String, Object>of(
@@ -222,7 +225,11 @@ public class RepositoryService {
         Document document = documentRepository.findById(documentId)
                 .orElseThrow(() -> new IllegalArgumentException("File tài liệu không tồn tại!"));
 
-        if (!document.getTeacher().getId().equals(teacherId)) {
+        if (document.getFileType() == Document.FileType.SHARED_MATERIAL) {
+            throw new IllegalStateException("Không thể đổi tên tài liệu dùng chung của hệ thống!");
+        }
+
+        if (document.getTeacher() == null || !document.getTeacher().getId().equals(teacherId)) {
             throw new IllegalStateException("Bạn không có quyền đổi tên file này!");
         }
 
@@ -243,7 +250,11 @@ public class RepositoryService {
         Document document = documentRepository.findById(documentId)
                 .orElseThrow(() -> new IllegalArgumentException("File tài liệu không tồn tại!"));
 
-        if (!document.getTeacher().getId().equals(teacherId)) {
+        if (document.getFileType() == Document.FileType.SHARED_MATERIAL) {
+            throw new IllegalStateException("Giáo viên không có quyền xóa tài liệu dùng chung của hệ thống!");
+        }
+
+        if (document.getTeacher() == null || !document.getTeacher().getId().equals(teacherId)) {
             throw new IllegalStateException("Bạn không có quyền xóa file này!");
         }
 
@@ -317,7 +328,11 @@ public class RepositoryService {
         Document document = documentRepository.findById(documentId)
                 .orElseThrow(() -> new IllegalArgumentException("File tài liệu không tồn tại!"));
 
-        if (!document.getTeacher().getId().equals(teacherId)) {
+        if (document.getFileType() == Document.FileType.SHARED_MATERIAL) {
+            throw new IllegalStateException("Không thể đổi loại tài liệu dùng chung của hệ thống!");
+        }
+
+        if (document.getTeacher() == null || !document.getTeacher().getId().equals(teacherId)) {
             throw new IllegalStateException("Bạn không có quyền thay đổi file này!");
         }
 
@@ -334,5 +349,64 @@ public class RepositoryService {
         result.put("documentId", documentId);
         result.put("fileType", newType.name());
         return result;
+    }
+
+    // Nghiệp vụ 11: Lấy tài liệu dùng chung theo Tổ bộ môn của Giáo viên
+    public Map<String, Object> getSharedDepartmentDocuments(Long teacherId) {
+        User teacher = userRepository.findById(teacherId)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy thông tin Giáo viên"));
+
+        List<Document> documents;
+        String deptName = "Chưa phân tổ";
+        Long deptId = null;
+
+        if (teacher.getDepartment() != null) {
+            deptId = teacher.getDepartment().getId();
+            deptName = teacher.getDepartment().getName();
+            // Lấy tài liệu thuộc tổ của GV hoặc tài liệu chung toàn trường (department == null)
+            documents = documentRepository.findAllByFileTypeAndDepartmentIdOrFileTypeAndDepartmentIsNullOrderByIdDesc(
+                    Document.FileType.SHARED_MATERIAL, deptId,
+                    Document.FileType.SHARED_MATERIAL);
+        } else {
+            // Nếu GV chưa phân tổ, lấy toàn bộ tài liệu chung
+            documents = documentRepository.findAllByFileTypeOrderByIdDesc(Document.FileType.SHARED_MATERIAL);
+        }
+
+        java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        List<Map<String, Object>> docList = documents.stream().map(d -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", d.getId());
+            map.put("title", d.getTitle());
+            map.put("fileType", d.getFileType().name());
+            
+            // Định dạng mở rộng
+            String ext = "UNKNOWN";
+            if (d.getTitle() != null && d.getTitle().contains(".")) {
+                ext = d.getTitle().substring(d.getTitle().lastIndexOf(".") + 1).toUpperCase();
+            }
+            map.put("format", ext);
+            
+            double sizeMb = d.getFileSizeKb() / 1024.0;
+            if (sizeMb >= 1.0) {
+                map.put("size", String.format("%.1f MB", sizeMb));
+            } else {
+                map.put("size", d.getFileSizeKb() + " KB");
+            }
+            
+            map.put("fileSizeKb", d.getFileSizeKb());
+            map.put("fileUrl", d.getFileUrl());
+            map.put("uploadedDate", d.getCreatedAt() != null ? d.getCreatedAt().format(formatter) : "");
+            map.put("uploadedBy", d.getTeacher() != null ? d.getTeacher().getFullName() : "Quản lý trung tâm");
+            map.put("departmentName", d.getDepartment() != null ? d.getDepartment().getName() : "Tất cả bộ môn");
+            map.put("type", "SHARED_FILE");
+            return map;
+        }).toList();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("departmentId", deptId);
+        response.put("departmentName", deptName);
+        response.put("documents", docList);
+        return response;
     }
 }

@@ -48,12 +48,45 @@ public class AuthService {
         User user = userRepository.findByPhoneNumber(request.getPhoneNumber())
                 .orElseThrow(() -> new IllegalArgumentException("Số điện thoại hoặc mật khẩu không chính xác!"));
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
-            throw new IllegalArgumentException("Số điện thoại hoặc mật khẩu không chính xác!");
-        }
-
         if (!user.getIsActive()) {
             throw new IllegalStateException("Tài khoản của bạn đã bị Quản trị viên khóa!");
+        }
+
+        // 1. Kiểm tra tài khoản có đang trong thời gian bị khóa do nhập sai nhiều lần hay không
+        java.time.LocalDateTime now = java.time.LocalDateTime.now();
+        if (user.getLockTime() != null) {
+            if (user.getLockTime().isAfter(now)) {
+                long minutesRemaining = java.time.Duration.between(now, user.getLockTime()).toMinutes() + 1;
+                throw new IllegalStateException("Tài khoản đã bị tạm khóa do nhập sai mật khẩu quá 5 lần. Vui lòng thử lại sau " + minutesRemaining + " phút!");
+            } else {
+                // Đã hết thời gian khóa -> Tự động reset
+                user.setLockTime(null);
+                user.setFailedLoginAttempts(0);
+                userRepository.save(user);
+            }
+        }
+
+        // 2. Kiểm tra mật khẩu
+        if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
+            int currentAttempts = (user.getFailedLoginAttempts() == null ? 0 : user.getFailedLoginAttempts()) + 1;
+            user.setFailedLoginAttempts(currentAttempts);
+
+            if (currentAttempts >= 5) {
+                user.setLockTime(now.plusMinutes(15));
+                userRepository.save(user);
+                throw new IllegalStateException("Bạn đã nhập sai mật khẩu 5 lần liên tiếp! Tài khoản đã bị tạm khóa 15 phút để bảo vệ an toàn.");
+            } else {
+                userRepository.save(user);
+                int remaining = 5 - currentAttempts;
+                throw new IllegalArgumentException("Số điện thoại hoặc mật khẩu không chính xác! (Còn " + remaining + " lần thử trước khi bị khóa 15 phút)");
+            }
+        }
+
+        // 3. Đăng nhập thành công -> Reset bộ đếm vi phạm
+        if ((user.getFailedLoginAttempts() != null && user.getFailedLoginAttempts() > 0) || user.getLockTime() != null) {
+            user.setFailedLoginAttempts(0);
+            user.setLockTime(null);
+            userRepository.save(user);
         }
 
         // Bước 1: Hủy session cũ để tránh Session Fixation attack
@@ -88,7 +121,6 @@ public class AuthService {
         );
     }
 
-    // BỔ SUNG VÀO CLASS AuthService CỦA BẠN:
     public Map<String, Object> getCurrentUser() {
         // 1. Lấy thông tin xác thực từ bộ nhớ Spring Security Context
         org.springframework.security.core.Authentication authentication =
@@ -128,6 +160,28 @@ public class AuthService {
 
         user.setPasswordHash(passwordEncoder.encode(newPassword));
         user.setIsFirstLogin(false);
+        userRepository.save(user);
+    }
+
+    @org.springframework.transaction.annotation.Transactional
+    public void changePassword(com.edu.assessment.dto.request.ChangePasswordRequest request) {
+        String phoneNumber = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByPhoneNumber(phoneNumber)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy tài khoản người dùng!"));
+
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPasswordHash())) {
+            throw new IllegalArgumentException("Mật khẩu hiện tại không chính xác!");
+        }
+
+        if (request.getNewPassword().equals(request.getOldPassword())) {
+            throw new IllegalArgumentException("Mật khẩu mới không được trùng với mật khẩu hiện tại!");
+        }
+
+        if (request.getNewPassword().length() < 6) {
+            throw new IllegalArgumentException("Mật khẩu mới phải có ít nhất 6 ký tự!");
+        }
+
+        user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
     }
 }

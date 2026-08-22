@@ -506,9 +506,15 @@ export default function UserManagement() {
                     Số điện thoại (Tài khoản) <span className="text-rose-500">*</span>
                   </label>
                   <input
-                    type="text"
+                    type="tel"
                     value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/\D/g, "");
+                      if (val.length <= 10) {
+                        setPhoneNumber(val);
+                      }
+                    }}
+                    maxLength={10}
                     placeholder="Ví dụ: 0987654321"
                     disabled={!!editingUser || isSubmitting}
                     className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/60 rounded-xl text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 font-mono font-bold transition-all disabled:opacity-60 disabled:bg-slate-100 dark:disabled:bg-slate-900 disabled:cursor-not-allowed"

@@ -5,12 +5,14 @@ import com.edu.assessment.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-@Slf4j // Lombok annotation để in log ra Console cho đẹp
+@Slf4j
+@Order(1)
 public class DataSeeder implements CommandLineRunner {
 
     private final UserRepository userRepository;
@@ -20,62 +22,35 @@ public class DataSeeder implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         // Migration fix: Cập nhật role cũ 'ADMIN' thành 'CENTER_MANAGER'
-        jdbcTemplate.update("UPDATE users SET role = 'CENTER_MANAGER' WHERE role = 'ADMIN'");
-        // Số điện thoại và mật khẩu mặc định của Center Manager hệ thống
+        try {
+            jdbcTemplate.update("UPDATE users SET role = 'CENTER_MANAGER' WHERE role = 'ADMIN'");
+        } catch (Exception ignored) {}
+
         String centerManagerPhone = "0999999999";
         String centerManagerPassword = "123456";
 
-        // Kiểm tra xem dưới DB đã có tài khoản Center Manager này chưa
-        if (!userRepository.existsByPhoneNumber(centerManagerPhone)) {
-            log.info("--- BẮT ĐẦU KHỞI TẠO TÀI KHOẢN CENTER MANAGER MẶC ĐỊNH ---");
-
-            User centerManager = User.builder()
+        // Khởi tạo hoặc cập nhật chuẩn tài khoản Quản Lý Trung Tâm duy nhất
+        User centerManager = userRepository.findByPhoneNumber(centerManagerPhone).orElse(null);
+        if (centerManager == null) {
+            log.info("--- KHỞI TẠO TÀI KHOẢN QUẢN LÝ TRUNG TÂM DUY NHẤT ---");
+            centerManager = User.builder()
                     .phoneNumber(centerManagerPhone)
                     .passwordHash(passwordEncoder.encode(centerManagerPassword))
-                    .fullName("Quản Trị Viên Hệ Thống")
+                    .fullName("Quản Lý Trung Tâm")
                     .role(User.Role.CENTER_MANAGER)
                     .isActive(true)
+                    .isFirstLogin(false)
                     .build();
-
             userRepository.save(centerManager);
-            log.info(">>> Khởi tạo thành công Center Manager | SĐT: {} | Mật khẩu: {}", centerManagerPhone,
-                    centerManagerPassword);
-            log.info("-----------------------------------------------------");
+            log.info(">>> Khởi tạo thành công Quản Lý Trung Tâm | SĐT: {} | Mật khẩu: {}", centerManagerPhone, centerManagerPassword);
         } else {
-            log.info("--- Tài khoản Center Manager hệ thống đã tồn tại, bỏ qua bước khởi tạo ---");
-        }
-
-        // Seed Department Head
-        if (!userRepository.existsByPhoneNumber("0888888888")) {
-            userRepository.save(User.builder()
-                    .phoneNumber("0888888888")
-                    .passwordHash(passwordEncoder.encode("123456"))
-                    .fullName("Tổ trưởng chuyên môn")
-                    .role(User.Role.DEPARTMENT_HEAD)
-                    .isActive(true)
-                    .build());
-        }
-
-        // Seed Teacher
-        if (!userRepository.existsByPhoneNumber("0777777777")) {
-            userRepository.save(User.builder()
-                    .phoneNumber("0777777777")
-                    .passwordHash(passwordEncoder.encode("123456"))
-                    .fullName("Giáo viên Demo")
-                    .role(User.Role.TEACHER)
-                    .isActive(true)
-                    .build());
-        }
-
-        // Seed Student
-        if (!userRepository.existsByPhoneNumber("0666666666")) {
-            userRepository.save(User.builder()
-                    .phoneNumber("0666666666")
-                    .passwordHash(passwordEncoder.encode("123456"))
-                    .fullName("Học sinh Demo")
-                    .role(User.Role.STUDENT)
-                    .isActive(true)
-                    .build());
+            centerManager.setFullName("Quản Lý Trung Tâm");
+            centerManager.setRole(User.Role.CENTER_MANAGER);
+            centerManager.setIsActive(true);
+            centerManager.setLockTime(null);
+            centerManager.setFailedLoginAttempts(0);
+            userRepository.save(centerManager);
+            log.info("--- Đã kiểm tra, mở khóa và bảo toàn tài khoản Quản Lý Trung Tâm: {} ---", centerManagerPhone);
         }
     }
 }
