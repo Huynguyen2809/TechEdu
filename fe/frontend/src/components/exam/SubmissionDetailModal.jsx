@@ -97,7 +97,7 @@ export default function SubmissionDetailModal({ submissionId, onClose, role = "S
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fade-in">
-      <div className={`bg-white dark:bg-slate-900 cyber:bg-white rounded-3xl shadow-2xl cyber:shadow-[8px_8px_0_0_#0f172a] w-full max-h-[90vh] flex flex-col overflow-hidden border border-slate-200 dark:border-slate-800 cyber:border-2 cyber:border-slate-900 relative transition-all ${hasPdfSection ? "max-w-7xl" : "max-w-3xl"}`}>
+      <div className={`bg-white dark:bg-slate-900 cyber:bg-white rounded-3xl shadow-2xl cyber:shadow-[8px_8px_0_0_#0f172a] w-full h-[95vh] flex flex-col overflow-hidden border border-slate-200 dark:border-slate-800 cyber:border-2 cyber:border-slate-900 relative transition-all ${hasPdfSection ? "max-w-7xl" : "max-w-3xl"}`}>
         {/* MODAL HEADER */}
         <div className="bg-indigo-600 dark:bg-slate-800 cyber:bg-indigo-600 text-white p-5 px-6 flex items-center justify-between shrink-0 border-b border-indigo-700 dark:border-slate-700 cyber:border-b-2 cyber:border-slate-900">
           <div className="flex items-center gap-3 min-w-0">
@@ -131,7 +131,7 @@ export default function SubmissionDetailModal({ submissionId, onClose, role = "S
         </div>
 
         {/* MODAL BODY */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-hidden p-6 flex flex-col">
           {loading ? (
             <div className="py-20 text-center">
               <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto" />
@@ -143,10 +143,10 @@ export default function SubmissionDetailModal({ submissionId, onClose, role = "S
               <p className="text-sm font-bold text-slate-700">{error}</p>
             </div>
           ) : (
-            <div className={hasPdfSection ? "grid grid-cols-1 lg:grid-cols-12 gap-6 items-start" : "space-y-6"}>
+            <div className={hasPdfSection ? "grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-0 flex-1" : "flex-1 overflow-hidden flex flex-col"}>
               {/* KHUNG BÊN TRÁI: PDF VIEWER & TABS LỜI GIẢI */}
               {hasPdfSection && (
-                <div className="lg:col-span-6 bg-slate-50 dark:bg-slate-800/40 cyber:bg-slate-50 rounded-2xl border border-slate-200 dark:border-slate-700 cyber:border-2 cyber:border-slate-900 p-4 flex flex-col gap-3 h-[700px] max-h-[75vh]">
+                <div className="lg:col-span-6 bg-slate-50 dark:bg-slate-800/40 cyber:bg-slate-50 rounded-2xl border border-slate-200 dark:border-slate-700 cyber:border-2 cyber:border-slate-900 p-4 flex flex-col gap-3 h-full min-h-0">
                   <div className="flex items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-700 pb-3 flex-wrap">
                     <div className="flex bg-slate-200/80 dark:bg-slate-700/60 cyber:bg-slate-200 p-1 rounded-xl gap-1 cyber:border-2 cyber:border-slate-900">
                       <button
@@ -226,7 +226,7 @@ export default function SubmissionDetailModal({ submissionId, onClose, role = "S
               )}
 
               {/* KHUNG BÊN PHẢI: BẢNG ĐIỂM & ĐỐI CHIẾU ĐÁP ÁN */}
-              <div className={hasPdfSection ? "lg:col-span-6 space-y-6" : "space-y-6"}>
+              <div className={hasPdfSection ? "lg:col-span-6 flex flex-col gap-6 min-h-0 h-full" : "flex-1 flex flex-col gap-6 min-h-0 h-full"}>
                 {/* STATUS & SCORE SUMMARY CARD */}
                 <div className="bg-slate-50 dark:bg-slate-800/60 cyber:bg-slate-50 rounded-2xl cyber:rounded-xl p-5 border border-slate-200/80 dark:border-slate-700 cyber:border-2 cyber:border-slate-900 cyber:shadow-[4px_4px_0_0_#0f172a] flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div className="space-y-1.5 text-center sm:text-left">
@@ -275,7 +275,7 @@ export default function SubmissionDetailModal({ submissionId, onClose, role = "S
                 )}
 
                 {/* BẢNG ĐỐI CHIẾU ĐÁP ÁN */}
-                <div className="bg-white dark:bg-slate-900 rounded-2xl cyber:rounded-xl border border-slate-200/80 dark:border-slate-800 cyber:border-2 cyber:border-slate-900 overflow-hidden shadow-xs cyber:shadow-[4px_4px_0_0_#0f172a]">
+                <div className="bg-white dark:bg-slate-900 rounded-2xl cyber:rounded-xl border border-slate-200/80 dark:border-slate-800 cyber:border-2 cyber:border-slate-900 overflow-hidden shadow-xs cyber:shadow-[4px_4px_0_0_#0f172a] flex-1 flex flex-col min-h-0">
                   <div className="px-4 py-3 bg-slate-50/80 dark:bg-slate-800/80 border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between flex-wrap gap-2">
                     <h3 className="font-extrabold text-slate-900 dark:text-slate-100 text-xs uppercase tracking-wider">
                       Đối chiếu chi tiết từng câu
@@ -313,7 +313,7 @@ export default function SubmissionDetailModal({ submissionId, onClose, role = "S
                       <p className="text-sm font-bold text-emerald-600 dark:text-emerald-400">🎉 Tuyệt vời! Bạn không làm sai câu nào.</p>
                     </div>
                   ) : (
-                    <div className="overflow-x-auto max-h-[460px] overflow-y-auto">
+                    <div className="overflow-x-auto flex-1 overflow-y-auto">
                       <table className="w-full text-xs">
                         <thead className="sticky top-0 z-10 bg-slate-100 dark:bg-slate-800 cyber:bg-slate-200 shadow-2xs text-center border-b border-slate-200 dark:border-slate-700 cyber:border-b-2 cyber:border-slate-900">
                           <tr>
@@ -333,7 +333,7 @@ export default function SubmissionDetailModal({ submissionId, onClose, role = "S
                               key={d.questionNumber}
                               className={`transition-colors ${isRowHidden ? "hover:bg-slate-50 dark:hover:bg-slate-800" : d.isCorrect ? "hover:bg-emerald-50 dark:hover:bg-emerald-950/20 cyber:hover:bg-emerald-50" : "hover:bg-rose-50 dark:hover:bg-rose-950/20 cyber:hover:bg-rose-50"}`}
                             >
-                              <td className="px-4 py-3 font-bold text-slate-900 dark:text-slate-100 text-center">Câu {getRelativeQuestionNumber(d)}</td>
+                              <td className="px-4 py-3 font-bold text-slate-900 dark:text-slate-100 text-center whitespace-nowrap">{getRelativeQuestionNumber(d)}</td>
                               <td className="px-4 py-3 text-center">
                                 <PartBadge partType={d.partType} />
                               </td>
@@ -397,16 +397,6 @@ export default function SubmissionDetailModal({ submissionId, onClose, role = "S
               </div>
             </div>
           )}
-        </div>
-
-        {/* MODAL FOOTER */}
-        <div className="p-4 bg-slate-50 dark:bg-slate-800/60 cyber:bg-slate-50 border-t border-slate-200 dark:border-slate-700 cyber:border-t-2 cyber:border-slate-900 flex items-center justify-end shrink-0">
-          <button
-            onClick={onClose}
-            className="px-6 py-2 bg-white dark:bg-slate-800 cyber:bg-white hover:bg-slate-50 dark:hover:bg-slate-700 cyber:hover:bg-slate-100 text-slate-700 dark:text-slate-200 cyber:text-slate-900 border border-slate-200 dark:border-slate-700 cyber:border-2 cyber:border-slate-900 font-semibold text-xs rounded-xl shadow-sm cyber:shadow-[2px_2px_0_0_#0f172a] cyber:active:translate-x-0.5 cyber:active:translate-y-0.5 cyber:active:shadow-none transition-all cursor-pointer"
-          >
-            Đóng
-          </button>
         </div>
       </div>
     </div>
